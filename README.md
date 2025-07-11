@@ -66,7 +66,27 @@ NEXT_PUBLIC_FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\
 
 ---
 
-### **Step 5: Run the Development Server**
+### **Step 5: Configure Firebase Functions (for AI features)**
+
+The project uses Gemini AI for parsing resume data. To enable this:
+
+1. **Get a Gemini API Key**:
+   - Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Create an API key for your project
+   - Copy the API key
+
+2. **Configure Firebase Functions**:
+   ```bash
+   cd functions
+   firebase functions:config:set gemini.api_key="YOUR_GEMINI_API_KEY"
+   firebase functions:config:get > .runtimeconfig.json
+   ```
+
+3. **For local development**, the `.runtimeconfig.json` file will be created automatically and ignored by git.
+
+---
+
+### **Step 6: Run the Development Server**
 
 Now that everything is configured, start the development server:
 
