@@ -40,9 +40,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Firebase Functions runtime config (contains API keys)
+functions/.runtimeconfig.json
+
 # Ignore Windows Zone.Identifier files
 *:Zone.Identifier
 *Zone.Identifier
 
 # Python
 /venv
+functions/firebase-debug.log
+functions/firebase-debug.log
