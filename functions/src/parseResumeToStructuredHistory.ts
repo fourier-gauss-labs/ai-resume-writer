@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as mammoth from 'mammoth'; // Added for .docx extraction
 import pdfParse from 'pdf-parse'; // Added for .pdf extraction
-import { parseContactInformation } from './lib'; // Gemini logic for parsing contact info
+import { parseContactInformation, parseSkills, parseEducation } from './lib'; // Gemini logic for parsing contact info, skills, and education
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -97,19 +97,32 @@ export const parseResumeToStructuredHistory = functions.https.onCall(async (data
 
         // Add document boundary end marker
         corpus += `--- DOCUMENT END: ${filePath} ---\n\n`;
-    }
-
-    // Parse the corpus using Gemini AI to extract contact information
-    console.log('Calling Gemini to parse contact information...');
+    }    // Parse the corpus using Gemini AI to extract contact information, skills, and education
+    console.log('Calling Gemini to parse contact information, skills, and education...');
     console.log('Corpus length:', corpus.length);
     console.log('Corpus preview (first 500 chars):', corpus.substring(0, 500));
 
     try {
-        const contactInfo = await parseContactInformation(corpus);
-        console.log('Gemini parsing complete:', JSON.stringify(contactInfo, null, 2));
+        // Parse contact information, skills, and education in parallel
+        const [contactInfo, skillsInfo, educationInfo] = await Promise.all([
+            parseContactInformation(corpus),
+            parseSkills(corpus),
+            parseEducation(corpus)
+        ]);
 
-        // Return the structured contact information
-        return contactInfo;
+        console.log('Contact information parsing complete:', JSON.stringify(contactInfo, null, 2));
+        console.log('Skills parsing complete:', JSON.stringify(skillsInfo, null, 2));
+        console.log('Education parsing complete:', JSON.stringify(educationInfo, null, 2));
+
+        // Combine the results into a single structured response
+        const structuredHistory = {
+            ...contactInfo,
+            ...skillsInfo,
+            ...educationInfo
+        };
+
+        console.log('Combined structured history:', JSON.stringify(structuredHistory, null, 2));
+        return structuredHistory;
     } catch (error) {
         console.error('Gemini parsing failed:', error);
         // Return both corpus and error for debugging
