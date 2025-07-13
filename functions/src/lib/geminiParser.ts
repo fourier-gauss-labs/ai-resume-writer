@@ -14,6 +14,10 @@ export interface ContactInformation {
     };
 }
 
+export interface Skills {
+    skills: string[];
+}
+
 export async function parseContactInformation(corpus: string): Promise<ContactInformation> {
     console.log('Using Google AI Gemini parser...');
 
@@ -141,4 +145,81 @@ function mockParseContactInformation(corpus: string): ContactInformation {
 
     console.log('Mock parsing result:', JSON.stringify(result, null, 2));
     return result;
+}
+
+export async function parseSkills(corpus: string): Promise<Skills> {
+    console.log('Using Google AI Gemini parser for skills...');
+
+    // Check if API key is available
+    if (!apiKey) {
+        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
+        return mockParseSkills(corpus);
+    }
+
+    console.log('API key found, proceeding with Gemini skills parsing...');
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const prompt = `
+You are an AI assistant that extracts skills from resume/biography documents.
+
+Parse the following corpus of documents and extract skills. Return a JSON object with the exact structure shown below.
+
+REQUIRED JSON STRUCTURE:
+{
+  "skills": ["<array of unique skills>"]
+}
+
+GUIDELINES FOR SKILLS EXTRACTION:
+1. Each skill should be a single word or abbreviation (but may be a short phrase)
+2. Extract technical skills, programming languages, frameworks, tools, certifications, and professional skills
+3. No duplicates
+4. Include skills from work experience, education, and explicit skills sections
+5. Use standard terminology (e.g., "JavaScript" not "JS", "Python" not "python")
+6. Include version numbers if specified (e.g., "React 18", "Node.js 16")
+7. Return 10-30 skills maximum, prioritizing the most relevant and prominent ones
+
+IMPORTANT RULES:
+1. Return ONLY valid JSON - no additional text or explanations
+2. Remove duplicates from skills array
+3. Focus on technical and professional skills
+
+CORPUS:
+${corpus}
+`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        let text = response.text();
+
+        // Clean up any markdown code blocks
+        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+
+        console.log('Gemini skills response:', text);
+
+        const parsed = JSON.parse(text);
+        return parsed as Skills;
+    } catch (error) {
+        console.error('Error parsing skills with Gemini:', error);
+        console.log('Falling back to mock skills parser');
+        return mockParseSkills(corpus);
+    }
+}
+
+function mockParseSkills(corpus: string): Skills {
+    console.log('Using mock skills parser');
+
+    // Simple mock parser that looks for common patterns
+    const commonSkills = [
+        'JavaScript', 'TypeScript', 'Python', 'Java', 'React', 'Node.js', 'HTML', 'CSS',
+        'Git', 'Docker', 'AWS', 'Firebase', 'MongoDB', 'PostgreSQL', 'SQL', 'REST API'
+    ];
+
+    const foundSkills = commonSkills.filter(skill =>
+        corpus.toLowerCase().includes(skill.toLowerCase())
+    ).slice(0, 10);
+
+    return {
+        skills: foundSkills.length > 0 ? foundSkills : ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Firebase']
+    };
 }

@@ -36,6 +36,13 @@
        }
     ```
 
+  - The skills shall be parsed into a json object that is a list of skill. A skill is generally a single word or abbreviation, but may be a short phrase. The skills shall not contain duplicate entries. The json shall be of the following form:
+
+    ```json
+      {
+        "skills": ["<skill 1>", "<skill 2>", ...]
+      }
+
 ---
 
 ### 2. Store Structured Data

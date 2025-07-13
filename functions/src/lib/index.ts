@@ -1,1 +1,1 @@
-export { parseContactInformation, ContactInformation } from './geminiParser';
+export { parseContactInformation, ContactInformation, parseSkills, Skills } from './geminiParser';
