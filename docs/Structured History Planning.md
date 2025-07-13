@@ -35,6 +35,19 @@
         }
        }
     ```
+  - The education information shall be parsed into the json object below. Duplicate entries shall be avoided. Start and End dates shall be parsed into month and year. If any item cannot be parsed into its' proper form, them it should be left empty. The json shall be of this form:
+
+    ```json
+      {
+        "education": {
+          "school": "<name of the school>",
+          "degree": "<name of the degree>",
+          "start date": { "month": "<month name>", "year": "<four digit year>"},
+          "end date": { "month": "<month name>", "year": "<four digit year>"},
+          "grade": "<grade point average>"
+        }
+      }
+    ```
 
   - The skills shall be parsed into a json object that is a list of skill. A skill is generally a single word or abbreviation, but may be a short phrase. The skills shall not contain duplicate entries. The json shall be of the following form:
 
