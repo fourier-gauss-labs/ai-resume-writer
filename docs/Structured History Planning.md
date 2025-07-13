@@ -40,11 +40,16 @@
     ```json
       {
         "education": {
-          "school": "<name of the school>",
-          "degree": "<name of the degree>",
-          "start date": { "month": "<month name>", "year": "<four digit year>"},
-          "end date": { "month": "<month name>", "year": "<four digit year>"},
-          "grade": "<grade point average>"
+          [
+             {
+              "school": "<name of the school>",
+              "degree": "<name of the degree>",
+              "start date": { "month": "<month name>", "year": "<four digit year>"},
+              "end date": { "month": "<month name>", "year": "<four digit year>"},
+              "grade": "<grade point average>"
+            },
+            ...
+          ]
         }
       }
     ```
