@@ -18,6 +18,16 @@ export interface Skills {
     skills: string[];
 }
 
+export interface Education {
+    education: {
+        school: string;
+        degree: string;
+        startDate: { month: string; year: string };
+        endDate: { month: string; year: string };
+        grade: string;
+    };
+}
+
 export async function parseContactInformation(corpus: string): Promise<ContactInformation> {
     console.log('Using Google AI Gemini parser...');
 
@@ -221,5 +231,129 @@ function mockParseSkills(corpus: string): Skills {
 
     return {
         skills: foundSkills.length > 0 ? foundSkills : ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Firebase']
+    };
+}
+
+export async function parseEducation(corpus: string): Promise<Education> {
+    console.log('Using Google AI Gemini parser for education...');
+
+    // Check if API key is available
+    if (!apiKey) {
+        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
+        return mockParseEducation(corpus);
+    }
+
+    console.log('API key found, proceeding with Gemini education parsing...');
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const prompt = `
+You are an AI assistant that extracts education information from resume/biography documents.
+
+Parse the following corpus of documents and extract education information. Return a JSON object with the exact structure shown below.
+
+REQUIRED JSON STRUCTURE:
+{
+  "education": {
+    "school": "<name of the school>",
+    "degree": "<name of the degree>",
+    "startDate": { "month": "<month name>", "year": "<four digit year>"},
+    "endDate": { "month": "<month name>", "year": "<four digit year>"},
+    "grade": "<grade point average>"
+  }
+}
+
+GUIDELINES FOR EDUCATION EXTRACTION:
+1. Extract the most recent or highest level of education
+2. Avoid duplicate entries - choose the most significant/recent education
+3. Parse start and end dates into month name (e.g., "January", "May") and four-digit year
+4. If any field cannot be parsed properly, leave it as an empty string ""
+5. For grade, extract GPA, honors, or similar academic performance indicators
+6. School should be the full institution name
+7. Degree should include the full degree name (e.g., "Bachelor of Science in Computer Science", "Master of Business Administration")
+
+IMPORTANT RULES:
+1. Return ONLY valid JSON - no additional text or explanations
+2. If dates are incomplete, use empty strings for missing parts
+3. If no education is found, return empty strings for all fields
+4. Use proper month names (January, February, etc.) not numbers or abbreviations
+
+CORPUS:
+${corpus}
+`;
+
+    try {
+        const geminiResult = await model.generateContent(prompt);
+        const response = geminiResult.response;
+        let text = response.text();
+
+        // Clean up any markdown code blocks
+        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+
+        console.log('Gemini education response:', text);
+
+        const parsed = JSON.parse(text);
+
+        // Validate and clean the response
+        const education = parsed.education || {};
+        const educationResult: Education = {
+            education: {
+                school: typeof education.school === 'string' ? education.school : '',
+                degree: typeof education.degree === 'string' ? education.degree : '',
+                startDate: {
+                    month: (education.startDate && typeof education.startDate.month === 'string') ? education.startDate.month : '',
+                    year: (education.startDate && typeof education.startDate.year === 'string') ? education.startDate.year : ''
+                },
+                endDate: {
+                    month: (education.endDate && typeof education.endDate.month === 'string') ? education.endDate.month : '',
+                    year: (education.endDate && typeof education.endDate.year === 'string') ? education.endDate.year : ''
+                },
+                grade: typeof education.grade === 'string' ? education.grade : ''
+            }
+        };
+
+        return educationResult;
+    } catch (error) {
+        console.error('Error parsing education with Gemini:', error);
+        console.log('Falling back to mock education parser');
+        return mockParseEducation(corpus);
+    }
+}
+
+function mockParseEducation(corpus: string): Education {
+    console.log('Using mock education parser');
+
+    // Simple mock parser that looks for common education patterns
+    const lines = corpus.split('\n');
+    let school = '';
+    let degree = '';
+
+    // Look for university/college patterns
+    const schoolPatterns = [
+        /university/i, /college/i, /institute/i, /school/i
+    ];
+
+    const degreePatterns = [
+        /bachelor/i, /master/i, /phd/i, /doctorate/i, /associates/i, /b\.?s\.?/i, /m\.?s\.?/i, /m\.?b\.?a\.?/i
+    ];
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!school && schoolPatterns.some(pattern => pattern.test(trimmed))) {
+            school = trimmed;
+        }
+        if (!degree && degreePatterns.some(pattern => pattern.test(trimmed))) {
+            degree = trimmed;
+        }
+        if (school && degree) break;
+    }
+
+    return {
+        education: {
+            school: school || '',
+            degree: degree || '',
+            startDate: { month: '', year: '' },
+            endDate: { month: '', year: '' },
+            grade: ''
+        }
     };
 }
