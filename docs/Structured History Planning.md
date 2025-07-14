@@ -36,6 +36,24 @@
         }
        }
     ```
+  - The jobHistory information provides a list of positions the user has held over their career. The list shall be parsed into the json object below. Duplicate entries shall be avoided, but the model may include multiple positions at the same company. Start and End dates shall be parsed into numeric month and year. If any item cannot be parsed into its' proper form, then it should be left empty. The json shall be of this form:
+
+    ```json
+      {
+        [
+          {
+            "title": "<job title>",
+            "company": "<name of employer>",
+            "start date": { "month": "<month name>", "year": "<four digit year>"},
+            "end date": { "month": "<month name>", "year": "<four digit year>"},
+            "currentlyWorking": <boolean indicator that they are still employed there>,
+            "jobDescription": "<text description of the job responsibilities>",
+            "accomplishments": ["<sentence describing an accomplishment 1>", "<sentence describing an accomplishment 2>", ...],
+          }
+        ]
+      }
+    ```
+
   - The education information shall be parsed into the json object below. Duplicate entries shall be avoided. Start and End dates shall be parsed into month and year. If any item cannot be parsed into its' proper form, then it should be left empty. The json shall be of this form:
 
     ```json

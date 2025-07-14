@@ -37,6 +37,18 @@ export interface Certifications {
     }>;
 }
 
+export interface JobHistory {
+    jobHistory: Array<{
+        title: string;
+        company: string;
+        startDate: { month: string; year: string };
+        endDate: { month: string; year: string };
+        currentlyWorking: boolean;
+        jobDescription: string;
+        accomplishments: string[];
+    }>;
+}
+
 export async function parseContactInformation(corpus: string): Promise<ContactInformation> {
     console.log('Using Google AI Gemini parser...');
 
@@ -699,5 +711,293 @@ function mockParseCertifications(corpus: string): Certifications {
 
     return {
         certifications: certificationsEntries.length > 0 ? certificationsEntries : []
+    };
+}
+
+export async function parseJobHistory(corpus: string): Promise<JobHistory> {
+    console.log('Using Google AI Gemini parser for job history...');
+
+    // Check if API key is available
+    if (!apiKey) {
+        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
+        return mockParseJobHistory(corpus);
+    }
+
+    console.log('API key found, proceeding with Gemini job history parsing...');
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const prompt = `
+You are an AI assistant that extracts job history and work experience from resume/biography documents.
+
+Parse the following corpus of documents and extract job history information. Return a JSON object with the exact structure shown below.
+
+REQUIRED JSON STRUCTURE:
+{
+  "jobHistory": [
+    {
+      "title": "<job title>",
+      "company": "<name of employer>",
+      "startDate": { "month": "<month number 01-12>", "year": "<four digit year>"},
+      "endDate": { "month": "<month number 01-12>", "year": "<four digit year>"},
+      "currentlyWorking": <boolean indicator that they are still employed there>,
+      "jobDescription": "<text description of the job responsibilities>",
+      "accomplishments": ["<sentence describing an accomplishment 1>", "<sentence describing an accomplishment 2>", ...]
+    }
+  ]
+}
+
+GUIDELINES FOR JOB HISTORY EXTRACTION:
+1. Extract ALL job positions found in the document, including current and past positions
+2. Include multiple positions at the same company as separate entries if they have different titles or date ranges
+3. Avoid duplicate entries for identical positions
+4. Parse dates carefully following these rules:
+   - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
+   - If there are conflicting dates for the same position, use the most consistent set
+   - Common date formats: "01/2020", "January 2020", "Jan 2020", "2020-01", "2020"
+   - For current positions, look for keywords like "Present", "Current", "Now", or missing end dates
+5. Set currentlyWorking to true ONLY if:
+   - The end date is explicitly "Present", "Current", "Now", or similar
+   - There is no end date but clear indicators this is their current job
+   - The end date is very recent (within last few months) and context suggests ongoing employment
+6. For jobDescription, extract the main responsibilities and duties for each position
+7. For accomplishments, extract specific achievements, quantifiable results, or notable contributions
+   - Look for bullet points, achievements sections, or accomplishment-oriented language
+   - Each accomplishment should be a complete sentence
+   - Focus on measurable results, awards, promotions, successful projects, etc.
+8. If any field cannot be parsed properly, leave it as an empty string "" or empty array []
+9. Company should be the full organization name
+10. Title should include the full job title (e.g., "Senior Software Engineer", "Vice President of Operations")
+11. Order entries chronologically if possible (most recent first)
+12. Pay special attention to experience sections, work history, and any lines containing company names with nearby date ranges
+
+IMPORTANT RULES:
+1. Return ONLY valid JSON - no additional text or explanations
+2. If dates are incomplete, use empty strings for missing parts
+3. If no job history is found, return an empty array []
+4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
+5. Look carefully for date patterns near company/job title names - they may be on the same line or adjacent lines
+6. Be conservative with currentlyWorking - only set to true if clearly indicated
+7. DATE CONVERSION EXAMPLES:
+   - "01/2020 - 03/2023" → startDate: {"month": "01", "year": "2020"}, endDate: {"month": "03", "year": "2023"}
+   - "January 2020 - Present" → startDate: {"month": "01", "year": "2020"}, endDate: {"month": "", "year": ""}, currentlyWorking: true
+   - "2019 - 2021" → startDate: {"month": "", "year": "2019"}, endDate: {"month": "", "year": "2021"}
+
+CORPUS:
+${corpus}
+
+Pay special attention to sections titled "Experience", "Work History", "Professional Experience", "Employment", or similar. Remember: convert months to two-digit numbers (01-12), be conservative with currentlyWorking, and extract specific accomplishments.
+`;
+
+    try {
+        const geminiResult = await model.generateContent(prompt);
+        const response = geminiResult.response;
+        let text = response.text();
+
+        // Clean up any markdown code blocks
+        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+
+        console.log('Gemini job history response:', text);
+
+        const parsed = JSON.parse(text);
+
+        // Validate and clean the response
+        const jobHistoryArray = parsed.jobHistory || [];
+        const validatedJobHistory: JobHistory = {
+            jobHistory: Array.isArray(jobHistoryArray) ? jobHistoryArray.map((job: any) => ({
+                title: typeof job.title === 'string' ? job.title : '',
+                company: typeof job.company === 'string' ? job.company : '',
+                startDate: {
+                    month: (job.startDate && typeof job.startDate.month === 'string') ? job.startDate.month : '',
+                    year: (job.startDate && typeof job.startDate.year === 'string') ? job.startDate.year : ''
+                },
+                endDate: {
+                    month: (job.endDate && typeof job.endDate.month === 'string') ? job.endDate.month : '',
+                    year: (job.endDate && typeof job.endDate.year === 'string') ? job.endDate.year : ''
+                },
+                currentlyWorking: typeof job.currentlyWorking === 'boolean' ? job.currentlyWorking : false,
+                jobDescription: typeof job.jobDescription === 'string' ? job.jobDescription : '',
+                accomplishments: Array.isArray(job.accomplishments) ?
+                    job.accomplishments.filter((acc: any) => typeof acc === 'string') : []
+            })) : []
+        };
+
+        return validatedJobHistory;
+    } catch (error) {
+        console.error('Error parsing job history with Gemini:', error);
+        console.log('Falling back to mock job history parser');
+        return mockParseJobHistory(corpus);
+    }
+}
+
+function mockParseJobHistory(corpus: string): JobHistory {
+    console.log('Using mock job history parser');
+
+    // Simple mock parser that looks for common job/company patterns
+    const lines = corpus.split('\n');
+    const jobHistoryEntries: Array<{
+        title: string;
+        company: string;
+        startDate: { month: string; year: string };
+        endDate: { month: string; year: string };
+        currentlyWorking: boolean;
+        jobDescription: string;
+        accomplishments: string[];
+    }> = [];
+
+    // Look for job/company patterns
+    const jobTitlePatterns = [
+        /senior|lead|principal|director|manager|engineer|developer|analyst|consultant|specialist|coordinator|supervisor|vice president|president|ceo|cto|cfo/i
+    ];
+
+    const companyIndicators = [
+        /corp|corporation|inc|llc|ltd|company|consulting|systems|solutions|technologies|services|group|associates|enterprises|tech/i
+    ];
+
+    // Month conversion map - convert to two-digit numbers
+    const monthMap: { [key: string]: string } = {
+        '01': '01', '02': '02', '03': '03', '04': '04',
+        '05': '05', '06': '06', '07': '07', '08': '08',
+        '09': '09', '10': '10', '11': '11', '12': '12',
+        '1': '01', '2': '02', '3': '03', '4': '04',
+        '5': '05', '6': '06', '7': '07', '8': '08',
+        '9': '09',
+        'january': '01', 'february': '02', 'march': '03', 'april': '04',
+        'may': '05', 'june': '06', 'july': '07', 'august': '08',
+        'september': '09', 'october': '10', 'november': '11', 'december': '12',
+        'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04',
+        'jun': '06', 'jul': '07', 'aug': '08',
+        'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+    };
+
+    // Track processed jobs to avoid duplicates
+    const processedJobs = new Set<string>();
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // Skip obvious non-job lines and bullet points
+        if (trimmed.includes('EDUCATION') ||
+            trimmed.includes('SKILLS') ||
+            trimmed.includes('CERTIFICATIONS') ||
+            trimmed.includes('EXPERIENCE') ||
+            trimmed.includes('PROFESSIONAL EXPERIENCE') ||
+            trimmed.startsWith('•') ||
+            trimmed.startsWith('-') ||
+            trimmed.startsWith('*') ||
+            trimmed.length < 5 ||
+            /^[A-Z\s&]+$/.test(trimmed)) {
+            continue;
+        }
+
+        // Look for lines that might contain job titles and companies
+        const hasJobTitle = jobTitlePatterns.some(pattern => pattern.test(trimmed));
+        const hasCompanyIndicator = companyIndicators.some(pattern => pattern.test(trimmed));
+        const hasDatePattern = /\d{4}/.test(trimmed);
+        const hasAtPattern = /\s+at\s+/i.test(trimmed);
+
+        if ((hasJobTitle || hasCompanyIndicator || hasAtPattern) && (hasDatePattern || i < lines.length - 3)) {
+            // Found a potential job entry
+            let title = '';
+            let company = '';
+            let startDate = { month: '', year: '' };
+            let endDate = { month: '', year: '' };
+            let currentlyWorking = false;
+            let jobDescription = '';
+            let accomplishments: string[] = [];
+
+            // Try to parse the job title and company from the current line
+            const parts = trimmed.split(/\s+at\s+|\s+-\s+|\s+\|\s+/i);
+            if (parts.length >= 2) {
+                title = parts[0].trim();
+                company = parts[1].trim();
+                // Clean up date info from company name if present
+                company = company.replace(/\s*\d{1,2}\/\d{4}.*$/, '').replace(/\s*\w+\s+\d{4}.*$/, '').trim();
+            } else if (hasJobTitle) {
+                title = trimmed.replace(/\s*\d{1,2}\/\d{4}.*$/, '').replace(/\s*\w+\s+\d{4}.*$/, '').trim();
+            } else {
+                company = trimmed.replace(/\s*\d{1,2}\/\d{4}.*$/, '').replace(/\s*\w+\s+\d{4}.*$/, '').trim();
+            }
+
+            // Skip if we've already processed this job
+            const jobKey = `${title}-${company}`.toLowerCase();
+            if (processedJobs.has(jobKey)) {
+                continue;
+            }
+
+            // Look for dates and additional info in nearby lines
+            for (let j = Math.max(0, i - 2); j <= Math.min(lines.length - 1, i + 5); j++) {
+                const nearbyLine = lines[j].trim();
+
+                // Look for date ranges
+                const dateRange = nearbyLine.match(/(\d{1,2}\/\d{4}|\w+\s+\d{4}|\d{4})\s*[-–—]\s*(\d{1,2}\/\d{4}|\w+\s+\d{4}|\d{4}|present|current)/gi);
+                if (dateRange && dateRange.length > 0) {
+                    const range = dateRange[0];
+                    const [start, end] = range.split(/\s*[-–—]\s*/);
+
+                    // Parse start date
+                    const startMatch = start.match(/(\d{1,2})\/(\d{4})|(\w+)\s+(\d{4})|(\d{4})/);
+                    if (startMatch) {
+                        if (startMatch[1] && startMatch[2]) {
+                            // MM/YYYY format
+                            startDate = { month: monthMap[startMatch[1]] || '', year: startMatch[2] };
+                        } else if (startMatch[3] && startMatch[4]) {
+                            // Month YYYY format
+                            startDate = { month: monthMap[startMatch[3].toLowerCase()] || '', year: startMatch[4] };
+                        } else if (startMatch[5]) {
+                            // YYYY format
+                            startDate = { month: '', year: startMatch[5] };
+                        }
+                    }
+
+                    // Parse end date
+                    if (end.toLowerCase().includes('present') || end.toLowerCase().includes('current')) {
+                        currentlyWorking = true;
+                        endDate = { month: '', year: '' };
+                    } else {
+                        const endMatch = end.match(/(\d{1,2})\/(\d{4})|(\w+)\s+(\d{4})|(\d{4})/);
+                        if (endMatch) {
+                            if (endMatch[1] && endMatch[2]) {
+                                // MM/YYYY format
+                                endDate = { month: monthMap[endMatch[1]] || '', year: endMatch[2] };
+                            } else if (endMatch[3] && endMatch[4]) {
+                                // Month YYYY format
+                                endDate = { month: monthMap[endMatch[3].toLowerCase()] || '', year: endMatch[4] };
+                            } else if (endMatch[5]) {
+                                // YYYY format
+                                endDate = { month: '', year: endMatch[5] };
+                            }
+                        }
+                    }
+                }
+
+                // Look for job descriptions (lines starting with bullets or descriptive text)
+                if (nearbyLine.startsWith('•') || nearbyLine.startsWith('-') || nearbyLine.startsWith('*')) {
+                    if (!jobDescription) {
+                        jobDescription = nearbyLine.replace(/^[•\-*]\s*/, '');
+                    } else {
+                        accomplishments.push(nearbyLine.replace(/^[•\-*]\s*/, ''));
+                    }
+                }
+            }
+
+            // Only add if we have meaningful data
+            if (title || company) {
+                processedJobs.add(jobKey);
+                jobHistoryEntries.push({
+                    title: title,
+                    company: company,
+                    startDate: startDate,
+                    endDate: endDate,
+                    currentlyWorking: currentlyWorking,
+                    jobDescription: jobDescription,
+                    accomplishments: accomplishments
+                });
+            }
+        }
+    }
+
+    return {
+        jobHistory: jobHistoryEntries.length > 0 ? jobHistoryEntries : []
     };
 }
