@@ -28,6 +28,15 @@ export interface Education {
     }>;
 }
 
+export interface Certifications {
+    certifications: Array<{
+        certName: string;
+        issuer: string;
+        issuedDate: { month: string; year: string };
+        credentialId: string;
+    }>;
+}
+
 export async function parseContactInformation(corpus: string): Promise<ContactInformation> {
     console.log('Using Google AI Gemini parser...');
 
@@ -476,5 +485,219 @@ function mockParseEducation(corpus: string): Education {
 
     return {
         education: educationEntries.length > 0 ? educationEntries : []
+    };
+}
+
+export async function parseCertifications(corpus: string): Promise<Certifications> {
+    console.log('Using Google AI Gemini parser for certifications...');
+
+    // Check if API key is available
+    if (!apiKey) {
+        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
+        return mockParseCertifications(corpus);
+    }
+
+    console.log('API key found, proceeding with Gemini certifications parsing...');
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const prompt = `
+You are an AI assistant that extracts certifications and licenses from resume/biography documents.
+
+Parse the following corpus of documents and extract certifications and licenses information. Return a JSON object with the exact structure shown below.
+
+REQUIRED JSON STRUCTURE:
+{
+  "certifications": [
+    {
+      "certName": "<name of the certificate/license>",
+      "issuer": "<name of the issuing organization>",
+      "issuedDate": { "month": "<month number 01-12>", "year": "<four digit year>"},
+      "credentialId": "<credential or license ID>"
+    }
+  ]
+}
+
+GUIDELINES FOR CERTIFICATIONS EXTRACTION:
+1. Extract ALL certifications, licenses, and professional credentials found in the document
+2. Include professional licenses (e.g., CPA, PE), industry certifications (e.g., AWS, Microsoft, Cisco), and educational certifications
+3. Avoid duplicate entries
+4. Parse issued dates carefully following these rules:
+   - Look for "issued", "earned", "obtained", "awarded", "completed" dates
+   - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
+   - If there are conflicting dates for the same certification, use the most recent one
+   - Common date formats: "12/2019", "December 2019", "June 2021", "05/2020"
+5. If any field cannot be parsed properly, leave it as an empty string ""
+6. For credentialId, look for certification numbers, license numbers, or credential IDs
+7. Issuer should be the full organization name (e.g., "Amazon Web Services", "Microsoft", "Project Management Institute")
+8. CertName should include the full certification name (e.g., "AWS Certified Solutions Architect", "Certified Public Accountant")
+9. Order entries chronologically if possible (most recent first)
+10. Pay special attention to certification sections, professional licenses, and any lines containing certification names with nearby date ranges
+
+IMPORTANT RULES:
+1. Return ONLY valid JSON - no additional text or explanations
+2. If dates are incomplete, use empty strings for missing parts
+3. If no certifications are found, return an empty array []
+4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
+5. Look carefully for date patterns near certification names - they may be on the same line or adjacent lines
+
+CORPUS:
+${corpus}
+
+Pay special attention to sections titled "Certifications", "Licenses", "Professional Credentials", "Certificates", or similar. Remember: convert months to two-digit numbers (01-12).
+`;
+
+    try {
+        const geminiResult = await model.generateContent(prompt);
+        const response = geminiResult.response;
+        let text = response.text();
+
+        // Clean up any markdown code blocks
+        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+
+        console.log('Gemini certifications response:', text);
+
+        const parsed = JSON.parse(text);
+
+        // Validate and clean the response
+        const certificationsArray = parsed.certifications || [];
+        const validatedCertifications: Certifications = {
+            certifications: Array.isArray(certificationsArray) ? certificationsArray.map((cert: any) => ({
+                certName: typeof cert.certName === 'string' ? cert.certName : '',
+                issuer: typeof cert.issuer === 'string' ? cert.issuer : '',
+                issuedDate: {
+                    month: (cert.issuedDate && typeof cert.issuedDate.month === 'string') ? cert.issuedDate.month : '',
+                    year: (cert.issuedDate && typeof cert.issuedDate.year === 'string') ? cert.issuedDate.year : ''
+                },
+                credentialId: typeof cert.credentialId === 'string' ? cert.credentialId : ''
+            })) : []
+        };
+
+        return validatedCertifications;
+    } catch (error) {
+        console.error('Error parsing certifications with Gemini:', error);
+        console.log('Falling back to mock certifications parser');
+        return mockParseCertifications(corpus);
+    }
+}
+
+function mockParseCertifications(corpus: string): Certifications {
+    console.log('Using mock certifications parser');
+
+    // Simple mock parser that looks for common certification patterns
+    const lines = corpus.split('\n');
+    const certificationsEntries: Array<{
+        certName: string;
+        issuer: string;
+        issuedDate: { month: string; year: string };
+        credentialId: string;
+    }> = [];
+
+    // Look for certification/license patterns - but be more selective
+    const certPatterns = [
+        /certified.*architect/i,
+        /certified.*developer/i,
+        /certified.*professional/i,
+        /project management professional/i,
+        /cissp/i,
+        /oracle certified/i,
+        /aws certified/i,
+        /microsoft certified/i,
+        /\b[a-z]+ certified\b/i
+    ];
+
+    // Month conversion map - convert to two-digit numbers
+    const monthMap: { [key: string]: string } = {
+        '01': '01', '02': '02', '03': '03', '04': '04',
+        '05': '05', '06': '06', '07': '07', '08': '08',
+        '09': '09', '10': '10', '11': '11', '12': '12',
+        '1': '01', '2': '02', '3': '03', '4': '04',
+        '5': '05', '6': '06', '7': '07', '8': '08',
+        '9': '09',
+        'january': '01', 'february': '02', 'march': '03', 'april': '04',
+        'may': '05', 'june': '06', 'july': '07', 'august': '08',
+        'september': '09', 'october': '10', 'november': '11', 'december': '12'
+    };
+
+    // Track processed certifications to avoid duplicates
+    const processedCerts = new Set<string>();
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // Skip headers, skills sections, and obvious non-certifications
+        if (trimmed.includes('SKILLS') ||
+            trimmed.includes('EDUCATION') ||
+            trimmed.includes('EXPERIENCE') ||
+            trimmed.includes('CERTIFICATIONS & LICENSES') ||
+            trimmed.includes('Credential ID:') ||
+            trimmed.includes('Certificate Number:') ||
+            trimmed.includes('License ID:') ||
+            trimmed.length < 10 ||
+            /^[A-Z\s&]+$/.test(trimmed)) {
+            continue;
+        }
+
+        if (certPatterns.some(pattern => pattern.test(trimmed))) {
+            // Found a potential certification
+            let certName = trimmed;
+            let issuer = '';
+            let issuedDate = { month: '', year: '' };
+            let credentialId = '';
+
+            // Skip if we've already processed this certification
+            if (processedCerts.has(certName.toLowerCase())) {
+                continue;
+            }
+
+            // Look for dates and additional info in nearby lines (current line and next few lines)
+            for (let j = i; j <= Math.min(lines.length - 1, i + 4); j++) {
+                const nearbyLine = lines[j].trim();
+
+                // Look for issuer organizations - only if it's a clean company name
+                const issuers = ['amazon web services', 'microsoft corporation', 'oracle corporation', 'project management institute'];
+                if (!issuer && issuers.some(org => nearbyLine.toLowerCase().includes(org))) {
+                    issuer = nearbyLine;
+                }
+
+                // Look for numeric date patterns (MM/YYYY or M/YYYY)
+                const numericDate = nearbyLine.match(/(\d{1,2})\/(\d{4})/);
+                if (numericDate && !issuedDate.year) {
+                    const monthNum = numericDate[1];
+                    const year = numericDate[2];
+                    const monthName = monthMap[monthNum] || '';
+                    issuedDate = { month: monthName, year: year };
+                }
+
+                // Look for month-year patterns
+                const monthYear = nearbyLine.match(/(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})/gi);
+                if (monthYear && monthYear.length > 0 && !issuedDate.year) {
+                    const parts = monthYear[0].split(' ');
+                    if (parts.length >= 2) {
+                        const monthName = parts[0].toLowerCase();
+                        const monthNum = monthMap[monthName] || '';
+                        issuedDate = { month: monthNum, year: parts[1] };
+                    }
+                }
+
+                // Look for credential IDs - be more specific
+                const credPattern = nearbyLine.match(/(?:credential id|certificate number|license id)[\s:]*([a-z0-9\-]+)/i);
+                if (credPattern && !credentialId) {
+                    credentialId = credPattern[1];
+                }
+            }
+
+            processedCerts.add(certName.toLowerCase());
+            certificationsEntries.push({
+                certName: certName,
+                issuer: issuer,
+                issuedDate: issuedDate,
+                credentialId: credentialId
+            });
+        }
+    }
+
+    return {
+        certifications: certificationsEntries.length > 0 ? certificationsEntries : []
     };
 }
