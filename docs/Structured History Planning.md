@@ -19,10 +19,11 @@
 - **Prompt Engineering**:
   - Craft prompts to guide the LLM in structuring the data accurately.
   - Include instructions for merging duplicates (e.g., duplicate job entries) and cleaning up inconsistencies (e.g., date formats).
-  - The prompt shall return four json objects from the corpus of uploaded data. These objects are:
+  - The prompt shall return five json objects from the corpus of uploaded data. These objects are:
     - contactInfo (Contact Informations)
     - jobHistory (History of jobs in the user's career)
     - education
+    - certifications
     - skills
   - The contactInformation shall be parsed into a json object of the following form:
 
@@ -35,7 +36,7 @@
         }
        }
     ```
-  - The education information shall be parsed into the json object below. Duplicate entries shall be avoided. Start and End dates shall be parsed into month and year. If any item cannot be parsed into its' proper form, them it should be left empty. The json shall be of this form:
+  - The education information shall be parsed into the json object below. Duplicate entries shall be avoided. Start and End dates shall be parsed into month and year. If any item cannot be parsed into its' proper form, then it should be left empty. The json shall be of this form:
 
     ```json
       {
@@ -51,6 +52,21 @@
             ...
           ]
         }
+      }
+    ```
+  - The certification object shall be parsed into the json object below. Certifications are similar to education and should include licenses in addition to certs. There is an "Issued Date" that follows the same rules as the education end date. If any item cannot be parsed into its' proper form, then it should be left empty. The json shall be of this form:
+
+    ```json
+      {
+          [
+             {
+              "certName": "<name of the certificate/license>",
+              "issuer": "<name of the issuing organization>",
+              "issued date": { "month": "<month name>", "year": "<four digit year>"},
+              "credentialId": "<credential or license ID>"
+            },
+            ...
+          ]
       }
     ```
 
