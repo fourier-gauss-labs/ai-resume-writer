@@ -43,3 +43,4 @@ export const reverseString = functions.https.onCall((data: any, context) => {
 });
 
 export { parseResumeToStructuredHistory } from './parseResumeToStructuredHistory';
+export { storeStructuredHistory, getStructuredHistory } from './storeStructuredHistory';

@@ -104,11 +104,27 @@
     - `users/{userId}/structuredHistory/contactInfo`
     - `users/{userId}/structuredHistory/jobHistory`
     - `users/{userId}/structuredHistory/education`
+    - `users/{userId}/structuredHistory/certifications`
     - `users/{userId}/structuredHistory/skills`
 
 ---
 
 ### 3. Build the UX for Structured History Sections
+- **Design UX for uploaded documents**
+
+  The UI is described by this ![wireframe](./images/filesUX.jpg)
+
+  The numbered items in the wireframe indicate:
+
+  1. Left side panel link. The text is `Profile`.
+  2. The content are for the profile, this is described below.
+  3. Button/icon to collaspe the right side panel. When collapsed, a handle/button/icon must be available to open the panel.
+  4. The label for the side panel. The label shall read `My Files`.
+  5. A button or icon to trigger parsing the historical documents as describe in section `1. Parse Unstructured Text into Structured Data`.
+  6. A button to open a modal dialog that contains the `backgroundForm` component.
+  7. Tiles that list the documents and text that are in the user's uploads folder (uploads/<userId>).
+
+
 - **Design LinkedIn-Style Profile Interface**:
   - Create a tabbed or section-based UI for:
     - Contact Information
