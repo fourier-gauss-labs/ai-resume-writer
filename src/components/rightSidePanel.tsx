@@ -60,7 +60,7 @@ export function RightSidePanel() {
 
             {/* Background Form Modal */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogContent className="w-[40vw] max-w-none max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Add Background</DialogTitle>
                     </DialogHeader>
