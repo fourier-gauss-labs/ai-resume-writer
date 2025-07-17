@@ -9,6 +9,7 @@ import { useAuth } from "@/context/authContext";
 
 interface BackgroundFormProps {
     isSubmitting: boolean;
+    onCancel?: () => void;
 }
 
 interface BackgroundFormValues {
@@ -18,7 +19,7 @@ interface BackgroundFormValues {
 
 const MAX_FILE_SIZE_MB = 5; // Set a file size limit of 5 MB
 
-const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting }) => {
+const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel }) => {
     const { user } = useAuth();
 
     const form = useForm<BackgroundFormValues>({
@@ -133,7 +134,7 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting }) => {
                             <FormControl>
                                 <textarea
                                     className="w-full p-2 border rounded-md"
-                                    rows={5}
+                                    rows={8}
                                     placeholder="Write your biography here..."
                                     {...field}
                                 />
@@ -147,6 +148,15 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting }) => {
                     <Button type="submit" disabled={isSubmitting} className="w-32 bg-blue-500 hover:bg-blue-600 text-white">
                         {isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
+                    {onCancel && (
+                        <Button
+                            type="button"
+                            onClick={onCancel}
+                            className="w-32 bg-gray-500 hover:bg-gray-600 text-white"
+                        >
+                            Cancel
+                        </Button>
+                    )}
                 </div>
             </form>
         </Form>
