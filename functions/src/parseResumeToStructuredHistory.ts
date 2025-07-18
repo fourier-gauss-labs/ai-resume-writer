@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as mammoth from 'mammoth'; // Added for .docx extraction
 import pdfParse from 'pdf-parse'; // Added for .pdf extraction
-import { parseContactInformation, parseSkills, parseEducation, parseCertifications } from './lib'; // Gemini logic for parsing contact info, skills, education, and certifications
+import { parseContactInformation, parseSkills, parseEducation, parseCertifications, parseJobHistory } from './lib'; // Gemini logic for parsing contact info, skills, education, certifications, and job history
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -97,31 +97,34 @@ export const parseResumeToStructuredHistory = functions.https.onCall(async (data
 
         // Add document boundary end marker
         corpus += `--- DOCUMENT END: ${filePath} ---\n\n`;
-    }    // Parse the corpus using Gemini AI to extract contact information, skills, education, and certifications
-    console.log('Calling Gemini to parse contact information, skills, education, and certifications...');
+    }    // Parse the corpus using Gemini AI to extract contact information, skills, education, certifications, and job history
+    console.log('Calling Gemini to parse contact information, skills, education, certifications, and job history...');
     console.log('Corpus length:', corpus.length);
     console.log('Corpus preview (first 500 chars):', corpus.substring(0, 500));
 
     try {
-        // Parse contact information, skills, education, and certifications in parallel
-        const [contactInfo, skillsInfo, educationInfo, certificationsInfo] = await Promise.all([
+        // Parse contact information, skills, education, certifications, and job history in parallel
+        const [contactInfo, skillsInfo, educationInfo, certificationsInfo, jobHistoryInfo] = await Promise.all([
             parseContactInformation(corpus),
             parseSkills(corpus),
             parseEducation(corpus),
-            parseCertifications(corpus)
+            parseCertifications(corpus),
+            parseJobHistory(corpus)
         ]);
 
         console.log('Contact information parsing complete:', JSON.stringify(contactInfo, null, 2));
         console.log('Skills parsing complete:', JSON.stringify(skillsInfo, null, 2));
         console.log('Education parsing complete:', JSON.stringify(educationInfo, null, 2));
         console.log('Certifications parsing complete:', JSON.stringify(certificationsInfo, null, 2));
+        console.log('Job history parsing complete:', JSON.stringify(jobHistoryInfo, null, 2));
 
         // Combine the results into a single structured response
         const structuredHistory = {
             ...contactInfo,
             ...skillsInfo,
             ...educationInfo,
-            ...certificationsInfo
+            ...certificationsInfo,
+            ...jobHistoryInfo
         };
 
         console.log('Combined structured history:', JSON.stringify(structuredHistory, null, 2));

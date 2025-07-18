@@ -8,6 +8,7 @@ const menuItems = [
     { name: "Home", href: "/home" },
     { name: "Settings", href: "/home/settings" },
     { name: "Background", href: "/home/background" },
+    { name: "Profile", href: "/home/profile" },
 ];
 
 export default function HomeLayout({ children }: { children: ReactNode }) {
