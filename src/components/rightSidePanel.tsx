@@ -9,6 +9,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BackgroundForm from "@/components/forms/backgroundForm";
 import { FileCard } from "@/components/fileCard";
+import { DeleteConfirmationModal } from "@/components/deleteConfirmationModal";
 import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
@@ -17,6 +18,15 @@ export function RightSidePanel() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [deleteConfirmation, setDeleteConfirmation] = useState<{
+        isOpen: boolean;
+        file: FileData | null;
+        isDeleting: boolean;
+    }>({
+        isOpen: false,
+        file: null,
+        isDeleting: false,
+    });
     const { user } = useAuth();
 
     // Load files when component mounts or user changes
@@ -69,22 +79,50 @@ export function RightSidePanel() {
         window.open(file.url, '_blank');
     };
 
-    // Handle file delete
-    const handleDeleteFile = async (file: FileData) => {
-        if (!user) {
+    // Handle file delete - show confirmation modal
+    const handleDeleteFile = (file: FileData) => {
+        setDeleteConfirmation({
+            isOpen: true,
+            file: file,
+            isDeleting: false,
+        });
+    };
+
+    // Handle confirmed delete
+    const handleConfirmedDelete = async () => {
+        if (!user || !deleteConfirmation.file) {
             toast.error("You must be logged in to delete files");
             return;
         }
 
+        setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
+
         try {
-            await deleteUserFile(user.uid, file.name);
+            await deleteUserFile(user.uid, deleteConfirmation.file.name);
             // Remove file from local state
-            setUploadedFiles(prev => prev.filter(f => f.id !== file.id));
+            setUploadedFiles(prev => prev.filter(f => f.id !== deleteConfirmation.file!.id));
             toast.success("File deleted successfully");
+            
+            // Close the confirmation modal
+            setDeleteConfirmation({
+                isOpen: false,
+                file: null,
+                isDeleting: false,
+            });
         } catch (error) {
             console.error("Error deleting file:", error);
             toast.error("Failed to delete file");
+            setDeleteConfirmation(prev => ({ ...prev, isDeleting: false }));
         }
+    };
+
+    // Handle delete cancellation
+    const handleDeleteCancel = () => {
+        setDeleteConfirmation({
+            isOpen: false,
+            file: null,
+            isDeleting: false,
+        });
     };
 
     // Handle modal close and refresh files
@@ -172,6 +210,15 @@ export function RightSidePanel() {
                     />
                 </DialogContent>
             </Dialog>
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmationModal
+                isOpen={deleteConfirmation.isOpen}
+                file={deleteConfirmation.file}
+                onConfirm={handleConfirmedDelete}
+                onCancel={handleDeleteCancel}
+                isDeleting={deleteConfirmation.isDeleting}
+            />
         </>
     );
 }
