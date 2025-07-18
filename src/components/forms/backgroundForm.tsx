@@ -2,8 +2,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 import { useAuth } from "@/context/authContext";
 
@@ -49,15 +48,6 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
             const storage = getStorage();
             const storageRef = ref(storage, `uploads/${user.uid}/${file.name}`);
             await uploadBytes(storageRef, file);
-            const fileURL = await getDownloadURL(storageRef);
-
-            const db = getFirestore();
-            const userRef = doc(db, "users", user.uid);
-            await setDoc(
-                userRef,
-                { files: { [file.name]: fileURL } },
-                { merge: true }
-            );
 
             toast.success("File uploaded successfully.");
         } catch (error) {

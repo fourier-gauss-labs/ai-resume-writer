@@ -9,14 +9,7 @@ import {
     TrashIcon,
     EyeIcon
 } from "@heroicons/react/24/outline";
-
-interface FileData {
-    id: number;
-    name: string;
-    type: string;
-    uploadDate: string;
-    size: string;
-}
+import { FileData } from "@/utils/fileUtils";
 
 interface FileCardProps {
     file: FileData;
