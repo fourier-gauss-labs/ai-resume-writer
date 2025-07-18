@@ -5,6 +5,8 @@ declare module '@heroicons/react/24/outline' {
     export const Bars3Icon: ComponentType<SVGProps<SVGSVGElement>>;
     export const DocumentPlusIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const ArrowPathIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const DocumentIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
     // Add other icons as needed
 }
 
@@ -15,5 +17,7 @@ declare module '@heroicons/react/24/solid' {
     export const Bars3Icon: ComponentType<SVGProps<SVGSVGElement>>;
     export const DocumentPlusIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const ArrowPathIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const DocumentIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
     // Add other icons as needed
 }
