@@ -102,7 +102,7 @@ export function RightSidePanel() {
             // Remove file from local state
             setUploadedFiles(prev => prev.filter(f => f.id !== deleteConfirmation.file!.id));
             toast.success("File deleted successfully");
-            
+
             // Close the confirmation modal
             setDeleteConfirmation({
                 isOpen: false,
