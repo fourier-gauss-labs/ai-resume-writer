@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import BackgroundForm from "@/components/forms/backgroundForm";
 import { FileCard } from "@/components/fileCard";
 import { DeleteConfirmationModal } from "@/components/deleteConfirmationModal";
+import { DocumentPreviewModal } from "@/components/documentPreview";
 import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
@@ -26,6 +27,13 @@ export function RightSidePanel() {
         isOpen: false,
         file: null,
         isDeleting: false,
+    });
+    const [previewModal, setPreviewModal] = useState<{
+        isOpen: boolean;
+        file: FileData | null;
+    }>({
+        isOpen: false,
+        file: null,
     });
     const { user } = useAuth();
 
@@ -72,11 +80,20 @@ export function RightSidePanel() {
         }
     };
 
-    // Handle file view
+    // Handle file view - show preview modal
     const handleViewFile = (file: FileData) => {
-        console.log("View file:", file.name);
-        // Open file in new tab
-        window.open(file.url, '_blank');
+        setPreviewModal({
+            isOpen: true,
+            file: file,
+        });
+    };
+
+    // Handle preview modal close
+    const handlePreviewClose = () => {
+        setPreviewModal({
+            isOpen: false,
+            file: null,
+        });
     };
 
     // Handle file delete - show confirmation modal
@@ -218,6 +235,13 @@ export function RightSidePanel() {
                 onConfirm={handleConfirmedDelete}
                 onCancel={handleDeleteCancel}
                 isDeleting={deleteConfirmation.isDeleting}
+            />
+
+            {/* Document Preview Modal */}
+            <DocumentPreviewModal
+                isOpen={previewModal.isOpen}
+                file={previewModal.file}
+                onClose={handlePreviewClose}
             />
         </>
     );
