@@ -21,11 +21,9 @@ type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
 export function ResetPasswordForm({
     onSuccess,
     buttonText = "Reset password",
-    inputSpacing = "mb-4",
 }: {
     onSuccess: () => void;
     buttonText?: string;
-    inputSpacing?: string;
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const form = useForm<ResetPasswordFormValues>({

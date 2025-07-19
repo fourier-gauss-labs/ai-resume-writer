@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { FileData } from "@/utils/fileUtils";
 
 interface DocxViewerProps {
@@ -7,9 +8,47 @@ interface DocxViewerProps {
 }
 
 export function DocxViewer({ file }: DocxViewerProps) {
-    const handleOpenInNewTab = () => {
-        window.open(file.url, '_blank', 'noopener,noreferrer');
-    };
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [htmlContent, setHtmlContent] = useState<string>("");
+
+    useEffect(() => {
+        const renderDocx = async () => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                console.log('Fetching DOCX file from:', file.url);
+                const response = await fetch(file.url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch file: ${response.statusText}`);
+                }
+
+                const arrayBuffer = await response.arrayBuffer();
+                console.log('DOCX file loaded, size:', arrayBuffer.byteLength, 'bytes');
+
+                // Dynamic import to handle client-side rendering
+                const mammoth = await import('mammoth');
+
+                // Convert DOCX to HTML
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                console.log('DOCX converted to HTML successfully');
+
+                if (result.messages.length > 0) {
+                    console.warn('Mammoth conversion messages:', result.messages);
+                }
+
+                setHtmlContent(result.value);
+            } catch (err) {
+                console.error('Error rendering DOCX:', err);
+                setError(err instanceof Error ? err.message : "Failed to render DOCX file");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        renderDocx();
+    }, [file.url]);
 
     const handleDownload = () => {
         const link = document.createElement('a');
@@ -21,43 +60,55 @@ export function DocxViewer({ file }: DocxViewerProps) {
         document.body.removeChild(link);
     };
 
-    return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-50">
-            <div className="text-center p-8 max-w-md">
-                <div className="mb-6">
-                    <svg
-                        className="w-20 h-20 mx-auto text-blue-500 mb-4"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                    </svg>
+    if (isLoading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-white">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                    <p className="text-sm text-muted-foreground">Loading Word document...</p>
                 </div>
+            </div>
+        );
+    }
 
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Microsoft Word Document</h3>
-                <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                    Word document preview is not yet available in the browser. Choose an option below to view the document content.
-                </p>
-
-                <div className="space-y-3">
-                    <button
-                        onClick={handleOpenInNewTab}
-                        className="block w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-                    >
-                        📄 Open in new tab
-                    </button>
-
+    if (error) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                <div className="text-center p-8 max-w-md">
+                    <div className="mb-6">
+                        <svg
+                            className="w-16 h-16 mx-auto text-red-500 mb-4"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-3 text-gray-800">Preview Error</h3>
+                    <p className="text-sm text-red-600 mb-4">{error}</p>
                     <button
                         onClick={handleDownload}
-                        className="block w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
                     >
-                        💾 Download file
+                        💾 Download file instead
                     </button>
                 </div>
+            </div>
+        );
+    }
 
-                <p className="text-xs text-gray-500 mt-4">
-                    The document will open in your default application or download to your device.
-                </p>
+    return (
+        <div className="w-full h-full bg-white overflow-auto">
+            <div className="docx-viewer-container p-6 max-w-4xl mx-auto">
+                <div
+                    className="docx-content bg-white shadow-sm border rounded-lg p-8"
+                    style={{
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        lineHeight: '1.6',
+                        color: '#374151'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: htmlContent }}
+                />
             </div>
         </div>
     );

@@ -85,7 +85,7 @@ export function LoginForm({
             await sendEmailVerification(user);
             toast.success("Verification email resent. Please check your inbox.");
             setShowResendLink(false);
-        } catch (err: unknown) {
+        } catch {
             toast.error("Failed to resend verification email. Please try again.");
         }
     };
