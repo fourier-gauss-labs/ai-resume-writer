@@ -124,3 +124,126 @@
 button:hover {
     cursor: pointer;
 }
+
+/* DOCX Preview Styling */
+.docx-viewer-container .docx-content {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 0 auto;
+  max-width: 210mm; /* A4 width */
+  line-height: 1.6;
+}
+
+.docx-viewer-container .docx-content p {
+  margin-bottom: 12px;
+  color: #374151;
+}
+
+.docx-viewer-container .docx-content h1,
+.docx-viewer-container .docx-content h2,
+.docx-viewer-container .docx-content h3,
+.docx-viewer-container .docx-content h4,
+.docx-viewer-container .docx-content h5,
+.docx-viewer-container .docx-content h6 {
+  color: #1f2937;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.docx-viewer-container .docx-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.docx-viewer-container .docx-content table td,
+.docx-viewer-container .docx-content table th {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.docx-viewer-container .docx-content table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.docx-viewer-container .docx-content ul,
+.docx-viewer-container .docx-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.docx-viewer-container .docx-content li {
+  margin-bottom: 4px;
+}
+
+.docx-viewer-container .docx-content strong,
+.docx-viewer-container .docx-content b {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.docx-viewer-container .docx-content em,
+.docx-viewer-container .docx-content i {
+  font-style: italic;
+}
+
+/* Legacy docx-preview styling (in case we need it) */
+.docx-viewer-container .docx-preview-container {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 0 auto;
+  max-width: 210mm; /* A4 width */
+  line-height: 1.6;
+}
+
+.docx-viewer-container .docx-preview-container p {
+  margin-bottom: 12px;
+  color: #374151;
+}
+
+.docx-viewer-container .docx-preview-container h1,
+.docx-viewer-container .docx-preview-container h2,
+.docx-viewer-container .docx-preview-container h3,
+.docx-viewer-container .docx-preview-container h4,
+.docx-viewer-container .docx-preview-container h5,
+.docx-viewer-container .docx-preview-container h6 {
+  color: #1f2937;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.docx-viewer-container .docx-preview-container table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.docx-viewer-container .docx-preview-container table td,
+.docx-viewer-container .docx-preview-container table th {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.docx-viewer-container .docx-preview-container table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.docx-viewer-container .docx-preview-container ul,
+.docx-viewer-container .docx-preview-container ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.docx-viewer-container .docx-preview-container li {
+  margin-bottom: 4px;
+}

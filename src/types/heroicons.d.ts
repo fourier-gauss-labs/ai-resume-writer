@@ -9,6 +9,9 @@ declare module '@heroicons/react/24/outline' {
     export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const DocumentTextIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const DocumentArrowDownIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const XMarkIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const PrinterIcon: ComponentType<SVGProps<SVGSVGElement>>;
+    export const ArrowDownTrayIcon: ComponentType<SVGProps<SVGSVGElement>>;
     // Add other icons as needed
 }
 

@@ -6,7 +6,8 @@ import type { MockAuth } from "@/types/auth";
 // Mock next/image to avoid Next.js SSR issues
 jest.mock("next/image", () => ({
     __esModule: true,
-    default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+    // eslint-disable-next-line @next/next/no-img-element
+    default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt || ""} />,
 }));
 
 // Mock useRouter
