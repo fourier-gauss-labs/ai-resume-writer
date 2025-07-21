@@ -50,6 +50,9 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
             await uploadBytes(storageRef, file);
 
             toast.success("File uploaded successfully.");
+
+            // Clear the file field on successful upload
+            form.setValue("file", null);
         } catch (error) {
             console.error("Error uploading file:", error);
             const firebaseError = error as { code?: string; message?: string };
@@ -87,11 +90,23 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
     };
 
     const onSubmit = async (values: BackgroundFormValues) => {
+        let uploadedSomething = false;
+
         if (values.file) {
             await handleFileUpload(values.file);
+            uploadedSomething = true;
         }
         if (values.biography) {
             await handleBiographySubmit(values.biography);
+            uploadedSomething = true;
+        }
+
+        // Auto-dismiss the form if something was uploaded successfully
+        if (uploadedSomething && onCancel) {
+            // Reset the form
+            form.reset();
+            // Close the modal/form
+            onCancel();
         }
     };
 
