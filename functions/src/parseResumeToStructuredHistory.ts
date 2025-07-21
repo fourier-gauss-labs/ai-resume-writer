@@ -41,7 +41,10 @@ function extractPayload(data: any) {
  * - In the emulator, the payload may be { data: { userId, ... } }.
  * This function uses a helper to extract the payload robustly for both environments.
  */
-export const parseResumeToStructuredHistory = onCall(async (request) => {
+export const parseResumeToStructuredHistory = onCall({
+    cors: true,
+    invoker: 'public'
+}, async (request) => {
     const data = request.data;
     // Avoid circular structure in logs
     console.log('Raw received data (keys):', Object.keys(data));

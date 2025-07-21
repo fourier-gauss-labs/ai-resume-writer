@@ -1,7 +1,7 @@
 // Import the functions you need from the Firebase SDKs
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getFunctions } from "firebase/functions";
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -22,11 +22,12 @@ export const auth = getAuth(app);
 // Initialize Firebase Functions
 export const functions = getFunctions(app);
 
-// Connect to Functions emulator if in development
-if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-    try {
-        connectFunctionsEmulator(functions, 'localhost', 5001);
-    } catch {
-        // Already connected or connection failed - ignore
-    }
-}
+// Note: Emulator connection disabled to use deployed functions
+// Uncomment below to use local emulator instead of deployed functions
+// if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+//     try {
+//         connectFunctionsEmulator(functions, 'localhost', 5001);
+//     } catch {
+//         // Already connected or connection failed - ignore
+//     }
+// }

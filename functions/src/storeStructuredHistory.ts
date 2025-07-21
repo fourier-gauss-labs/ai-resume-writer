@@ -58,23 +58,37 @@ function extractPayload(data: any) {
  *   }
  * }
  */
-export const storeStructuredHistory = onCall(async (request) => {
+export const storeStructuredHistory = onCall({
+    cors: true,
+    invoker: 'public'
+}, async (request) => {
     const data = request.data;
-    console.log('Raw received data (keys):', Object.keys(data));
+    console.log('=== STORE STRUCTURED HISTORY DEBUG ===');
+    console.log('Raw received data:', JSON.stringify(data, null, 2));
+    console.log('Raw received data type:', typeof data);
+    console.log('Raw received data keys:', Object.keys(data || {}));
 
     const payload = extractPayload(data);
     console.log('Extracted payload:', JSON.stringify(payload, null, 2));
+    console.log('Extracted payload type:', typeof payload);
+    console.log('Extracted payload keys:', Object.keys(payload || {}));
 
     const { userId, structuredHistory } = payload;
+    console.log('userId:', userId, 'type:', typeof userId);
+    console.log('structuredHistory:', structuredHistory, 'type:', typeof structuredHistory);
 
     // Validate the input
     if (!userId || typeof userId !== 'string') {
+        console.error('userId validation failed:', userId);
         throw new HttpsError('invalid-argument', 'userId is required and must be a string');
     }
 
     if (!structuredHistory || typeof structuredHistory !== 'object') {
+        console.error('structuredHistory validation failed:', structuredHistory);
         throw new HttpsError('invalid-argument', 'structuredHistory is required and must be an object');
     }
+
+    console.log('Validation passed, proceeding with storage...');
 
     try {
         // Prepare the Firestore batch write
@@ -174,86 +188,91 @@ export const storeStructuredHistory = onCall(async (request) => {
  *   userId: string
  * }
  */
-export const getStructuredHistory = onCall(async (request) => {
-    const data = request.data;
-    console.log('Raw received data (keys):', Object.keys(data));
+export const getStructuredHistory = onCall(
+    {
+        cors: true,  // Enable CORS for all origins
+        invoker: 'public'
+    },
+    async (request) => {
+        const data = request.data;
+        console.log('Raw received data (keys):', Object.keys(data));
 
-    const payload = extractPayload(data);
-    console.log('Extracted payload:', JSON.stringify(payload, null, 2));
+        const payload = extractPayload(data);
+        console.log('Extracted payload:', JSON.stringify(payload, null, 2));
 
-    const { userId } = payload;
+        const { userId } = payload;
 
-    // Validate the input
-    if (!userId || typeof userId !== 'string') {
-        throw new HttpsError('invalid-argument', 'userId is required and must be a string');
-    }
-
-    try {
-        // Define the base path for the user's structured history
-        const userStructuredHistoryPath = `users/${userId}/structuredHistory`;
-
-        // Retrieve all documents in parallel
-        const [contactInfoDoc, skillsDoc, educationDoc, certificationsDoc, jobHistoryDoc] = await Promise.all([
-            db.doc(`${userStructuredHistoryPath}/contactInfo`).get(),
-            db.doc(`${userStructuredHistoryPath}/skills`).get(),
-            db.doc(`${userStructuredHistoryPath}/education`).get(),
-            db.doc(`${userStructuredHistoryPath}/certifications`).get(),
-            db.doc(`${userStructuredHistoryPath}/jobHistory`).get()
-        ]);
-
-        // Build the structured history response
-        const structuredHistory: any = {};
-
-        if (contactInfoDoc.exists) {
-            const data = contactInfoDoc.data();
-            if (data) {
-                // Remove metadata fields before returning
-                const { lastUpdated, source, ...contactInfo } = data;
-                structuredHistory.contactInformation = contactInfo;
-            }
+        // Validate the input
+        if (!userId || typeof userId !== 'string') {
+            throw new HttpsError('invalid-argument', 'userId is required and must be a string');
         }
 
-        if (skillsDoc.exists) {
-            const data = skillsDoc.data();
-            if (data && data.skills) {
-                structuredHistory.skills = data.skills;
+        try {
+            // Define the base path for the user's structured history
+            const userStructuredHistoryPath = `users/${userId}/structuredHistory`;
+
+            // Retrieve all documents in parallel
+            const [contactInfoDoc, skillsDoc, educationDoc, certificationsDoc, jobHistoryDoc] = await Promise.all([
+                db.doc(`${userStructuredHistoryPath}/contactInfo`).get(),
+                db.doc(`${userStructuredHistoryPath}/skills`).get(),
+                db.doc(`${userStructuredHistoryPath}/education`).get(),
+                db.doc(`${userStructuredHistoryPath}/certifications`).get(),
+                db.doc(`${userStructuredHistoryPath}/jobHistory`).get()
+            ]);
+
+            // Build the structured history response
+            const structuredHistory: any = {};
+
+            if (contactInfoDoc.exists) {
+                const data = contactInfoDoc.data();
+                if (data) {
+                    // Remove metadata fields before returning
+                    const { lastUpdated, source, ...contactInfo } = data;
+                    structuredHistory.contactInformation = contactInfo;
+                }
             }
-        }
 
-        if (educationDoc.exists) {
-            const data = educationDoc.data();
-            if (data && data.education) {
-                structuredHistory.education = data.education;
+            if (skillsDoc.exists) {
+                const data = skillsDoc.data();
+                if (data && data.skills) {
+                    structuredHistory.skills = data.skills;
+                }
             }
-        }
 
-        if (certificationsDoc.exists) {
-            const data = certificationsDoc.data();
-            if (data && data.certifications) {
-                structuredHistory.certifications = data.certifications;
+            if (educationDoc.exists) {
+                const data = educationDoc.data();
+                if (data && data.education) {
+                    structuredHistory.education = data.education;
+                }
             }
-        }
 
-        if (jobHistoryDoc.exists) {
-            const data = jobHistoryDoc.data();
-            if (data && data.jobHistory) {
-                structuredHistory.jobHistory = data.jobHistory;
+            if (certificationsDoc.exists) {
+                const data = certificationsDoc.data();
+                if (data && data.certifications) {
+                    structuredHistory.certifications = data.certifications;
+                }
             }
+
+            if (jobHistoryDoc.exists) {
+                const data = jobHistoryDoc.data();
+                if (data && data.jobHistory) {
+                    structuredHistory.jobHistory = data.jobHistory;
+                }
+            }
+
+            console.log('Successfully retrieved structured history data from Firestore');
+            console.log('Retrieved data summary:', {
+                hasContactInfo: !!structuredHistory.contactInformation,
+                skillsCount: structuredHistory.skills ? structuredHistory.skills.length : 0,
+                educationCount: structuredHistory.education ? structuredHistory.education.length : 0,
+                certificationsCount: structuredHistory.certifications ? structuredHistory.certifications.length : 0,
+                jobHistoryCount: structuredHistory.jobHistory ? structuredHistory.jobHistory.length : 0
+            });
+
+            return structuredHistory;
+
+        } catch (error) {
+            console.error('Error retrieving structured history:', error);
+            throw new HttpsError('internal', 'Failed to retrieve structured history data');
         }
-
-        console.log('Successfully retrieved structured history data from Firestore');
-        console.log('Retrieved data summary:', {
-            hasContactInfo: !!structuredHistory.contactInformation,
-            skillsCount: structuredHistory.skills ? structuredHistory.skills.length : 0,
-            educationCount: structuredHistory.education ? structuredHistory.education.length : 0,
-            certificationsCount: structuredHistory.certifications ? structuredHistory.certifications.length : 0,
-            jobHistoryCount: structuredHistory.jobHistory ? structuredHistory.jobHistory.length : 0
-        });
-
-        return structuredHistory;
-
-    } catch (error) {
-        console.error('Error retrieving structured history:', error);
-        throw new HttpsError('internal', 'Failed to retrieve structured history data');
-    }
-});
+    });

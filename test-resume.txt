@@ -1,0 +1,32 @@
+John Doe
+Software Engineer
+
+Contact Information:
+Email: john.doe@example.com
+Phone: (555) 123-4567
+
+Education:
+University of Technology
+Bachelor of Science in Computer Science
+2018 - 2022
+GPA: 3.8
+
+Skills:
+- JavaScript
+- TypeScript
+- React
+- Node.js
+- Python
+- Git
+
+Work Experience:
+Tech Company Inc.
+Junior Software Developer
+June 2022 - Present
+- Developed web applications using React and Node.js
+- Collaborated with cross-functional teams
+- Implemented REST APIs and database integration
+
+Certifications:
+AWS Certified Developer Associate
+Issued: January 2023

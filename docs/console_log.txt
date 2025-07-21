@@ -1,0 +1,1390 @@
+VM88:1 Console was cleared
+undefined
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+[Deprecation] -ms-high-contrast is in the process of being deprecated. Please see <URL> for tips on updating to the new Forced Colors Mode standard.
+popup.ts:302  Cross-Origin-Opener-Policy policy would block the window.closed call.
+poll @ popup.ts:302
+popup.ts:302  Cross-Origin-Opener-Policy policy would block the window.closed call.
+poll @ popup.ts:302
+popup.ts:50  Cross-Origin-Opener-Policy policy would block the window.close call.
+close @ popup.ts:50
+cleanUp @ popup.ts:288
+unregisterAndCleanUp @ abstract_popup_redirect_operation.ts:147
+resolve @ abstract_popup_redirect_operation.ts:132
+onAuthEvent @ abstract_popup_redirect_operation.ts:103
+popup.ts:50  Cross-Origin-Opener-Policy policy would block the window.close call.
+close @ popup.ts:50
+cleanUp @ popup.ts:288
+unregisterAndCleanUp @ abstract_popup_redirect_operation.ts:147
+resolve @ abstract_popup_redirect_operation.ts:132
+onAuthEvent @ abstract_popup_redirect_operation.ts:103
+loginForm.tsx:47 Google sign-in successful: UserImpl {providerId: 'firebase', proactiveRefresh: ProactiveRefresh, reloadUserInfo: {…}, reloadListener: null, uid: 'h8jKZcK81VekRCJYXa8Gk6RhOnp1', …}
+path-to-avatar-image.jpg:1   GET http://localhost:3000/path-to-avatar-image.jpg 404 (Not Found)
+Image
+resolveLoadingStatus @ avatar.tsx:128
+useImageLoadingStatus.useState @ avatar.tsx:148
+mountStateImpl @ react-dom-client.development.js:7274
+mountState @ react-dom-client.development.js:7291
+useState @ react-dom-client.development.js:23290
+exports.useState @ react.development.js:1229
+useImageLoadingStatus @ avatar.tsx:147
+AvatarImage @ avatar.tsx:66
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooks @ react-dom-client.development.js:6666
+updateForwardRef @ react-dom-client.development.js:8678
+beginWork @ react-dom-client.development.js:10894
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<AvatarImage>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+AvatarImage @ avatar.tsx:29
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<AvatarImage>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+TopBanner @ topBanner.tsx:91
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<TopBanner>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+HomeLayout @ layout.tsx:26
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<HomeLayout>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientSegmentRoot @ client-segment.tsx:50
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+"use client"
+(anonymous) @ react-server-dom-turbopack-client.browser.development.js:2347
+initializeModelChunk @ react-server-dom-turbopack-client.browser.development.js:1047
+resolveModelChunk @ react-server-dom-turbopack-client.browser.development.js:1024
+resolveModel @ react-server-dom-turbopack-client.browser.development.js:1592
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2281
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
+progress @ react-server-dom-turbopack-client.browser.development.js:2472
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:1580
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:2389
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:2702
+createFromNextReadableStream @ fetch-server-response.ts:297
+fetchServerResponse @ fetch-server-response.ts:226
+await in fetchServerResponse
+(anonymous) @ prefetch-cache-utils.ts:323
+task @ promise-queue.ts:33
+processNext @ promise-queue.ts:66
+enqueue @ promise-queue.ts:46
+createLazyPrefetchEntry @ prefetch-cache-utils.ts:322
+getOrCreatePrefetchCacheEntry @ prefetch-cache-utils.ts:227
+navigateReducer @ navigate-reducer.ts:216
+clientReducer @ router-reducer.ts:32
+action @ app-router-instance.ts:211
+runAction @ app-router-instance.ts:98
+dispatchAction @ app-router-instance.ts:185
+dispatch @ app-router-instance.ts:209
+(anonymous) @ use-action-queue.ts:46
+startTransition @ react-dom-client.development.js:7842
+dispatch @ use-action-queue.ts:45
+dispatchAppRouterAction @ use-action-queue.ts:22
+dispatchNavigateAction @ app-router-instance.ts:280
+(anonymous) @ app-router-instance.ts:352
+exports.startTransition @ react.development.js:1127
+push @ app-router-instance.ts:351
+LandingPage.useEffect @ page.tsx:18
+react-stack-bottom-frame @ react-dom-client.development.js:23054
+runWithFiberInDEV @ react-dom-client.development.js:844
+commitHookEffectListMount @ react-dom-client.development.js:11977
+commitHookPassiveMountEffects @ react-dom-client.development.js:12098
+commitPassiveMountOnFiber @ react-dom-client.development.js:13928
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13931
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13921
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:14047
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13901
+commitPassiveMountOnFiber @ react-dom-client.development.js:13940
+flushPassiveEffects @ react-dom-client.development.js:15868
+flushPendingEffects @ react-dom-client.development.js:15829
+flushSpawnedWork @ react-dom-client.development.js:15795
+commitRoot @ react-dom-client.development.js:15528
+commitRootWhenReady @ react-dom-client.development.js:14758
+performWorkOnRoot @ react-dom-client.development.js:14681
+performSyncWorkOnRoot @ react-dom-client.development.js:16364
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:16210
+processRootScheduleInMicrotask @ react-dom-client.development.js:16249
+(anonymous) @ react-dom-client.development.js:16383
+turbopack-hot-reloader-common.ts:41 [Fast Refresh] rebuilding
+report-hmr-latency.ts:26 [Fast Refresh] done in 2431ms
+turbopack-hot-reloader-common.ts:41 [Fast Refresh] rebuilding
+rightSidePanel.tsx:54 Loading files for user: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+fileUtils.ts:53 Loading files from Storage for user: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+rightSidePanel.tsx:54 Loading files for user: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+fileUtils.ts:53 Loading files from Storage for user: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+report-hmr-latency.ts:26 [Fast Refresh] done in 183ms
+fileUtils.ts:62 Found 3 files in Storage
+fileUtils.ts:62 Found 3 files in Storage
+fileUtils.ts:93 Returning 3 valid files
+rightSidePanel.tsx:57 Loaded files: 3
+fileUtils.ts:93 Returning 3 valid files
+rightSidePanel.tsx:57 Loaded files: 3
+fileUtils.ts:53 Loading files from Storage for user: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+fileUtils.ts:62 Found 3 files in Storage
+fileUtils.ts:93 Returning 3 valid files
+rightSidePanel.tsx:91 === CLIENT DEBUG: parseResumeToStructuredHistory result ===
+rightSidePanel.tsx:92 structuredData: {
+  "contactInformation": {
+    "fullName": "Bill McCann",
+    "email": [
+      "Bill.mccann@gmail.com",
+      "0367bill.mccann@gmail.comwww.linkedin.com"
+    ],
+    "phones": [
+      "732.812.0367"
+    ]
+  },
+  "skills": [
+    "JavaScript",
+    "Python",
+    "Java",
+    "React",
+    "HTML",
+    "CSS",
+    "Git",
+    "Docker",
+    "AWS",
+    "Firebase"
+  ],
+  "education": [
+    {
+      "school": "University of Michigan",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "12",
+        "year": "1989"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Central Michigan University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "06",
+        "year": "1981"
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan, Coursera",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "11",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Johns Hopkins University, Coursera",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "04",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "New Jersey Institute of Technology",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "STEM University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan and Coursera. November",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "04",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Johns Hopkins University and Coursera. April 2016",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "01",
+        "year": "2020"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Stanford University and Coursera. January 2020",
+      "degree": "MBA, Operations",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "01",
+        "year": "2020"
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan",
+      "degree": "BS, Computer Science",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "Central Michigan University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    }
+  ],
+  "certifications": [],
+  "jobHistory": [
+    {
+      "title": "Technology Evangelist, Business Leader, Adjunct Computer Science Professor",
+      "company": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": false,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Director of Engineering and Security Officer",
+      "company": "",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "",
+      "company": "Glidian, Inc   https://glidian.com/",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Established hiring practices to double the engineering team",
+      "company": "",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "",
+      "company": "Improved company margins by establishing automation",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": false,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Technical Consultant",
+      "company": "RGP,",
+      "startDate": {
+        "month": "",
+        "year": "2020"
+      },
+      "endDate": {
+       
+rightSidePanel.tsx:93 structuredData type: object
+rightSidePanel.tsx:94 structuredData keys: (5) ['contactInformation', 'skills', 'education', 'certifications', 'jobHistory']
+rightSidePanel.tsx:95 Has error? false
+rightSidePanel.tsx:100 === CLIENT DEBUG: About to call storeStructuredHistory ===
+rightSidePanel.tsx:101 user.uid: h8jKZcK81VekRCJYXa8Gk6RhOnp1
+rightSidePanel.tsx:102 structuredData for storage: {
+  "contactInformation": {
+    "fullName": "Bill McCann",
+    "email": [
+      "Bill.mccann@gmail.com",
+      "0367bill.mccann@gmail.comwww.linkedin.com"
+    ],
+    "phones": [
+      "732.812.0367"
+    ]
+  },
+  "skills": [
+    "JavaScript",
+    "Python",
+    "Java",
+    "React",
+    "HTML",
+    "CSS",
+    "Git",
+    "Docker",
+    "AWS",
+    "Firebase"
+  ],
+  "education": [
+    {
+      "school": "University of Michigan",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "12",
+        "year": "1989"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Central Michigan University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "06",
+        "year": "1981"
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan, Coursera",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "11",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Johns Hopkins University, Coursera",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "04",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "New Jersey Institute of Technology",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "STEM University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan and Coursera. November",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "04",
+        "year": "2016"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Johns Hopkins University and Coursera. April 2016",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "01",
+        "year": "2020"
+      },
+      "grade": ""
+    },
+    {
+      "school": "Stanford University and Coursera. January 2020",
+      "degree": "MBA, Operations",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "01",
+        "year": "2020"
+      },
+      "grade": ""
+    },
+    {
+      "school": "University of Michigan",
+      "degree": "BS, Computer Science",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    },
+    {
+      "school": "Central Michigan University",
+      "degree": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "grade": ""
+    }
+  ],
+  "certifications": [],
+  "jobHistory": [
+    {
+      "title": "Technology Evangelist, Business Leader, Adjunct Computer Science Professor",
+      "company": "",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": false,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Director of Engineering and Security Officer",
+      "company": "",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "",
+      "company": "Glidian, Inc   https://glidian.com/",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Established hiring practices to double the engineering team",
+      "company": "",
+      "startDate": {
+        "month": "09",
+        "year": "2021"
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": true,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "",
+      "company": "Improved company margins by establishing automation",
+      "startDate": {
+        "month": "",
+        "year": ""
+      },
+      "endDate": {
+        "month": "",
+        "year": ""
+      },
+      "currentlyWorking": false,
+      "jobDescription": "",
+      "accomplishments": []
+    },
+    {
+      "title": "Technical Consultant",
+      "company": "RGP,",
+      "startDate": {
+        "month": "",
+        "year": "2020"
+      },
+      "endDate": {
+       
+:3000/home/profile:1  Access to fetch at 'http://localhost:5001/ai-resume-writer-46403/us-central1/storeStructuredHistory' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+firebaseFunctions.ts:78   POST http://localhost:5001/ai-resume-writer-46403/us-central1/storeStructuredHistory net::ERR_FAILED 500 (Internal Server Error)
+fetchImpl @ service.ts:117
+postJSON @ service.ts:265
+callAtURL @ service.ts:356
+await in callAtURL
+call @ service.ts:330
+callable @ service.ts:206
+storeStructuredHistory @ firebaseFunctions.ts:78
+refreshFiles @ rightSidePanel.tsx:105
+await in refreshFiles
+onClick @ rightSidePanel.tsx:205
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+Button @ button.tsx:51
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<Button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+RightSidePanel @ rightSidePanel.tsx:199
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<RightSidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+ProfilePage @ page.tsx:42
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<ProfilePage>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientPageRoot @ client-page.tsx:60
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+"use client"
+(anonymous) @ react-server-dom-turbopack-client.browser.development.js:2347
+initializeModelChunk @ react-server-dom-turbopack-client.browser.development.js:1047
+resolveModelChunk @ react-server-dom-turbopack-client.browser.development.js:1024
+resolveModel @ react-server-dom-turbopack-client.browser.development.js:1592
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2281
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
+progress @ react-server-dom-turbopack-client.browser.development.js:2472
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:1580
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:2389
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:2702
+createFromNextReadableStream @ fetch-server-response.ts:297
+fetchServerResponse @ fetch-server-response.ts:226
+await in fetchServerResponse
+(anonymous) @ prefetch-cache-utils.ts:323
+task @ promise-queue.ts:33
+processNext @ promise-queue.ts:66
+enqueue @ promise-queue.ts:46
+createLazyPrefetchEntry @ prefetch-cache-utils.ts:322
+getOrCreatePrefetchCacheEntry @ prefetch-cache-utils.ts:227
+navigateReducer @ navigate-reducer.ts:216
+clientReducer @ router-reducer.ts:32
+action @ app-router-instance.ts:211
+runAction @ app-router-instance.ts:98
+dispatchAction @ app-router-instance.ts:163
+dispatch @ app-router-instance.ts:209
+(anonymous) @ use-action-queue.ts:46
+startTransition @ react-dom-client.development.js:7842
+dispatch @ use-action-queue.ts:45
+dispatchAppRouterAction @ use-action-queue.ts:22
+dispatchNavigateAction @ app-router-instance.ts:280
+navigate @ link.tsx:289
+exports.startTransition @ react.development.js:1127
+linkClicked @ link.tsx:297
+onClick @ link.tsx:629
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<a>
+exports.jsx @ react-jsx-runtime.development.js:339
+LinkComponent @ link.tsx:716
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<LinkComponent>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+(anonymous) @ sidePanel.tsx:20
+SidePanel @ sidePanel.tsx:18
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<SidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+HomeLayout @ layout.tsx:31
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<HomeLayout>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientSegmentRoot @ client-segment.tsx:50
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+firebaseFunctions.ts:83  Error calling storeStructuredHistory: FirebaseError: internal
+overrideMethod @ hook.js:608
+error @ intercept-console-error.ts:40
+storeStructuredHistory @ firebaseFunctions.ts:83
+await in storeStructuredHistory
+refreshFiles @ rightSidePanel.tsx:105
+await in refreshFiles
+onClick @ rightSidePanel.tsx:205
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+Button @ button.tsx:51
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<Button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+RightSidePanel @ rightSidePanel.tsx:199
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<RightSidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+ProfilePage @ page.tsx:42
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<ProfilePage>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientPageRoot @ client-page.tsx:60
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+"use client"
+(anonymous) @ react-server-dom-turbopack-client.browser.development.js:2347
+initializeModelChunk @ react-server-dom-turbopack-client.browser.development.js:1047
+resolveModelChunk @ react-server-dom-turbopack-client.browser.development.js:1024
+resolveModel @ react-server-dom-turbopack-client.browser.development.js:1592
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2281
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
+progress @ react-server-dom-turbopack-client.browser.development.js:2472
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:1580
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:2389
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:2702
+createFromNextReadableStream @ fetch-server-response.ts:297
+fetchServerResponse @ fetch-server-response.ts:226
+await in fetchServerResponse
+(anonymous) @ prefetch-cache-utils.ts:323
+task @ promise-queue.ts:33
+processNext @ promise-queue.ts:66
+enqueue @ promise-queue.ts:46
+createLazyPrefetchEntry @ prefetch-cache-utils.ts:322
+getOrCreatePrefetchCacheEntry @ prefetch-cache-utils.ts:227
+navigateReducer @ navigate-reducer.ts:216
+clientReducer @ router-reducer.ts:32
+action @ app-router-instance.ts:211
+runAction @ app-router-instance.ts:98
+dispatchAction @ app-router-instance.ts:163
+dispatch @ app-router-instance.ts:209
+(anonymous) @ use-action-queue.ts:46
+startTransition @ react-dom-client.development.js:7842
+dispatch @ use-action-queue.ts:45
+dispatchAppRouterAction @ use-action-queue.ts:22
+dispatchNavigateAction @ app-router-instance.ts:280
+navigate @ link.tsx:289
+exports.startTransition @ react.development.js:1127
+linkClicked @ link.tsx:297
+onClick @ link.tsx:629
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<a>
+exports.jsx @ react-jsx-runtime.development.js:339
+LinkComponent @ link.tsx:716
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<LinkComponent>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+(anonymous) @ sidePanel.tsx:20
+SidePanel @ sidePanel.tsx:18
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<SidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+HomeLayout @ layout.tsx:31
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<HomeLayout>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientSegmentRoot @ client-segment.tsx:50
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+rightSidePanel.tsx:112  Error refreshing files or parsing documents: Error: Failed to store structured history: internal
+    at storeStructuredHistory (firebaseFunctions.ts:84:15)
+    at async refreshFiles (rightSidePanel.tsx:105:21)
+overrideMethod @ hook.js:608
+error @ intercept-console-error.ts:40
+refreshFiles @ rightSidePanel.tsx:112
+await in refreshFiles
+onClick @ rightSidePanel.tsx:205
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+Button @ button.tsx:51
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<Button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+RightSidePanel @ rightSidePanel.tsx:199
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<RightSidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+ProfilePage @ page.tsx:42
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<ProfilePage>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientPageRoot @ client-page.tsx:60
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+"use client"
+(anonymous) @ react-server-dom-turbopack-client.browser.development.js:2347
+initializeModelChunk @ react-server-dom-turbopack-client.browser.development.js:1047
+resolveModelChunk @ react-server-dom-turbopack-client.browser.development.js:1024
+resolveModel @ react-server-dom-turbopack-client.browser.development.js:1592
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2281
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
+progress @ react-server-dom-turbopack-client.browser.development.js:2472
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:1580
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:2389
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:2702
+createFromNextReadableStream @ fetch-server-response.ts:297
+fetchServerResponse @ fetch-server-response.ts:226
+await in fetchServerResponse
+(anonymous) @ prefetch-cache-utils.ts:323
+task @ promise-queue.ts:33
+processNext @ promise-queue.ts:66
+enqueue @ promise-queue.ts:46
+createLazyPrefetchEntry @ prefetch-cache-utils.ts:322
+getOrCreatePrefetchCacheEntry @ prefetch-cache-utils.ts:227
+navigateReducer @ navigate-reducer.ts:216
+clientReducer @ router-reducer.ts:32
+action @ app-router-instance.ts:211
+runAction @ app-router-instance.ts:98
+dispatchAction @ app-router-instance.ts:163
+dispatch @ app-router-instance.ts:209
+(anonymous) @ use-action-queue.ts:46
+startTransition @ react-dom-client.development.js:7842
+dispatch @ use-action-queue.ts:45
+dispatchAppRouterAction @ use-action-queue.ts:22
+dispatchNavigateAction @ app-router-instance.ts:280
+navigate @ link.tsx:289
+exports.startTransition @ react.development.js:1127
+linkClicked @ link.tsx:297
+onClick @ link.tsx:629
+executeDispatch @ react-dom-client.development.js:16501
+runWithFiberInDEV @ react-dom-client.development.js:844
+processDispatchQueue @ react-dom-client.development.js:16551
+(anonymous) @ react-dom-client.development.js:17149
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16705
+dispatchEvent @ react-dom-client.development.js:20815
+dispatchDiscreteEvent @ react-dom-client.development.js:20783
+<a>
+exports.jsx @ react-jsx-runtime.development.js:339
+LinkComponent @ link.tsx:716
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<LinkComponent>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+(anonymous) @ sidePanel.tsx:20
+SidePanel @ sidePanel.tsx:18
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<SidePanel>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+HomeLayout @ layout.tsx:31
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10555
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+<HomeLayout>
+exports.jsx @ react-jsx-runtime.development.js:339
+ClientSegmentRoot @ client-segment.tsx:50
+react-stack-bottom-frame @ react-dom-client.development.js:22973
+renderWithHooksAgain @ react-dom-client.development.js:6766
+renderWithHooks @ react-dom-client.development.js:6678
+updateFunctionComponent @ react-dom-client.development.js:8930
+beginWork @ react-dom-client.development.js:10504
+runWithFiberInDEV @ react-dom-client.development.js:844
+performUnitOfWork @ react-dom-client.development.js:15257
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15251
+renderRootConcurrent @ react-dom-client.development.js:15226
+performWorkOnRoot @ react-dom-client.development.js:14524
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16349
+performWorkUntilDeadline @ scheduler.development.js:45
+VM130:1  Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM41:1  Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM131:1  Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM42:1  Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
