@@ -8,7 +8,7 @@
  */
 
 import { setGlobalOptions } from "firebase-functions";
-import * as functions from "firebase-functions";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -25,11 +25,12 @@ import * as functions from "firebase-functions";
 // this will be the maximum concurrent request count.
 setGlobalOptions({ maxInstances: 10 });
 
-export const reverseString = functions.https.onCall((data: any, context) => {
+export const reverseString = onCall((request) => {
+    const data = request.data;
     // Support both callable SDK and direct HTTP POST (like Postman)
     const input: string = (data && data.text) || (data && data.data && data.data.text);
     if (typeof input !== "string") {
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
             "invalid-argument",
             `Input must be a string. Received: ${JSON.stringify(input)}`
         );

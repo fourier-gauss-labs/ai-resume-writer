@@ -12,6 +12,7 @@ import { FileCard } from "@/components/fileCard";
 import { DeleteConfirmationModal } from "@/components/deleteConfirmationModal";
 import { DocumentPreviewModal } from "@/components/documentPreview";
 import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
+import { parseResumeToStructuredHistory, storeStructuredHistory } from "@/utils/firebaseFunctions";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
 
@@ -19,6 +20,7 @@ export function RightSidePanel() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isParsing, setIsParsing] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState<{
         isOpen: boolean;
         file: FileData | null;
@@ -66,17 +68,42 @@ export function RightSidePanel() {
         loadFiles();
     }, [user]);
 
-    // Function to refresh file list
+    // Function to refresh file list and parse documents
     const refreshFiles = async () => {
         if (!user) return;
 
         try {
+            setIsParsing(true);
+
+            // First refresh the file list
             const files = await getUserFiles(user.uid);
             setUploadedFiles(files);
-            toast.success("Files refreshed");
+
+            // If there are files, parse them using the Firebase function
+            if (files.length > 0) {
+                toast.info("Parsing documents...", { duration: 2000 });
+
+                // Extract file paths for the function call
+                const filePaths = files.map(file => `uploads/${user.uid}/${file.name}`);
+
+                // Call the Firebase function to parse documents
+                const structuredData = await parseResumeToStructuredHistory(user.uid, filePaths);
+
+                if (structuredData.error) {
+                    toast.error(`Parsing failed: ${structuredData.error}`);
+                } else {
+                    // Store the parsed data
+                    await storeStructuredHistory(user.uid, structuredData);
+                    toast.success("Documents parsed and profile updated!");
+                }
+            } else {
+                toast.success("Files refreshed (no documents to parse)");
+            }
         } catch (error) {
-            console.error("Error refreshing files:", error);
-            toast.error("Failed to refresh files");
+            console.error("Error refreshing files or parsing documents:", error);
+            toast.error("Failed to refresh files or parse documents");
+        } finally {
+            setIsParsing(false);
         }
     };
 
@@ -168,8 +195,10 @@ export function RightSidePanel() {
                                         // Trigger refresh/parsing of historical documents
                                         refreshFiles();
                                     }}
+                                    disabled={isParsing}
+                                    title={isParsing ? "Parsing documents..." : "Parse documents and refresh files"}
                                 >
-                                    <ArrowPathIcon className="h-4 w-4" />
+                                    <ArrowPathIcon className={`h-4 w-4 ${isParsing ? 'animate-spin' : ''}`} />
                                 </Button>
                                 <Button
                                     variant="default"

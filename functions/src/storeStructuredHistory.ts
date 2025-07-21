@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 
 // Initialize Firebase Admin if not already initialized
@@ -58,22 +58,23 @@ function extractPayload(data: any) {
  *   }
  * }
  */
-export const storeStructuredHistory = functions.https.onCall(async (data: any, context) => {
+export const storeStructuredHistory = onCall(async (request) => {
+    const data = request.data;
     console.log('Raw received data (keys):', Object.keys(data));
 
     const payload = extractPayload(data);
     console.log('Extracted payload:', JSON.stringify(payload, null, 2));
 
-    // Validate the input
-    if (!payload.userId || typeof payload.userId !== 'string') {
-        throw new functions.https.HttpsError('invalid-argument', 'userId is required and must be a string');
-    }
-
-    if (!payload.structuredHistory || typeof payload.structuredHistory !== 'object') {
-        throw new functions.https.HttpsError('invalid-argument', 'structuredHistory is required and must be an object');
-    }
-
     const { userId, structuredHistory } = payload;
+
+    // Validate the input
+    if (!userId || typeof userId !== 'string') {
+        throw new HttpsError('invalid-argument', 'userId is required and must be a string');
+    }
+
+    if (!structuredHistory || typeof structuredHistory !== 'object') {
+        throw new HttpsError('invalid-argument', 'structuredHistory is required and must be an object');
+    }
 
     try {
         // Prepare the Firestore batch write
@@ -159,7 +160,7 @@ export const storeStructuredHistory = functions.https.onCall(async (data: any, c
 
     } catch (error) {
         console.error('Error storing structured history:', error);
-        throw new functions.https.HttpsError('internal', 'Failed to store structured history data');
+        throw new HttpsError('internal', 'Failed to store structured history data');
     }
 });
 
@@ -173,18 +174,19 @@ export const storeStructuredHistory = functions.https.onCall(async (data: any, c
  *   userId: string
  * }
  */
-export const getStructuredHistory = functions.https.onCall(async (data: any, context) => {
+export const getStructuredHistory = onCall(async (request) => {
+    const data = request.data;
     console.log('Raw received data (keys):', Object.keys(data));
 
     const payload = extractPayload(data);
     console.log('Extracted payload:', JSON.stringify(payload, null, 2));
 
-    // Validate the input
-    if (!payload.userId || typeof payload.userId !== 'string') {
-        throw new functions.https.HttpsError('invalid-argument', 'userId is required and must be a string');
-    }
-
     const { userId } = payload;
+
+    // Validate the input
+    if (!userId || typeof userId !== 'string') {
+        throw new HttpsError('invalid-argument', 'userId is required and must be a string');
+    }
 
     try {
         // Define the base path for the user's structured history
@@ -252,6 +254,6 @@ export const getStructuredHistory = functions.https.onCall(async (data: any, con
 
     } catch (error) {
         console.error('Error retrieving structured history:', error);
-        throw new functions.https.HttpsError('internal', 'Failed to retrieve structured history data');
+        throw new HttpsError('internal', 'Failed to retrieve structured history data');
     }
 });
