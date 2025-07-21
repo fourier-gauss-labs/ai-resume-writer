@@ -1,10 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import * as functions from 'firebase-functions';
 
-// Initialize Google AI - using Firebase Functions config
-const config = functions.config();
-const apiKey = config.gemini?.api_key || process.env.GEMINI_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
+// Initialize Google AI - using environment variables for Firebase Functions v2
+const getGenAI = () => {
+    const apiKey = process.env.GEMINI_API_KEY || '';
+    if (!apiKey) {
+        throw new Error('GEMINI_API_KEY environment variable is required');
+    }
+    return new GoogleGenerativeAI(apiKey);
+};
 
 export interface ContactInformation {
     contactInformation: {
@@ -52,16 +55,12 @@ export interface JobHistory {
 export async function parseContactInformation(corpus: string): Promise<ContactInformation> {
     console.log('Using Google AI Gemini parser...');
 
-    // Check if API key is available
-    if (!apiKey) {
-        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
-        return mockParseContactInformation(corpus);
-    }
+    try {
+        const genAI = getGenAI();
+        console.log('API key found, proceeding with Gemini...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    console.log('API key found, proceeding with Gemini...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const prompt = `
+        const prompt = `
 You are an AI assistant that extracts contact information from resume/biography documents.
 
 Parse the following corpus of documents and extract ONLY contact information. Return a JSON object with the exact structure shown below. Prevent duplicate entries in email and phone arrays.
@@ -89,47 +88,53 @@ ${corpus}
 
 JSON OUTPUT:`;
 
-    try {
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-
-        console.log('Gemini raw response:', text);
-
-        // Try to parse the JSON response
         try {
-            // Clean up the response - remove markdown code blocks if present
-            let cleanText = text.trim();
-            if (cleanText.startsWith('```json')) {
-                cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-            } else if (cleanText.startsWith('```')) {
-                cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
-            }
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
 
-            const parsedData = JSON.parse(cleanText.trim());
+            console.log('Gemini raw response:', text);
 
-            // Validate the structure
-            if (!parsedData.contactInformation) {
-                throw new Error('Invalid response structure - missing contactInformation');
-            }
-
-            const contact = parsedData.contactInformation;
-
-            // Ensure required fields exist and are correct types
-            const result: ContactInformation = {
-                contactInformation: {
-                    fullName: typeof contact.fullName === 'string' ? contact.fullName : '',
-                    email: Array.isArray(contact.email) ? contact.email : [],
-                    phones: Array.isArray(contact.phones) ? contact.phones : []
+            // Try to parse the JSON response
+            try {
+                // Clean up the response - remove markdown code blocks if present
+                let cleanText = text.trim();
+                if (cleanText.startsWith('```json')) {
+                    cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+                } else if (cleanText.startsWith('```')) {
+                    cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
                 }
-            };
 
-            console.log('Gemini parsing complete:', JSON.stringify(result, null, 2));
-            return result;
+                const parsedData = JSON.parse(cleanText.trim());
 
-        } catch (parseError) {
-            console.error('Failed to parse Gemini JSON response:', text);
-            console.warn('Falling back to mock parser due to JSON parse error');
+                // Validate the structure
+                if (!parsedData.contactInformation) {
+                    throw new Error('Invalid response structure - missing contactInformation');
+                }
+
+                const contact = parsedData.contactInformation;
+
+                // Ensure required fields exist and are correct types
+                const result: ContactInformation = {
+                    contactInformation: {
+                        fullName: typeof contact.fullName === 'string' ? contact.fullName : '',
+                        email: Array.isArray(contact.email) ? contact.email : [],
+                        phones: Array.isArray(contact.phones) ? contact.phones : []
+                    }
+                };
+
+                console.log('Gemini parsing complete:', JSON.stringify(result, null, 2));
+                return result;
+
+            } catch (parseError) {
+                console.error('Failed to parse Gemini JSON response:', text);
+                console.warn('Falling back to mock parser due to JSON parse error');
+                return mockParseContactInformation(corpus);
+            }
+
+        } catch (error) {
+            console.error('Gemini API error:', error);
+            console.warn('Falling back to mock parser due to API error');
             return mockParseContactInformation(corpus);
         }
 
@@ -181,16 +186,12 @@ function mockParseContactInformation(corpus: string): ContactInformation {
 export async function parseSkills(corpus: string): Promise<Skills> {
     console.log('Using Google AI Gemini parser for skills...');
 
-    // Check if API key is available
-    if (!apiKey) {
-        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
-        return mockParseSkills(corpus);
-    }
+    try {
+        const genAI = getGenAI();
+        console.log('API key found, proceeding with Gemini skills parsing...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    console.log('API key found, proceeding with Gemini skills parsing...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const prompt = `
+        const prompt = `
 You are an AI assistant that extracts skills from resume/biography documents.
 
 Parse the following corpus of documents and extract skills. Return a JSON object with the exact structure shown below.
@@ -218,21 +219,27 @@ CORPUS:
 ${corpus}
 `;
 
-    try {
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        let text = response.text();
+        try {
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            let text = response.text();
 
-        // Clean up any markdown code blocks
-        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+            // Clean up any markdown code blocks
+            text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
 
-        console.log('Gemini skills response:', text);
+            console.log('Gemini skills response:', text);
 
-        const parsed = JSON.parse(text);
-        return parsed as Skills;
+            const parsed = JSON.parse(text);
+            return parsed as Skills;
+        } catch (error) {
+            console.error('Error parsing skills with Gemini:', error);
+            console.log('Falling back to mock skills parser');
+            return mockParseSkills(corpus);
+        }
+
     } catch (error) {
-        console.error('Error parsing skills with Gemini:', error);
-        console.log('Falling back to mock skills parser');
+        console.error('Gemini API error for skills:', error);
+        console.warn('Falling back to mock parser due to API error');
         return mockParseSkills(corpus);
     }
 }
@@ -258,16 +265,12 @@ function mockParseSkills(corpus: string): Skills {
 export async function parseEducation(corpus: string): Promise<Education> {
     console.log('Using Google AI Gemini parser for education...');
 
-    // Check if API key is available
-    if (!apiKey) {
-        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
-        return mockParseEducation(corpus);
-    }
+    try {
+        const genAI = getGenAI();
+        console.log('API key found, proceeding with Gemini education parsing...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    console.log('API key found, proceeding with Gemini education parsing...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const prompt = `
+        const prompt = `
 You are an AI assistant that extracts education information from resume/biography documents.
 
 Parse the following corpus of documents and extract education information. Return a JSON object with the exact structure shown below.
@@ -326,46 +329,52 @@ ${corpus}
 Pay special attention to sections titled "Education", "Academic Background", "Academic History", or similar. Remember: single dates are END DATES (graduation dates), convert months to two-digit numbers (01-12), and handle conflicts by leaving month blank.
 `;
 
-    try {
-        const geminiResult = await model.generateContent(prompt);
-        const response = geminiResult.response;
-        let text = response.text();
+        try {
+            const geminiResult = await model.generateContent(prompt);
+            const response = geminiResult.response;
+            let text = response.text();
 
-        // Clean up any markdown code blocks
-        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+            // Clean up any markdown code blocks
+            text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
 
-        console.log('Gemini education response:', text);
+            console.log('Gemini education response:', text);
 
-        const parsed = JSON.parse(text);
+            const parsed = JSON.parse(text);
 
-        // Validate and clean the response
-        const educationArray = parsed.education || [];
-        const validatedEducation: Education = {
-            education: Array.isArray(educationArray) ? educationArray.map((edu: any) => ({
-                school: typeof edu.school === 'string' ? edu.school : '',
-                degree: typeof edu.degree === 'string' ? edu.degree : '',
-                startDate: {
-                    month: (edu.startDate && typeof edu.startDate.month === 'string') ? edu.startDate.month : '',
-                    year: (edu.startDate && typeof edu.startDate.year === 'string') ? edu.startDate.year : ''
-                },
-                endDate: {
-                    month: (edu.endDate && typeof edu.endDate.month === 'string') ? edu.endDate.month : '',
-                    year: (edu.endDate && typeof edu.endDate.year === 'string') ? edu.endDate.year : ''
-                },
-                grade: typeof edu.grade === 'string' ? edu.grade : ''
-            })).map((edu: any) => {
-                // Apply single date rule: if start and end years are the same, clear start date
-                if (edu.startDate.year && edu.endDate.year && edu.startDate.year === edu.endDate.year) {
-                    edu.startDate = { month: '', year: '' };
-                }
-                return edu;
-            }) : []
-        };
+            // Validate and clean the response
+            const educationArray = parsed.education || [];
+            const validatedEducation: Education = {
+                education: Array.isArray(educationArray) ? educationArray.map((edu: any) => ({
+                    school: typeof edu.school === 'string' ? edu.school : '',
+                    degree: typeof edu.degree === 'string' ? edu.degree : '',
+                    startDate: {
+                        month: (edu.startDate && typeof edu.startDate.month === 'string') ? edu.startDate.month : '',
+                        year: (edu.startDate && typeof edu.startDate.year === 'string') ? edu.startDate.year : ''
+                    },
+                    endDate: {
+                        month: (edu.endDate && typeof edu.endDate.month === 'string') ? edu.endDate.month : '',
+                        year: (edu.endDate && typeof edu.endDate.year === 'string') ? edu.endDate.year : ''
+                    },
+                    grade: typeof edu.grade === 'string' ? edu.grade : ''
+                })).map((edu: any) => {
+                    // Apply single date rule: if start and end years are the same, clear start date
+                    if (edu.startDate.year && edu.endDate.year && edu.startDate.year === edu.endDate.year) {
+                        edu.startDate = { month: '', year: '' };
+                    }
+                    return edu;
+                }) : []
+            };
 
-        return validatedEducation;
+            return validatedEducation;
+        } catch (error) {
+            console.error('Error parsing education with Gemini:', error);
+            console.log('Falling back to mock education parser');
+            return mockParseEducation(corpus);
+        }
+
     } catch (error) {
-        console.error('Error parsing education with Gemini:', error);
-        console.log('Falling back to mock education parser');
+        console.error('Gemini API error for education:', error);
+        console.warn('Falling back to mock parser due to API error');
         return mockParseEducation(corpus);
     }
 }
@@ -503,16 +512,12 @@ function mockParseEducation(corpus: string): Education {
 export async function parseCertifications(corpus: string): Promise<Certifications> {
     console.log('Using Google AI Gemini parser for certifications...');
 
-    // Check if API key is available
-    if (!apiKey) {
-        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
-        return mockParseCertifications(corpus);
-    }
+    try {
+        const genAI = getGenAI();
+        console.log('API key found, proceeding with Gemini certifications parsing...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    console.log('API key found, proceeding with Gemini certifications parsing...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const prompt = `
+        const prompt = `
 You are an AI assistant that extracts certifications and licenses from resume/biography documents.
 
 Parse the following corpus of documents and extract certifications and licenses information. Return a JSON object with the exact structure shown below.
@@ -558,36 +563,42 @@ ${corpus}
 Pay special attention to sections titled "Certifications", "Licenses", "Professional Credentials", "Certificates", or similar. Remember: convert months to two-digit numbers (01-12).
 `;
 
-    try {
-        const geminiResult = await model.generateContent(prompt);
-        const response = geminiResult.response;
-        let text = response.text();
+        try {
+            const geminiResult = await model.generateContent(prompt);
+            const response = geminiResult.response;
+            let text = response.text();
 
-        // Clean up any markdown code blocks
-        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+            // Clean up any markdown code blocks
+            text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
 
-        console.log('Gemini certifications response:', text);
+            console.log('Gemini certifications response:', text);
 
-        const parsed = JSON.parse(text);
+            const parsed = JSON.parse(text);
 
-        // Validate and clean the response
-        const certificationsArray = parsed.certifications || [];
-        const validatedCertifications: Certifications = {
-            certifications: Array.isArray(certificationsArray) ? certificationsArray.map((cert: any) => ({
-                certName: typeof cert.certName === 'string' ? cert.certName : '',
-                issuer: typeof cert.issuer === 'string' ? cert.issuer : '',
-                issuedDate: {
-                    month: (cert.issuedDate && typeof cert.issuedDate.month === 'string') ? cert.issuedDate.month : '',
-                    year: (cert.issuedDate && typeof cert.issuedDate.year === 'string') ? cert.issuedDate.year : ''
-                },
-                credentialId: typeof cert.credentialId === 'string' ? cert.credentialId : ''
-            })) : []
-        };
+            // Validate and clean the response
+            const certificationsArray = parsed.certifications || [];
+            const validatedCertifications: Certifications = {
+                certifications: Array.isArray(certificationsArray) ? certificationsArray.map((cert: any) => ({
+                    certName: typeof cert.certName === 'string' ? cert.certName : '',
+                    issuer: typeof cert.issuer === 'string' ? cert.issuer : '',
+                    issuedDate: {
+                        month: (cert.issuedDate && typeof cert.issuedDate.month === 'string') ? cert.issuedDate.month : '',
+                        year: (cert.issuedDate && typeof cert.issuedDate.year === 'string') ? cert.issuedDate.year : ''
+                    },
+                    credentialId: typeof cert.credentialId === 'string' ? cert.credentialId : ''
+                })) : []
+            };
 
-        return validatedCertifications;
+            return validatedCertifications;
+        } catch (error) {
+            console.error('Error parsing certifications with Gemini:', error);
+            console.log('Falling back to mock certifications parser');
+            return mockParseCertifications(corpus);
+        }
+
     } catch (error) {
-        console.error('Error parsing certifications with Gemini:', error);
-        console.log('Falling back to mock certifications parser');
+        console.error('Gemini API error for certifications:', error);
+        console.warn('Falling back to mock parser due to API error');
         return mockParseCertifications(corpus);
     }
 }
@@ -717,16 +728,12 @@ function mockParseCertifications(corpus: string): Certifications {
 export async function parseJobHistory(corpus: string): Promise<JobHistory> {
     console.log('Using Google AI Gemini parser for job history...');
 
-    // Check if API key is available
-    if (!apiKey) {
-        console.warn('Gemini API key not found in Firebase config or environment, falling back to mock parser');
-        return mockParseJobHistory(corpus);
-    }
+    try {
+        const genAI = getGenAI();
+        console.log('API key found, proceeding with Gemini job history parsing...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    console.log('API key found, proceeding with Gemini job history parsing...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const prompt = `
+        const prompt = `
 You are an AI assistant that extracts job history and work experience from resume/biography documents.
 
 Parse the following corpus of documents and extract job history information. Return a JSON object with the exact structure shown below.
@@ -788,43 +795,49 @@ ${corpus}
 Pay special attention to sections titled "Experience", "Work History", "Professional Experience", "Employment", or similar. Remember: convert months to two-digit numbers (01-12), be conservative with currentlyWorking, and extract specific accomplishments.
 `;
 
-    try {
-        const geminiResult = await model.generateContent(prompt);
-        const response = geminiResult.response;
-        let text = response.text();
+        try {
+            const geminiResult = await model.generateContent(prompt);
+            const response = geminiResult.response;
+            let text = response.text();
 
-        // Clean up any markdown code blocks
-        text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+            // Clean up any markdown code blocks
+            text = text.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
 
-        console.log('Gemini job history response:', text);
+            console.log('Gemini job history response:', text);
 
-        const parsed = JSON.parse(text);
+            const parsed = JSON.parse(text);
 
-        // Validate and clean the response
-        const jobHistoryArray = parsed.jobHistory || [];
-        const validatedJobHistory: JobHistory = {
-            jobHistory: Array.isArray(jobHistoryArray) ? jobHistoryArray.map((job: any) => ({
-                title: typeof job.title === 'string' ? job.title : '',
-                company: typeof job.company === 'string' ? job.company : '',
-                startDate: {
-                    month: (job.startDate && typeof job.startDate.month === 'string') ? job.startDate.month : '',
-                    year: (job.startDate && typeof job.startDate.year === 'string') ? job.startDate.year : ''
-                },
-                endDate: {
-                    month: (job.endDate && typeof job.endDate.month === 'string') ? job.endDate.month : '',
-                    year: (job.endDate && typeof job.endDate.year === 'string') ? job.endDate.year : ''
-                },
-                currentlyWorking: typeof job.currentlyWorking === 'boolean' ? job.currentlyWorking : false,
-                jobDescription: typeof job.jobDescription === 'string' ? job.jobDescription : '',
-                accomplishments: Array.isArray(job.accomplishments) ?
-                    job.accomplishments.filter((acc: any) => typeof acc === 'string') : []
-            })) : []
-        };
+            // Validate and clean the response
+            const jobHistoryArray = parsed.jobHistory || [];
+            const validatedJobHistory: JobHistory = {
+                jobHistory: Array.isArray(jobHistoryArray) ? jobHistoryArray.map((job: any) => ({
+                    title: typeof job.title === 'string' ? job.title : '',
+                    company: typeof job.company === 'string' ? job.company : '',
+                    startDate: {
+                        month: (job.startDate && typeof job.startDate.month === 'string') ? job.startDate.month : '',
+                        year: (job.startDate && typeof job.startDate.year === 'string') ? job.startDate.year : ''
+                    },
+                    endDate: {
+                        month: (job.endDate && typeof job.endDate.month === 'string') ? job.endDate.month : '',
+                        year: (job.endDate && typeof job.endDate.year === 'string') ? job.endDate.year : ''
+                    },
+                    currentlyWorking: typeof job.currentlyWorking === 'boolean' ? job.currentlyWorking : false,
+                    jobDescription: typeof job.jobDescription === 'string' ? job.jobDescription : '',
+                    accomplishments: Array.isArray(job.accomplishments) ?
+                        job.accomplishments.filter((acc: any) => typeof acc === 'string') : []
+                })) : []
+            };
 
-        return validatedJobHistory;
+            return validatedJobHistory;
+        } catch (error) {
+            console.error('Error parsing job history with Gemini:', error);
+            console.log('Falling back to mock job history parser');
+            return mockParseJobHistory(corpus);
+        }
+
     } catch (error) {
-        console.error('Error parsing job history with Gemini:', error);
-        console.log('Falling back to mock job history parser');
+        console.error('Gemini API error for job history:', error);
+        console.warn('Falling back to mock parser due to API error');
         return mockParseJobHistory(corpus);
     }
 }

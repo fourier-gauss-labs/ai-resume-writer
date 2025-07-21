@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import * as mammoth from 'mammoth'; // Added for .docx extraction
 import pdfParse from 'pdf-parse'; // Added for .pdf extraction
@@ -41,7 +41,8 @@ function extractPayload(data: any) {
  * - In the emulator, the payload may be { data: { userId, ... } }.
  * This function uses a helper to extract the payload robustly for both environments.
  */
-export const parseResumeToStructuredHistory = functions.https.onCall(async (data: any, context) => {
+export const parseResumeToStructuredHistory = onCall(async (request) => {
+    const data = request.data;
     // Avoid circular structure in logs
     console.log('Raw received data (keys):', Object.keys(data));
     if (data.data) {
@@ -52,7 +53,7 @@ export const parseResumeToStructuredHistory = functions.https.onCall(async (data
     const userId = payload.userId;
     const filePaths = payload.filePaths;
     if (!userId) {
-        throw new functions.https.HttpsError('invalid-argument', 'userId is required');
+        throw new HttpsError('invalid-argument', 'userId is required');
     }
 
     // Get file paths if not provided
@@ -62,7 +63,7 @@ export const parseResumeToStructuredHistory = functions.https.onCall(async (data
         const [allFiles] = await storage.bucket().getFiles({ prefix: `uploads/${userId}/` });
         files = allFiles.map(f => f.name);
         if (!files.length) {
-            throw new functions.https.HttpsError('not-found', 'No files found for user');
+            throw new HttpsError('not-found', 'No files found for user');
         }
     }
 
