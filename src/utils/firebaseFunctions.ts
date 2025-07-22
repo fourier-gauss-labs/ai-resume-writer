@@ -16,7 +16,13 @@ export interface StructuredHistory {
  */
 export async function parseResumeToStructuredHistoryHttp(userId: string, filePaths?: string[]): Promise<StructuredHistory> {
     try {
-        const response = await fetch('https://us-central1-ai-resume-writer-46403.cloudfunctions.net/parseResumeToStructuredHistoryHttp', {
+        // Use emulator URL for local development based on environment variable
+        const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+        const functionUrl = useEmulator
+            ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/parseResumeToStructuredHistoryHttp'
+            : 'https://parseresumetostructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+
+        const response = await fetch(functionUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +57,13 @@ export async function parseResumeToStructuredHistoryHttp(userId: string, filePat
  */
 export async function storeStructuredHistoryHttp(userId: string, structuredData: StructuredHistory): Promise<void> {
     try {
-        const response = await fetch('https://us-central1-ai-resume-writer-46403.cloudfunctions.net/storeStructuredHistoryHttp', {
+        // Use emulator URL for local development based on environment variable
+        const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+        const functionUrl = useEmulator
+            ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/storeStructuredHistoryHttp'
+            : 'https://storestructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+
+        const response = await fetch(functionUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

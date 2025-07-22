@@ -95,33 +95,33 @@ export const parseResumeToStructuredHistoryHttp = onRequest(async (req: Request,
                     try {
                         console.log('Parsing contact information...');
                         const contactInfo = await parseContactInformation(extractedText);
-                        if (contactInfo && Object.keys(contactInfo).length > 0) {
-                            // Merge contact information properly
-                            Object.assign(allStructuredData.contactInformation, contactInfo);
+                        if (contactInfo && contactInfo.contactInformation && Object.keys(contactInfo.contactInformation).length > 0) {
+                            // Merge contact information properly (extract from nested structure)
+                            Object.assign(allStructuredData.contactInformation, contactInfo.contactInformation);
                         }
 
                         console.log('Parsing skills...');
                         const skills = await parseSkills(extractedText);
-                        if (skills && Array.isArray(skills) && skills.length > 0) {
-                            allStructuredData.skills.push(...skills);
+                        if (skills && skills.skills && Array.isArray(skills.skills) && skills.skills.length > 0) {
+                            allStructuredData.skills.push(...skills.skills);
                         }
 
                         console.log('Parsing education...');
                         const education = await parseEducation(extractedText);
-                        if (education && Array.isArray(education) && education.length > 0) {
-                            allStructuredData.education.push(...education);
+                        if (education && education.education && Array.isArray(education.education) && education.education.length > 0) {
+                            allStructuredData.education.push(...education.education);
                         }
 
                         console.log('Parsing certifications...');
                         const certifications = await parseCertifications(extractedText);
-                        if (certifications && Array.isArray(certifications) && certifications.length > 0) {
-                            allStructuredData.certifications.push(...certifications);
+                        if (certifications && certifications.certifications && Array.isArray(certifications.certifications) && certifications.certifications.length > 0) {
+                            allStructuredData.certifications.push(...certifications.certifications);
                         }
 
                         console.log('Parsing job history...');
                         const jobHistory = await parseJobHistory(extractedText);
-                        if (jobHistory && Array.isArray(jobHistory) && jobHistory.length > 0) {
-                            allStructuredData.jobHistory.push(...jobHistory);
+                        if (jobHistory && jobHistory.jobHistory && Array.isArray(jobHistory.jobHistory) && jobHistory.jobHistory.length > 0) {
+                            allStructuredData.jobHistory.push(...jobHistory.jobHistory);
                         }
 
                     } catch (parseError) {
