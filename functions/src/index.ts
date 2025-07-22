@@ -25,23 +25,31 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 // this will be the maximum concurrent request count.
 setGlobalOptions({ maxInstances: 10 });
 
-export const reverseString = onCall((request) => {
-    const data = request.data;
-    // Support both callable SDK and direct HTTP POST (like Postman)
-    const input: string = (data && data.text) || (data && data.data && data.data.text);
-    if (typeof input !== "string") {
-        throw new HttpsError(
-            "invalid-argument",
-            `Input must be a string. Received: ${JSON.stringify(input)}`
-        );
-    }
-    const reversed = input.split("").reverse().join("");
-    const isPalindrome = input === reversed;
-    return {
-        reversed,
-        ...(isPalindrome && { message: "Hey look, a palindrome!" })
-    };
-});
+export const reverseString = onCall(
+    {
+        cors: true,  // Enable CORS for all origins
+        invoker: 'public'
+    },
+    (request) => {
+        const data = request.data;
+        // Support both callable SDK and direct HTTP POST (like Postman)
+        const input: string = (data && data.text) || (data && data.data && data.data.text);
+        if (typeof input !== "string") {
+            throw new HttpsError(
+                "invalid-argument",
+                `Input must be a string. Received: ${JSON.stringify(input)}`
+            );
+        }
+        const reversed = input.split("").reverse().join("");
+        const isPalindrome = input === reversed;
+        return {
+            reversed,
+            ...(isPalindrome && { message: "Hey look, a palindrome!" })
+        };
+    });
 
 export { parseResumeToStructuredHistory } from './parseResumeToStructuredHistory';
+export { parseResumeToStructuredHistoryHttp } from './parseResumeHttps';
 export { storeStructuredHistory, getStructuredHistory } from './storeStructuredHistory';
+export { storeStructuredHistoryHttp } from './storeStructuredHistoryHttp';
+export { getStructuredHistoryHttp } from './getStructuredHistoryHttp';

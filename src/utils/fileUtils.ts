@@ -1,4 +1,5 @@
-import { getStorage, ref, getMetadata, listAll, deleteObject, getDownloadURL } from "firebase/storage";
+import { ref, getMetadata, listAll, deleteObject, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 
 export interface FileData {
     id: string;
@@ -47,7 +48,6 @@ const formatFileSize = (bytes: number): string => {
  */
 export const getUserFiles = async (userId: string): Promise<FileData[]> => {
     try {
-        const storage = getStorage();
         const listRef = ref(storage, `uploads/${userId}`);
 
         console.log(`Loading files from Storage for user: ${userId}`);
@@ -108,7 +108,6 @@ export const getUserFiles = async (userId: string): Promise<FileData[]> => {
  */
 export const deleteUserFile = async (userId: string, fileName: string): Promise<void> => {
     try {
-        const storage = getStorage();
         const fileRef = ref(storage, `uploads/${userId}/${fileName}`);
 
         await deleteObject(fileRef);

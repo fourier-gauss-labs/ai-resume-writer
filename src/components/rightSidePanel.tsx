@@ -12,7 +12,7 @@ import { FileCard } from "@/components/fileCard";
 import { DeleteConfirmationModal } from "@/components/deleteConfirmationModal";
 import { DocumentPreviewModal } from "@/components/documentPreview";
 import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
-import { parseResumeToStructuredHistory, storeStructuredHistory } from "@/utils/firebaseFunctions";
+import { parseResumeToStructuredHistoryHttp, storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
 
@@ -87,13 +87,21 @@ export function RightSidePanel() {
                 const filePaths = files.map(file => `uploads/${user.uid}/${file.name}`);
 
                 // Call the Firebase function to parse documents
-                const structuredData = await parseResumeToStructuredHistory(user.uid, filePaths);
+                const structuredData = await parseResumeToStructuredHistoryHttp(user.uid, filePaths);
+                console.log('=== CLIENT DEBUG: parseResumeToStructuredHistoryHttp result ===');
+                console.log('structuredData:', JSON.stringify(structuredData, null, 2));
+                console.log('structuredData type:', typeof structuredData);
+                console.log('structuredData keys:', Object.keys(structuredData || {}));
 
-                if (structuredData.error) {
-                    toast.error(`Parsing failed: ${structuredData.error}`);
+                if (!structuredData) {
+                    toast.error('Parsing failed: No data returned');
                 } else {
+                    console.log('=== CLIENT DEBUG: About to call storeStructuredHistory ===');
+                    console.log('user.uid:', user.uid);
+                    console.log('structuredData for storage:', JSON.stringify(structuredData, null, 2));
+
                     // Store the parsed data
-                    await storeStructuredHistory(user.uid, structuredData);
+                    await storeStructuredHistoryHttp(user.uid, structuredData);
                     toast.success("Documents parsed and profile updated!");
                 }
             } else {

@@ -1,7 +1,9 @@
 // Import the functions you need from the Firebase SDKs
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -22,11 +24,42 @@ export const auth = getAuth(app);
 // Initialize Firebase Functions
 export const functions = getFunctions(app);
 
-// Connect to Functions emulator if in development
-if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+// Initialize Firebase Storage
+export const storage = getStorage(app);
+
+// Initialize Firebase Firestore
+export const db = getFirestore(app);
+
+// Connect to emulators in development based on environment variable
+const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+
+if (useEmulator && typeof window !== 'undefined') {
+    console.log('🔧 Connecting to Firebase emulators...');
+
+    try {
+        connectAuthEmulator(auth, 'http://localhost:9099');
+    } catch {
+        // Already connected or connection failed - ignore
+    }
+
     try {
         connectFunctionsEmulator(functions, 'localhost', 5001);
     } catch {
         // Already connected or connection failed - ignore
     }
+
+    try {
+        connectStorageEmulator(storage, 'localhost', 9199);
+    } catch {
+        // Already connected or connection failed - ignore
+    }
+
+    try {
+        connectFirestoreEmulator(db, 'localhost', 8080);
+    } catch {
+        // Already connected or connection failed - ignore
+    }
+} else if (typeof window !== 'undefined') {
+    console.log('☁️ Using production Firebase services for development...');
+    console.log('📍 Environment:', process.env.NEXT_PUBLIC_FIREBASE_ENV || 'cloud (default)');
 }

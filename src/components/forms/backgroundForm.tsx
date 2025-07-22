@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 import { toast } from "sonner";
 import { useAuth } from "@/context/authContext";
 
@@ -50,6 +51,9 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
             await uploadBytes(storageRef, file);
 
             toast.success("File uploaded successfully.");
+
+            // Clear the file field on successful upload
+            form.setValue("file", null);
         } catch (error) {
             console.error("Error uploading file:", error);
             const firebaseError = error as { code?: string; message?: string };
@@ -71,7 +75,6 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
             const snippet = biography.slice(0, 20).replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
             const fileName = `${snippet}.txt`;
 
-            const storage = getStorage();
             const storageRef = ref(storage, `uploads/${user.uid}/${fileName}`);
             const blob = new Blob([biography], { type: "text/plain" });
             await uploadBytes(storageRef, blob);
@@ -87,11 +90,23 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
     };
 
     const onSubmit = async (values: BackgroundFormValues) => {
+        let uploadedSomething = false;
+
         if (values.file) {
             await handleFileUpload(values.file);
+            uploadedSomething = true;
         }
         if (values.biography) {
             await handleBiographySubmit(values.biography);
+            uploadedSomething = true;
+        }
+
+        // Auto-dismiss the form if something was uploaded successfully
+        if (uploadedSomething && onCancel) {
+            // Reset the form
+            form.reset();
+            // Close the modal/form
+            onCancel();
         }
     };
 

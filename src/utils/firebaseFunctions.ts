@@ -1,60 +1,97 @@
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase";
 
-// Type definitions for the function responses
-export interface ContactInformation {
-    name?: string;
-    email?: string;
-    phone?: string;
-    address?: string;
-    linkedin?: string;
-    website?: string;
-}
-
-export interface Skills {
-    technical?: string[];
-    soft?: string[];
-    tools?: string[];
-    languages?: string[];
-}
-
-export interface Education {
-    institutions?: Array<{
-        institution: string;
-        degree: string;
-        field?: string;
-        graduationYear?: number;
-        gpa?: string;
-    }>;
-}
-
-export interface Certifications {
-    certifications?: Array<{
-        name: string;
-        issuer: string;
-        date?: string;
-        expirationDate?: string;
-    }>;
-}
-
-export interface JobHistory {
-    positions?: Array<{
-        company: string;
-        title: string;
-        startDate: string;
-        endDate?: string;
-        description?: string;
-        achievements?: string[];
-    }>;
-}
-
-export interface StructuredHistory extends ContactInformation, Skills, Education, Certifications, JobHistory {
-    error?: string;
-    corpus?: string;
+// Type definitions
+export interface StructuredHistory {
+    contactInformation: Record<string, unknown>;
+    skills: string[];
+    education: Record<string, unknown>[];
+    certifications: Record<string, unknown>[];
+    jobHistory: Record<string, unknown>[];
 }
 
 /**
- * Call the parseResumeToStructuredHistory Firebase function
+ * Call the parseResumeToStructuredHistoryHttp Firebase function via HTTP
+ * to parse uploaded documents into structured profile data
+ */
+export async function parseResumeToStructuredHistoryHttp(userId: string, filePaths?: string[]): Promise<StructuredHistory> {
+    try {
+        // Use emulator URL for local development based on environment variable
+        const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+        const functionUrl = useEmulator
+            ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/parseResumeToStructuredHistoryHttp'
+            : 'https://parseresumetostructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId,
+                ...(filePaths && { filePaths })
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Unknown error from server');
+        }
+
+        return result.data as StructuredHistory;
+    } catch (error) {
+        console.error('Error calling parseResumeToStructuredHistoryHttp:', error);
+        throw new Error(`Failed to parse resume: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
+/**
+ * Call the storeStructuredHistoryHttp Firebase function via HTTP
+ * to store structured profile data to Firestore
+ */
+export async function storeStructuredHistoryHttp(userId: string, structuredData: StructuredHistory): Promise<void> {
+    try {
+        // Use emulator URL for local development based on environment variable
+        const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+        const functionUrl = useEmulator
+            ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/storeStructuredHistoryHttp'
+            : 'https://storestructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId,
+                structuredData
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Unknown error from server');
+        }
+    } catch (error) {
+        console.error('Error calling storeStructuredHistoryHttp:', error);
+        throw new Error(`Failed to store structured history: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
+/**
+ * Call the parseResumeToStructuredHistory Firebase function (legacy callable)
  * to parse uploaded documents into structured profile data
  */
 export async function parseResumeToStructuredHistory(userId: string, filePaths?: string[]): Promise<StructuredHistory> {
@@ -74,16 +111,16 @@ export async function parseResumeToStructuredHistory(userId: string, filePaths?:
 }
 
 /**
- * Call the storeStructuredHistory Firebase function
+ * Call the storeStructuredHistory Firebase function (legacy callable)
  * to save structured profile data to Firestore
  */
-export async function storeStructuredHistory(userId: string, data: StructuredHistory): Promise<void> {
+export async function storeStructuredHistory(userId: string, structuredHistory: StructuredHistory): Promise<void> {
     const storeFunction = httpsCallable(functions, 'storeStructuredHistory');
 
     try {
         await storeFunction({
             userId,
-            data
+            structuredHistory
         });
     } catch (error) {
         console.error('Error calling storeStructuredHistory:', error);
