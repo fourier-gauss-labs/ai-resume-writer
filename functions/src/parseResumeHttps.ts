@@ -14,7 +14,10 @@ if (!admin.apps.length) {
 const storage = admin.storage();
 
 // Initialize CORS middleware
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://ai-resume-writer-46403.web.app'],
+    credentials: true
+});
 
 export const parseResumeToStructuredHistoryHttp = onRequest(async (req: Request, res: Response) => {
     return corsHandler(req, res, async () => {

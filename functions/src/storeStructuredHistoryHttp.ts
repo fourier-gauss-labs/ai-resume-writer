@@ -11,7 +11,10 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // Initialize CORS middleware
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://ai-resume-writer-46403.web.app'],
+    credentials: true
+});
 
 export const storeStructuredHistoryHttp = onRequest(async (req: Request, res: Response) => {
     return corsHandler(req, res, async () => {
@@ -39,7 +42,70 @@ export const storeStructuredHistoryHttp = onRequest(async (req: Request, res: Re
 
             console.log('Storing structured data for user:', userId);
 
-            // Create a batch for atomic operations
+            // First, clear existing data
+            console.log('Clearing existing data...');
+
+            // Clear skills
+            const skillsRef = db.collection('users').doc(userId).collection('skills');
+            const skillsSnapshot = await skillsRef.get();
+            const skillsBatch = db.batch();
+            skillsSnapshot.docs.forEach(doc => {
+                skillsBatch.delete(doc.ref);
+            });
+            if (!skillsSnapshot.empty) {
+                await skillsBatch.commit();
+                console.log(`Cleared ${skillsSnapshot.size} existing skills`);
+            }
+
+            // Clear education
+            const educationRef = db.collection('users').doc(userId).collection('education');
+            const educationSnapshot = await educationRef.get();
+            const educationBatch = db.batch();
+            educationSnapshot.docs.forEach(doc => {
+                educationBatch.delete(doc.ref);
+            });
+            if (!educationSnapshot.empty) {
+                await educationBatch.commit();
+                console.log(`Cleared ${educationSnapshot.size} existing education entries`);
+            }
+
+            // Clear certifications
+            const certificationsRef = db.collection('users').doc(userId).collection('certifications');
+            const certificationsSnapshot = await certificationsRef.get();
+            const certificationsBatch = db.batch();
+            certificationsSnapshot.docs.forEach(doc => {
+                certificationsBatch.delete(doc.ref);
+            });
+            if (!certificationsSnapshot.empty) {
+                await certificationsBatch.commit();
+                console.log(`Cleared ${certificationsSnapshot.size} existing certifications`);
+            }
+
+            // Clear job history
+            const jobHistoryRef = db.collection('users').doc(userId).collection('jobHistory');
+            const jobHistorySnapshot = await jobHistoryRef.get();
+            const jobHistoryBatch = db.batch();
+            jobHistorySnapshot.docs.forEach(doc => {
+                jobHistoryBatch.delete(doc.ref);
+            });
+            if (!jobHistorySnapshot.empty) {
+                await jobHistoryBatch.commit();
+                console.log(`Cleared ${jobHistorySnapshot.size} existing job history entries`);
+            }
+
+            // Clear contact information (profile collection)
+            const profileRef = db.collection('users').doc(userId).collection('profile');
+            const profileSnapshot = await profileRef.get();
+            const profileBatch = db.batch();
+            profileSnapshot.docs.forEach(doc => {
+                profileBatch.delete(doc.ref);
+            });
+            if (!profileSnapshot.empty) {
+                await profileBatch.commit();
+                console.log(`Cleared ${profileSnapshot.size} existing profile entries`);
+            }
+
+            // Create a batch for atomic operations to store new data
             const batch = db.batch();
 
             // Store contact information

@@ -11,7 +11,10 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // Initialize CORS middleware
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://ai-resume-writer-46403.web.app'],
+    credentials: true
+});
 
 export const getStructuredHistoryHttp = onRequest(async (req: Request, res: Response) => {
     return corsHandler(req, res, async () => {
@@ -36,8 +39,13 @@ export const getStructuredHistoryHttp = onRequest(async (req: Request, res: Resp
 
             // Get contact information
             const contactRef = db.collection('users').doc(userId).collection('profile').doc('contactInformation');
+            console.log('Contact ref path:', contactRef.path);
             const contactDoc = await contactRef.get();
+            console.log('Contact doc exists:', contactDoc.exists);
             const contactInformation = contactDoc.exists ? contactDoc.data() : {};
+            console.log('Contact information retrieved:', JSON.stringify(contactInformation, null, 2));
+            console.log('Contact information keys:', Object.keys(contactInformation || {}));
+            console.log('FullName from contact info:', contactInformation?.fullName);
 
             // Get skills
             const skillsRef = db.collection('users').doc(userId).collection('skills');
