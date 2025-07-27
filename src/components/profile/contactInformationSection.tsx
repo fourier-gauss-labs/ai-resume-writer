@@ -69,54 +69,68 @@ export default function ContactInformationSection({
                     </Button>
                 </div>
 
-                {/* Contact details */}
-                <div className="space-y-3">
-                    {/* Phone numbers */}
-                    {contactInfo?.phones && contactInfo.phones.length > 0 && (
-                        <div className="flex items-start space-x-2">
-                            <PhoneIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                                {contactInfo.phones.map((phone, index) => (
-                                    <div key={index} className="text-xs text-foreground">
-                                        {phone}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Email addresses */}
-                    {contactInfo?.email && contactInfo.email.length > 0 ? (
-                        <div className="flex items-start space-x-2">
-                            <EnvelopeIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                                {contactInfo.email.map((email, index) => (
-                                    <div key={index} className="text-xs text-foreground break-words">
-                                        {email}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ) : user?.email && (
-                        // Fallback to user's auth email if no parsed email
-                        <div className="flex items-start space-x-2">
-                            <EnvelopeIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                                <div className="text-xs text-foreground break-words">
-                                    {user.email}
+                {/* Contact details - side by side layout */}
+                <div className="grid grid-cols-2 gap-6">
+                    {/* Phone numbers column */}
+                    <div className="space-y-2">
+                        {contactInfo?.phones && contactInfo.phones.length > 0 ? (
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <PhoneIcon className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-xs font-medium text-muted-foreground">Phone</span>
                                 </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Empty state if no contact details */}
-                    {(!contactInfo?.phones || contactInfo.phones.length === 0) &&
-                        (!contactInfo?.email || contactInfo.email.length === 0) &&
-                        !user?.email && (
-                            <div className="text-xs text-muted-foreground">
-                                No contact details available.
+                                <div className="pl-6 space-y-1">
+                                    {contactInfo.phones.map((phone, index) => (
+                                        <div key={index} className="text-xs text-foreground">
+                                            {phone}
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center space-x-2 text-muted-foreground">
+                                <PhoneIcon className="h-4 w-4" />
+                                <span className="text-xs">No phone number</span>
                             </div>
                         )}
+                    </div>
+
+                    {/* Email addresses column */}
+                    <div className="space-y-2">
+                        {contactInfo?.email && contactInfo.email.length > 0 ? (
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <EnvelopeIcon className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-xs font-medium text-muted-foreground">Email</span>
+                                </div>
+                                <div className="pl-6 space-y-1">
+                                    {contactInfo.email.map((email, index) => (
+                                        <div key={index} className="text-xs text-foreground break-words">
+                                            {email}
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : user?.email ? (
+                            // Fallback to user's auth email if no parsed email
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <EnvelopeIcon className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-xs font-medium text-muted-foreground">Email</span>
+                                </div>
+                                <div className="pl-6">
+                                    <div className="text-xs text-foreground break-words">
+                                        {user.email}
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center space-x-2 text-muted-foreground">
+                                <EnvelopeIcon className="h-4 w-4" />
+                                <span className="text-xs">No email address</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Card>
