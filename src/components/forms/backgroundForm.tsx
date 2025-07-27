@@ -46,7 +46,6 @@ const BackgroundForm: React.FC<BackgroundFormProps> = ({ isSubmitting, onCancel 
         }
 
         try {
-            const storage = getStorage();
             const storageRef = ref(storage, `uploads/${user.uid}/${file.name}`);
             await uploadBytes(storageRef, file);
 

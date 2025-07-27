@@ -20,7 +20,10 @@ export async function parseResumeToStructuredHistoryHttp(userId: string, filePat
         const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
         const functionUrl = useEmulator
             ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/parseResumeToStructuredHistoryHttp'
-            : 'https://parseresumetostructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+            : 'https://us-central1-ai-resume-writer-46403.cloudfunctions.net/parseResumeToStructuredHistoryHttp';
+
+        console.log('Using function URL:', functionUrl);
+        console.log('Request payload:', { userId, filePaths });
 
         const response = await fetch(functionUrl, {
             method: 'POST',
@@ -33,12 +36,17 @@ export async function parseResumeToStructuredHistoryHttp(userId: string, filePat
             })
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
+            console.error('Error response:', errorData);
             throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
         }
 
         const result = await response.json();
+        console.log('Successful response:', result);
 
         if (!result.success) {
             throw new Error(result.error || 'Unknown error from server');
@@ -61,7 +69,10 @@ export async function storeStructuredHistoryHttp(userId: string, structuredData:
         const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
         const functionUrl = useEmulator
             ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/storeStructuredHistoryHttp'
-            : 'https://storestructuredhistoryhttp-vx66fnfbua-uc.a.run.app';
+            : 'https://us-central1-ai-resume-writer-46403.cloudfunctions.net/storeStructuredHistoryHttp';
+
+        console.log('Storing structured history with URL:', functionUrl);
+        console.log('Data to store:', { userId, structuredData });
 
         const response = await fetch(functionUrl, {
             method: 'POST',
@@ -74,12 +85,16 @@ export async function storeStructuredHistoryHttp(userId: string, structuredData:
             })
         });
 
+        console.log('Store response status:', response.status);
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
+            console.error('Store error response:', errorData);
             throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
         }
 
         const result = await response.json();
+        console.log('Store successful response:', result);
 
         if (!result.success) {
             throw new Error(result.error || 'Unknown error from server');

@@ -4,10 +4,19 @@ import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { RightSidePanel } from "@/components/rightSidePanel";
+import ContactInformationSection from "@/components/profile/contactInformationSection";
+import ExperienceSection from "@/components/profile/experienceSection";
+import { useStructuredHistory } from "@/hooks/useStructuredHistory";
 
 export default function ProfilePage() {
+    console.log('=== ProfilePage render ===');
     const { user, loading } = useAuth();
     const router = useRouter();
+    const { data, isLoading } = useStructuredHistory();
+
+    console.log('Profile page - user:', user?.uid);
+    console.log('Profile page - data:', data);
+    console.log('Profile page - isLoading:', isLoading);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -23,17 +32,18 @@ export default function ProfilePage() {
         <div className="h-full flex">
             {/* Main content area - takes remaining space */}
             <div className="flex-1 pr-4">
-                {/* Large empty space for now - profile components will go here */}
-                <div className="h-full bg-muted/10 rounded-lg border-2 border-dashed border-muted-foreground/20">
-                    <div className="flex items-center justify-center h-full">
-                        <div className="text-center">
-                            <h2 className="text-2xl font-semibold text-muted-foreground mb-2">
-                                Profile Content Area
-                            </h2>
-                            <p className="text-muted-foreground">
-                                Profile components will be implemented here
-                            </p>
-                        </div>
+                <div className="p-4">
+                    {/* Profile sections */}
+                    <div className="space-y-0">
+                        <ContactInformationSection
+                            contactInfo={data.contactInformation}
+                            user={user}
+                            isLoading={isLoading}
+                        />
+                        <ExperienceSection
+                            jobHistory={data.jobHistory}
+                            isLoading={isLoading}
+                        />
                     </div>
                 </div>
             </div>
