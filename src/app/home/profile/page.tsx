@@ -39,6 +39,7 @@ export default function ProfilePage() {
                         <ExperienceSection
                             jobHistory={data.jobHistory}
                             isLoading={isLoading}
+                            onDataRefresh={refetch}
                         />
                     </div>
                 </div>
