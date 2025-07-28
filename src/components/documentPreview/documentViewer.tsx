@@ -11,16 +11,26 @@ interface DocumentViewerProps {
 
 export function DocumentViewer({ file }: DocumentViewerProps) {
     const getViewer = () => {
-        switch (file.type.toLowerCase()) {
+        const fileType = file.type.toLowerCase();
+        console.log('=== DocumentViewer ===');
+        console.log('File name:', file.name);
+        console.log('File type (original):', file.type);
+        console.log('File type (lowercase):', fileType);
+        
+        switch (fileType) {
             case 'pdf':
+                console.log('Using PdfViewer');
                 return <PdfViewer file={file} />;
             case 'txt':
             case 'md':
+                console.log('Using TextViewer');
                 return <TextViewer file={file} />;
             case 'docx':
             case 'doc':
+                console.log('Using DocxViewer');
                 return <DocxViewer file={file} />;
             default:
+                console.log('No suitable viewer found');
                 return (
                     <div className="w-full h-full flex items-center justify-center">
                         <div className="text-center p-4">
