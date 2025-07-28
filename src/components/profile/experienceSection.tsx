@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PencilIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
 
 interface JobHistoryItem {
     title: string;
@@ -26,11 +25,10 @@ interface ExperienceSectionProps {
 interface JobEntryProps {
     job: JobHistoryItem;
     showFullDescription?: boolean;
-    onEditJob?: (job: JobHistoryItem) => void;
 }
 
 // Component for individual job entry
-function JobEntry({ job, showFullDescription = false, onEditJob }: JobEntryProps) {
+function JobEntry({ job, showFullDescription = false }: JobEntryProps) {
     const [isExpanded, setIsExpanded] = useState(showFullDescription);
 
     const formatDateRange = () => {
@@ -56,14 +54,6 @@ function JobEntry({ job, showFullDescription = false, onEditJob }: JobEntryProps
     const getDisplayedAccomplishments = () => {
         if (isExpanded || showFullDescription) return job.accomplishments || [];
         return (job.accomplishments || []).slice(0, 2);
-    };
-
-    const handleEdit = () => {
-        if (onEditJob) {
-            onEditJob(job);
-        } else {
-            toast.info("Edit functionality coming soon!");
-        }
     };
 
     return (
@@ -97,19 +87,7 @@ function JobEntry({ job, showFullDescription = false, onEditJob }: JobEntryProps
                             )}
                         </div>
                     </div>
-
-                    {/* Edit button */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-muted"
-                        onClick={handleEdit}
-                    >
-                        <PencilIcon className="h-3 w-3" />
-                    </Button>
-                </div>
-
-                {/* Job description */}
+                </div>                {/* Job description */}
                 {job.jobDescription && (
                     <div className="text-sm text-foreground mt-3">
                         {getTruncatedDescription()}
@@ -159,15 +137,8 @@ export default function ExperienceSection({
     const [isAllExperiencesOpen, setIsAllExperiencesOpen] = useState(false);
 
     const handleEditSection = () => {
-        toast.info("Section edit functionality coming soon!");
-    };
-
-    const handleEditJob = (job: JobHistoryItem) => {
-        toast.info(`Edit job: ${job.title} at ${job.company}`);
-        // TODO: Open individual job edit modal
-    };
-
-    if (isLoading) {
+        setIsAllExperiencesOpen(true);
+    }; if (isLoading) {
         return (
             <Card className="border border-border p-4 mb-4">
                 <div className="animate-pulse">
@@ -230,7 +201,6 @@ export default function ExperienceSection({
                                     <JobEntry
                                         key={index}
                                         job={job}
-                                        onEditJob={handleEditJob}
                                     />
                                 ))}
                             </div>
@@ -267,7 +237,6 @@ export default function ExperienceSection({
                                 key={index}
                                 job={job}
                                 showFullDescription={true}
-                                onEditJob={handleEditJob}
                             />
                         ))}
                     </div>
