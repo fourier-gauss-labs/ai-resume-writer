@@ -42,7 +42,7 @@ export function DataOverwriteWarningModal({
                             You are about to parse <span className="font-semibold">{fileName}</span> and update your profile data.
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            <span className="font-semibold text-amber-600">Warning:</span> This will overwrite any manual changes you&apos;ve made to your profile information. 
+                            <span className="font-semibold text-amber-600">Warning:</span> This will overwrite any manual changes you&apos;ve made to your profile information.
                             The new document data will replace your current profile data.
                         </p>
                     </>
@@ -54,7 +54,7 @@ export function DataOverwriteWarningModal({
                             You are about to re-parse all your uploaded documents and refresh your profile data.
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            <span className="font-semibold text-amber-600">Warning:</span> This will overwrite any manual changes you&apos;ve made to your profile information. 
+                            <span className="font-semibold text-amber-600">Warning:</span> This will overwrite any manual changes you&apos;ve made to your profile information.
                             All profile data will be regenerated from your uploaded documents.
                         </p>
                     </>

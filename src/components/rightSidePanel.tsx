@@ -164,7 +164,7 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
             fileName: undefined,
             pendingAction: undefined,
         });
-        
+
         if (action) {
             await action();
         }
@@ -245,18 +245,18 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
     // Handle modal close and potentially trigger parsing
     const handleModalClose = async () => {
         setIsModalOpen(false);
-        
+
         if (!user) return;
-        
+
         // Refresh file list to see if any new files were uploaded
         try {
             const files = await getUserFiles(user.uid);
             const currentFileCount = uploadedFiles.length;
             const newFileCount = files.length;
-            
+
             // Update the file list
             setUploadedFiles(files);
-            
+
             // If files were uploaded, show parsing warning
             if (newFileCount > currentFileCount && files.length > 0) {
                 parseAfterUpload("new document");
