@@ -34,6 +34,7 @@ export default function ProfilePage() {
                             contactInfo={data.contactInformation}
                             user={user}
                             isLoading={isLoading}
+                            onDataRefresh={refetch}
                         />
                         <ExperienceSection
                             jobHistory={data.jobHistory}

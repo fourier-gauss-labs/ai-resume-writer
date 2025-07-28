@@ -16,7 +16,7 @@ export function DocumentViewer({ file }: DocumentViewerProps) {
         console.log('File name:', file.name);
         console.log('File type (original):', file.type);
         console.log('File type (lowercase):', fileType);
-        
+
         switch (fileType) {
             case 'pdf':
                 console.log('Using PdfViewer');
