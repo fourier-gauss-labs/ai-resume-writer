@@ -16,7 +16,11 @@ import { parseResumeToStructuredHistoryHttp, storeStructuredHistoryHttp } from "
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
 
-export function RightSidePanel() {
+interface RightSidePanelProps {
+    onDataRefresh?: () => Promise<void>;
+}
+
+export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -103,6 +107,11 @@ export function RightSidePanel() {
                     // Store the parsed data
                     await storeStructuredHistoryHttp(user.uid, structuredData);
                     toast.success("Documents parsed and profile updated!");
+
+                    // Refresh the profile data
+                    if (onDataRefresh) {
+                        await onDataRefresh();
+                    }
                 }
             } else {
                 toast.success("Files refreshed (no documents to parse)");

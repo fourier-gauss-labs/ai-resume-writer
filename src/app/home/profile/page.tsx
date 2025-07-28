@@ -9,14 +9,9 @@ import ExperienceSection from "@/components/profile/experienceSection";
 import { useStructuredHistory } from "@/hooks/useStructuredHistory";
 
 export default function ProfilePage() {
-    console.log('=== ProfilePage render ===');
     const { user, loading } = useAuth();
     const router = useRouter();
-    const { data, isLoading } = useStructuredHistory();
-
-    console.log('Profile page - user:', user?.uid);
-    console.log('Profile page - data:', data);
-    console.log('Profile page - isLoading:', isLoading);
+    const { data, isLoading, refetch } = useStructuredHistory();
 
     useEffect(() => {
         if (!loading && !user) {
@@ -49,7 +44,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Right Side Panel - fixed width */}
-            <RightSidePanel />
+            <RightSidePanel onDataRefresh={refetch} />
         </div>
     );
 }

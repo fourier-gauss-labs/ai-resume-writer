@@ -22,27 +22,39 @@ export async function parseResumeToStructuredHistoryHttp(userId: string, filePat
             ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/parseResumeToStructuredHistoryHttp'
             : 'https://us-central1-ai-resume-writer-46403.cloudfunctions.net/parseResumeToStructuredHistoryHttp';
 
+        console.log('=== parseResumeToStructuredHistoryHttp ===');
         console.log('Using function URL:', functionUrl);
         console.log('Request payload:', { userId, filePaths });
 
+        const requestBody = {
+            userId,
+            ...(filePaths && { filePaths })
+        };
+
+        console.log('Making fetch request...');
         const response = await fetch(functionUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                userId,
-                ...(filePaths && { filePaths })
-            })
+            body: JSON.stringify(requestBody)
         });
 
+        console.log('Response received:');
         console.log('Response status:', response.status);
         console.log('Response ok:', response.ok);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('Error response:', errorData);
-            throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
+            let errorData;
+            try {
+                errorData = await response.json();
+                console.error('Error response data:', errorData);
+            } catch (parseError) {
+                console.error('Failed to parse error response:', parseError);
+                errorData = { error: `HTTP ${response.status} ${response.statusText}` };
+            }
+            throw new Error(`Failed to parse resume: ${errorData.error || `HTTP ${response.status}`}`);
         }
 
         const result = await response.json();
@@ -54,7 +66,16 @@ export async function parseResumeToStructuredHistoryHttp(userId: string, filePat
 
         return result.data as StructuredHistory;
     } catch (error) {
-        console.error('Error calling parseResumeToStructuredHistoryHttp:', error);
+        console.error('=== parseResumeToStructuredHistoryHttp ERROR ===');
+        console.error('Error type:', error?.constructor?.name);
+        console.error('Error message:', error instanceof Error ? error.message : String(error));
+        console.error('Full error:', error);
+
+        // Check if it's a network error
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+            throw new Error('Failed to parse resume: Network error - unable to connect to the parsing service. Please check your internet connection and try again.');
+        }
+
         throw new Error(`Failed to parse resume: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }

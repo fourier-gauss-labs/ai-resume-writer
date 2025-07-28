@@ -1,5 +1,32 @@
 # Structured History Sections Planning
 
+This describes the requirements for a system that builds a LinkedIn-like profile based on documents and information provided by a user. The use cases include:
+
+1. **Narrative career journaling** (like your Resume Journaling.txt) - rich contextual stories about your career experiences
+2. **Plain contact information files** - simple lists of phone numbers and email addresses to update your contact details
+3. **Traditional resume documents** - PDFs and Word docs with standard formatting
+4. **Mixed content documents** - files that might combine multiple types of information
+
+The re-engineered system should be smart enough to:
+
+- **Detect content type** and apply appropriate parsing strategies
+- **Extract contact info** from plain text lists like your original phone/email file
+- **Mine narrative content** for career insights, accomplishments, and technical details
+- **Combine information** from multiple sources to build a comprehensive professional profile
+- **Preserve context** so the AI can generate targeted resume content for different opportunities
+
+For example, when it encounters a file that's just:
+```
+732-812-0367
+732-890-7780
+bill.mccann@gmail.com
+billfmccann@hotmail.com
+```
+
+It should recognize this as pure contact data and extract it accordingly, rather than expecting it to be embedded in a traditional resume format.
+
+This flexibility will make your AI Resume Writer much more powerful than typical resume parsers that only handle standardized formats. Users could feed it any career-related content - LinkedIn exports, performance reviews, project descriptions, even informal notes about their work - and the system would intelligently extract and organize the valuable information.
+
 ## High-Level Steps
 
 ### 1. Parse Unstructured Text into Structured Data

@@ -24,16 +24,9 @@ export default function ContactInformationSection({
     user,
     isLoading = false
 }: ContactInformationSectionProps) {
-    console.log('=== ContactInformationSection render ===');
-    console.log('contactInfo:', contactInfo);
-    console.log('user:', user);
-    console.log('isLoading:', isLoading);
-
     const handleEdit = () => {
         toast.info("Edit functionality coming soon!");
-    };
-
-    // Determine the name to display
+    };    // Determine the name to display
     const displayName = contactInfo?.fullName || user?.displayName || user?.email?.split('@')[0] || 'Name Not Available';
 
     if (isLoading) {
