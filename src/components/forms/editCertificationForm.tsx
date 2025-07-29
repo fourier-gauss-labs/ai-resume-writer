@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 interface CertificationItem {
     certName: string;
@@ -14,18 +15,25 @@ interface CertificationItem {
 }
 
 interface EditCertificationFormProps {
-    certification?: CertificationItem | null;
-    onSave: (certification: CertificationItem) => Promise<void>;
+    certification: CertificationItem | null;
+    onSave: (updatedCertification: CertificationItem) => Promise<void>;
     onCancel: () => void;
-    onDelete?: (certification: CertificationItem) => Promise<void>;
     isNew?: boolean;
 }
+
+const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+// Generate years from 1960 to current year + 5
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: currentYear - 1959 }, (_, i) => (currentYear + 5 - i).toString());
 
 export default function EditCertificationForm({
     certification,
     onSave,
     onCancel,
-    onDelete,
     isNew = false
 }: EditCertificationFormProps) {
     const [formData, setFormData] = useState<CertificationItem>({
@@ -34,196 +42,180 @@ export default function EditCertificationForm({
         issuedDate: { month: '', year: '' },
         credentialId: ''
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+
+    const [isSaving, setIsSaving] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (certification) {
             setFormData(certification);
-        } else {
-            setFormData({
-                certName: '',
-                issuer: '',
-                issuedDate: { month: '', year: '' },
-                credentialId: ''
-            });
         }
     }, [certification]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
 
-        try {
-            // Remove credentialId if it's empty
-            const dataToSave = {
-                ...formData,
-                credentialId: formData.credentialId?.trim() || undefined
-            };
-
-            await onSave(dataToSave);
-        } catch (error) {
-            console.error('Error saving certification:', error);
-        } finally {
-            setIsSubmitting(false);
+        if (!formData.certName.trim()) {
+            newErrors.certName = 'Certification name is required';
         }
+
+        if (!formData.issuer.trim()) {
+            newErrors.issuer = 'Issuer is required';
+        }
+
+        if (!formData.issuedDate.month) {
+            newErrors.issuedMonth = 'Issue month is required';
+        }
+
+        if (!formData.issuedDate.year) {
+            newErrors.issuedYear = 'Issue year is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
-    const handleDelete = async () => {
-        if (!certification || !onDelete) return;
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-        setIsDeleting(true);
+        if (!validateForm()) {
+            toast.error('Please fix the errors below');
+            return;
+        }
+
+        setIsSaving(true);
+
         try {
-            await onDelete(certification);
+            await onSave(formData);
+            toast.success(isNew ? 'Certification added successfully!' : 'Certification updated successfully!');
         } catch (error) {
-            console.error('Error deleting certification:', error);
+            console.error('Error saving certification:', error);
+            toast.error('Failed to save certification');
         } finally {
-            setIsDeleting(false);
+            setIsSaving(false);
         }
     };
 
     const handleInputChange = (field: keyof CertificationItem, value: string) => {
-        if (field === 'issuedDate') return; // Handle date separately
-
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
+        setFormData(prev => ({ ...prev, [field]: value }));
+        // Clear error when user starts typing
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: '' }));
+        }
     };
 
-    const handleDateChange = (field: 'month' | 'year', value: string) => {
+    const handleDateChange = (subField: 'month' | 'year', value: string) => {
         setFormData(prev => ({
             ...prev,
-            issuedDate: {
-                ...prev.issuedDate,
-                [field]: value
-            }
+            issuedDate: { ...prev.issuedDate, [subField]: value }
         }));
+        // Clear related errors
+        const errorKey = `issued${subField.charAt(0).toUpperCase() + subField.slice(1)}`;
+        if (errors[errorKey]) {
+            setErrors(prev => ({ ...prev, [errorKey]: '' }));
+        }
     };
-
-    const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-foreground">
-                    {isNew ? 'Add certification' : 'Edit certification'}
-                </h2>
-                {!isNew && onDelete && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                        <TrashIcon className="h-4 w-4" />
-                    </Button>
-                )}
+        <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Certification Name */}
+            <div className="space-y-2">
+                <Label htmlFor="certName">Certification Name *</Label>
+                <Input
+                    id="certName"
+                    value={formData.certName}
+                    onChange={(e) => handleInputChange('certName', e.target.value)}
+                    placeholder="e.g. AWS Certified Solutions Architect"
+                    className={errors.certName ? 'border-red-500' : ''}
+                />
+                {errors.certName && <p className="text-sm text-red-500">{errors.certName}</p>}
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Certification Name */}
-                <div className="space-y-2">
-                    <Label htmlFor="certName">
-                        Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                        id="certName"
-                        value={formData.certName}
-                        onChange={(e) => handleInputChange('certName', e.target.value)}
-                        placeholder="e.g., AWS Certified Solutions Architect"
-                        required
-                    />
-                </div>
+            {/* Issuer */}
+            <div className="space-y-2">
+                <Label htmlFor="issuer">Issuer *</Label>
+                <Input
+                    id="issuer"
+                    value={formData.issuer}
+                    onChange={(e) => handleInputChange('issuer', e.target.value)}
+                    placeholder="e.g. Amazon Web Services (AWS)"
+                    className={errors.issuer ? 'border-red-500' : ''}
+                />
+                {errors.issuer && <p className="text-sm text-red-500">{errors.issuer}</p>}
+            </div>
 
-                {/* Issuing Organization */}
-                <div className="space-y-2">
-                    <Label htmlFor="issuer">
-                        Issuing organization <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                        id="issuer"
-                        value={formData.issuer}
-                        onChange={(e) => handleInputChange('issuer', e.target.value)}
-                        placeholder="e.g., Amazon Web Services"
-                        required
-                    />
-                </div>
-
-                {/* Issue Date */}
-                <div className="space-y-2">
-                    <Label>
-                        Issue date <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="grid grid-cols-2 gap-3">
-                        <select
+            {/* Issue Date */}
+            <div className="space-y-2">
+                <Label>Issue Date *</Label>
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <Select
                             value={formData.issuedDate.month}
-                            onChange={(e) => handleDateChange('month', e.target.value)}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            required
+                            onValueChange={(value) => handleDateChange('month', value)}
                         >
-                            <option value="">Month</option>
-                            {months.map((month) => (
-                                <option key={month} value={month}>
-                                    {month}
-                                </option>
-                            ))}
-                        </select>
-                        <select
+                            <SelectTrigger className={errors.issuedMonth ? 'border-red-500' : ''}>
+                                <SelectValue placeholder="Month" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {months.map((month) => (
+                                    <SelectItem key={month} value={month}>
+                                        {month}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.issuedMonth && <p className="text-sm text-red-500 mt-1">{errors.issuedMonth}</p>}
+                    </div>
+                    <div>
+                        <Select
                             value={formData.issuedDate.year}
-                            onChange={(e) => handleDateChange('year', e.target.value)}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            required
+                            onValueChange={(value) => handleDateChange('year', value)}
                         >
-                            <option value="">Year</option>
-                            {years.map((year) => (
-                                <option key={year} value={year.toString()}>
-                                    {year}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectTrigger className={errors.issuedYear ? 'border-red-500' : ''}>
+                                <SelectValue placeholder="Year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {years.map((year) => (
+                                    <SelectItem key={year} value={year}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.issuedYear && <p className="text-sm text-red-500 mt-1">{errors.issuedYear}</p>}
                     </div>
                 </div>
+            </div>
 
-                {/* Credential ID */}
-                <div className="space-y-2">
-                    <Label htmlFor="credentialId">
-                        Credential ID
-                    </Label>
-                    <Input
-                        id="credentialId"
-                        value={formData.credentialId || ''}
-                        onChange={(e) => handleInputChange('credentialId', e.target.value)}
-                        placeholder="e.g., AWS-ASA-12345"
-                    />
-                </div>
+            {/* Credential ID */}
+            <div className="space-y-2">
+                <Label htmlFor="credentialId">Credential ID</Label>
+                <Input
+                    id="credentialId"
+                    value={formData.credentialId}
+                    onChange={(e) => handleInputChange('credentialId', e.target.value)}
+                    placeholder="e.g. AWS-ASA-123456 (optional)"
+                />
+            </div>
 
-                {/* Action Buttons */}
-                <div className="flex justify-end space-x-3 pt-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={isSubmitting || isDeleting}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting || isDeleting}
-                    >
-                        {isSubmitting ? 'Saving...' : 'Save'}
-                    </Button>
-                </div>
-            </form>
-        </div>
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4">
+                <Button
+                    type="submit"
+                    className="w-32 bg-blue-500 hover:bg-blue-600 text-white"
+                    disabled={isSaving}
+                >
+                    {isSaving ? 'Saving...' : 'Save'}
+                </Button>
+                <Button
+                    type="button"
+                    onClick={onCancel}
+                    className="w-32 bg-gray-500 hover:bg-gray-600 text-white"
+                    disabled={isSaving}
+                >
+                    Cancel
+                </Button>
+            </div>
+        </form>
     );
 }

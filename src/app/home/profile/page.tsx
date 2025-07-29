@@ -257,19 +257,34 @@ export default function ProfilePage() {
         try {
             console.log('Updating certification:', updatedCertification, 'Original:', originalCertification);
 
-            // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                certifications: prevData.certifications.map(cert =>
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: localData.certifications.map(cert =>
                     (cert.certName === originalCertification.certName &&
                         cert.issuer === originalCertification.issuer &&
                         cert.issuedDate.month === originalCertification.issuedDate.month &&
                         cert.issuedDate.year === originalCertification.issuedDate.year) ? updatedCertification : cert
                 )
-            }));
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Certification updated successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error updating certification:', error);
             toast.error('Failed to update certification');
@@ -282,14 +297,29 @@ export default function ProfilePage() {
         try {
             console.log('Adding certification:', newCertification);
 
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: [...localData.certifications, newCertification]
+            };
+
             // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                certifications: [...prevData.certifications, newCertification]
-            }));
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Certification added successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error adding certification:', error);
             toast.error('Failed to add certification');
