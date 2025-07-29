@@ -1,10 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus, PencilIcon, Trash2, Award } from 'lucide-react';
-// import EditCertificationModal from './editCertificationModal';
-// import { DeleteCertificationModal } from '../deleteCertificationModal';
+import { GenericDeleteModal } from '../genericDeleteModal';
 
 interface CertificationItem {
     certName: string;
@@ -111,45 +110,68 @@ export default function CertificationFullView({
     onBack,
     // onUpdateCertification,
     // onAddCertification,
-    // onDeleteCertification,
+    onDeleteCertification,
     isLoading = false
 }: CertificationFullViewProps) {
-    // TODO: Re-enable when modals are working
-    // const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    // const [selectedCertification, setSelectedCertification] = useState<CertificationItem | null>(null);
-    // const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    //     isOpen: boolean;
-    //     certification: CertificationItem | null;
-    //     isDeleting: boolean;
-    // }>({
-    //     isOpen: false,
-    //     certification: null,
-    //     isDeleting: false,
-    // });
+    const [deleteConfirmation, setDeleteConfirmation] = useState<{
+        isOpen: boolean;
+        certification: CertificationItem | null;
+        isDeleting: boolean;
+    }>({
+        isOpen: false,
+        certification: null,
+        isDeleting: false,
+    });
 
     const handleEditCertification = (certification: CertificationItem) => {
-        console.log('Edit certification clicked:', certification);
-        // TODO: Implement modal
-        // setSelectedCertification(certification);
-        // setIsEditModalOpen(true);
+        // TODO: Implement edit modal when ready
+        alert(`Edit certification: ${certification.certName}\n(Edit functionality coming soon)`);
     };
 
     const handleAddCertification = () => {
-        console.log('Add certification clicked');
-        // TODO: Implement modal
-        // setSelectedCertification(null);
-        // setIsAddModalOpen(true);
+        // TODO: Implement add modal when ready  
+        alert('Add certification functionality coming soon');
+    };
+
+    const handleDeleteCertification = async (certificationToDelete: CertificationItem) => {
+        if (onDeleteCertification) {
+            await onDeleteCertification(certificationToDelete);
+        }
     };
 
     const handleShowDeleteConfirmation = (certification: CertificationItem) => {
-        console.log('Delete certification clicked:', certification);
-        // TODO: Implement delete confirmation
-        // setDeleteConfirmation({
-        //     isOpen: true,
-        //     certification: certification,
-        //     isDeleting: false,
-        // });
+        setDeleteConfirmation({
+            isOpen: true,
+            certification: certification,
+            isDeleting: false,
+        });
+    };
+
+    const handleConfirmedDelete = async () => {
+        if (!deleteConfirmation.certification) return;
+
+        setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
+
+        try {
+            await handleDeleteCertification(deleteConfirmation.certification);
+            // Close the confirmation modal
+            setDeleteConfirmation({
+                isOpen: false,
+                certification: null,
+                isDeleting: false,
+            });
+        } catch (error) {
+            console.error("Error deleting certification:", error);
+            setDeleteConfirmation(prev => ({ ...prev, isDeleting: false }));
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteConfirmation({
+            isOpen: false,
+            certification: null,
+            isDeleting: false,
+        });
     };
 
     if (isLoading) {
@@ -257,32 +279,19 @@ export default function CertificationFullView({
                 )}
             </div>
 
-            {/* Edit Certification Modal */}
-            {/* <EditCertificationModal
-                isOpen={isEditModalOpen}
-                onClose={handleCloseEditModal}
-                certification={selectedCertification}
-                onSave={handleSaveCertification}
-                isNew={false}
-            /> */}
-
-            {/* Add Certification Modal */}
-            {/* <EditCertificationModal
-                isOpen={isAddModalOpen}
-                onClose={handleCloseAddModal}
-                certification={null}
-                onSave={handleAddNewCertification}
-                isNew={true}
-            /> */}
-
             {/* Delete Confirmation Modal */}
-            {/* <DeleteCertificationModal
+            <GenericDeleteModal
                 isOpen={deleteConfirmation.isOpen}
-                certification={deleteConfirmation.certification}
                 onConfirm={handleConfirmedDelete}
                 onCancel={handleDeleteCancel}
                 isDeleting={deleteConfirmation.isDeleting}
-            /> */}
+                title="Delete Certification"
+                message={
+                    deleteConfirmation.certification 
+                        ? `You have chosen to delete the ${deleteConfirmation.certification.certName} certification from ${deleteConfirmation.certification.issuer}. This cannot be undone. Do you wish to continue?`
+                        : ""
+                }
+            />
         </div>
     );
 }

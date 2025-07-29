@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { PencilIcon, ChevronDownIcon, ChevronUpIcon, Award } from 'lucide-react';
+import { PencilIcon, Award } from 'lucide-react';
 
 interface CertificationItem {
     certName: string;
@@ -67,11 +67,6 @@ export default function CertificationSection({
     isLoading = false,
     onShowAllCertifications
 }: CertificationSectionProps) {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    const toggleExpanded = () => {
-        setIsExpanded(!isExpanded);
-    };
 
     if (isLoading) {
         return (
@@ -114,8 +109,8 @@ export default function CertificationSection({
         return bMonth - aMonth;
     });
 
-    // Show first 3 certifications when collapsed, all when expanded
-    const displayedCertifications = isExpanded ? sortedCertifications : sortedCertifications.slice(0, 3);
+    // Show first 3 certifications only
+    const displayedCertifications = sortedCertifications.slice(0, 3);
     const hasMoreCertifications = sortedCertifications.length > 3;
 
     return (
@@ -130,6 +125,7 @@ export default function CertificationSection({
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        onClick={() => onShowAllCertifications && onShowAllCertifications()}
                     >
                         <PencilIcon className="h-4 w-4" />
                     </Button>
@@ -145,39 +141,15 @@ export default function CertificationSection({
                             ))}
                         </div>
 
-                        {/* Show all/collapse button */}
-                        {hasMoreCertifications && (
-                            <div className="mt-4 pt-4 border-t border-border">
-                                <Button
-                                    variant="ghost"
-                                    onClick={toggleExpanded}
-                                    className="text-sm text-muted-foreground hover:text-foreground"
-                                >
-                                    {isExpanded ? (
-                                        <>
-                                            <ChevronUpIcon className="h-4 w-4 mr-2" />
-                                            Show less
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ChevronDownIcon className="h-4 w-4 mr-2" />
-                                            Show all {sortedCertifications.length} certifications
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        )}
-
-                        {/* Show all certifications link (when collapsed and has more than 3) */}
-                        {!isExpanded && hasMoreCertifications && onShowAllCertifications && (
-                            <div className="mt-4 pt-4 border-t border-border">
-                                <Button
-                                    variant="ghost"
+                        {/* Show all certifications link (when has more than 3) */}
+                        {hasMoreCertifications && onShowAllCertifications && (
+                            <div className="pt-3 border-t border-border mt-3">
+                                <button
                                     onClick={onShowAllCertifications}
-                                    className="text-sm text-blue-600 hover:text-blue-800"
+                                    className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center"
                                 >
-                                    Show all certifications →
-                                </Button>
+                                    Show all {sortedCertifications.length} certification{sortedCertifications.length !== 1 ? 's' : ''} →
+                                </button>
                             </div>
                         )}
                     </>

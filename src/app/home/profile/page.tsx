@@ -347,7 +347,7 @@ export default function ProfilePage() {
                 {currentView === 'main' ? (
                     <div className="p-4">
                         {/* Profile sections */}
-                        <div className="space-y-0">
+                        <div className="space-y-4">
                             <ContactInformationSection
                                 contactInfo={data.contactInformation}
                                 user={user}
