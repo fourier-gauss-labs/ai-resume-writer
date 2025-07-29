@@ -83,22 +83,36 @@ export default function ProfilePage() {
 
     const handleUpdateJob = async (updatedJob: JobHistoryItem, originalJob: JobHistoryItem) => {
         try {
-            // TODO: Implement API call to update job
             console.log('Updating job:', updatedJob, 'Original:', originalJob);
 
-            // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                jobHistory: prevData.jobHistory.map(job =>
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                jobHistory: localData.jobHistory.map(job =>
                     (job.title === originalJob.title &&
                         job.company === originalJob.company &&
                         job.startDate.month === originalJob.startDate.month &&
                         job.startDate.year === originalJob.startDate.year) ? updatedJob : job
                 )
-            }));
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Experience updated successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error updating job:', error);
             toast.error('Failed to update experience');
@@ -109,17 +123,31 @@ export default function ProfilePage() {
 
     const handleAddJob = async (newJob: JobHistoryItem) => {
         try {
-            // TODO: Implement API call to add job
             console.log('Adding job:', newJob);
 
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                jobHistory: [...localData.jobHistory, newJob]
+            };
+
             // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                jobHistory: [...prevData.jobHistory, newJob]
-            }));
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Experience added successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error adding job:', error);
             toast.error('Failed to add experience');
@@ -170,22 +198,36 @@ export default function ProfilePage() {
 
     const handleUpdateEducation = async (updatedEducation: EducationItem, originalEducation: EducationItem) => {
         try {
-            // TODO: Implement API call to update education
             console.log('Updating education:', updatedEducation, 'Original:', originalEducation);
 
-            // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                education: prevData.education.map(edu =>
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                education: localData.education.map(edu =>
                     (edu.school === originalEducation.school &&
                         edu.degree === originalEducation.degree &&
                         edu.startDate.month === originalEducation.startDate.month &&
                         edu.startDate.year === originalEducation.startDate.year) ? updatedEducation : edu
                 )
-            }));
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Education updated successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error updating education:', error);
             toast.error('Failed to update education');
@@ -196,17 +238,31 @@ export default function ProfilePage() {
 
     const handleAddEducation = async (newEducation: EducationItem) => {
         try {
-            // TODO: Implement API call to add education
             console.log('Adding education:', newEducation);
 
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                education: [...localData.education, newEducation]
+            };
+
             // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                education: [...prevData.education, newEducation]
-            }));
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Education added successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error adding education:', error);
             toast.error('Failed to add education');
