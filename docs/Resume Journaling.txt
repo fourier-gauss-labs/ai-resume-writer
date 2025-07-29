@@ -1,0 +1,322 @@
+Resume Journaling
+
+Jobs to Journal
+	Adjunct Professor, NJIT
+	Director of Engineering, Glidian
+	Principal, Fourier Gauss Labs
+	Director of Engineering, PowerInbox
+	Head of Engineering, Avlino
+	CTO, AlignCare
+	VP of Technology, TriZetto
+	
+
+Adjunct Professor, NJIT
+
+	I started teaching in the Fall Semester of 2021. It was my son Joe who hooked me up with the university. Joe had often heard how I wanted to spend the end of my career in academia. He was also a graduate student and highly respected instructor at NJIT. He name dropped me in a conversation with the adjunct coordinator and I was given a chance to teach with barely any interviewing. 
+	
+	Funny enough, I was originally slated to teach CS 101 which is a highly structured course and the place where most CS majors start. I had a lengthy conversation with the course coordinator and must have said some things that he did not like because the department passed up on me that semester. But with COVID, many adjunct professors stopped teaching and the school was desperate for instructors.
+	
+	My first class was CS 490 taught. Because I was an "unknown" professor, the university assigned me to a class of Rutgers students. For the project I broke the class into groups of three and assigned them a personal news app. The app required a web architecture with a RESTful API and a batch data pipeline. The teams chose their own tech-stack.
+	
+	Teams that chose PHP could not break out of the server-side model. They were not able to build a RESTful API. In general, the students did not understand the notion of a data pipeline. Instead of collecting articles into a database they attempted real-queries. They also wrestled with the API, and had a tendency to connect to the database from the client instead of the server.
+	
+	I had an placed an emphasis on starting careers. That included ask-me-anything sessions with Sterling Brown and Joey. My evaluations were excellent and the students invited me to present the Rutgers computer science club.
+	
+	The following semester I was asked to teach Software Testing and Quality Assurance. QA has never been an area of expertise for me, but I did it anyway. I never got my hands on the text book, so that made creating course material challenging. So I borrowed heavily from CS490 including the news feed project and AMAs. My AMAs were given by Sterling and Lindsey Lonergan. Again my evaluations were excellent.
+	
+	In Fall of 2022 I returned to teaching CS 490. This time I was given a class of NJIT students. I had decided that I could make the project more significant by having larger teams. So I broken the class into three groups of twelve or thirteen instead of the reverse. I also changed the project to a task and time planning app. The project suffered though, because It was not very well defined. Still, my evaluations were excellent.
+	
+	This time, instead of letting the class choose their own tech-stack, I directed them to use RedwoodJS. Redwood is one of many JavaScript frameworks that will never truly go mainstream but it has the advantage of being a complete stack. It comes with React, Jest, Storybook, and GraphQL built-in. It even comes with it's own RDBMS database.
+	
+	Discord, JavaScript, React, RDBMS, RedwoodJS, Prisma, Jest, GraphQL
+	
+VP of Technology, TriZetto
+
+	Principal, Product Architect 
+	January 2012 - June 2013 (1 year 6 months) 
+	Union, NJ 
+	
+	Responsible for the product architecture of TriZetto's Medicare software and Topaz initiative. Champion of Software as a Service and Zero Downtime Upgrades on these product lines. Working within the TriZetto architecture team to evangelize the transformation of our products to a state-of-the-art healthcare platform
+
+	Vice President of Software Engineering 
+	June 2010 - December 2011 (1 year 7 months) 
+	Union, NJ 
+	
+	Managed product development for Trizetto's Medicare software. As Product Champion I oversaw the complete software development process. During this time I managed the alignment of Plan Data Management with TriZetto. These changes included reorganizing teams, relocating the office, and establishing iterative development process.
+
+	Vice President of Technology 
+	January 2008 - May 2010 (2 years 5 months) 
+	New York, NY 
+	
+	Lead the software development, quality assurance, and technical support teams for PDM. Developed and implemented an architectural framework for the Medicare product set. Established technical service team to accommodate special customer needs. Implemented agile development for the Medicare software. Established offshore development team.
+	
+	Director of Technology 
+	June 2005 - December 2007 (2 years 7 months) 
+	New York, NY 
+	
+	Managed software development and cloud infrastructure for Plan Data Management. Developed and launched four products within the first twelve months in support of Medicare Part D. Built a highly motivated team while reducing dependency on outside consultants. In this position I managed  Page 3 of 7    the development and delivery of four products in the first six months. I also established and managed our hosted software business
+
+	This journey started with a small company, Plan Data Management. I had interviewed for PDM's Head of Technology previously, and kept in touch with Stephen Jackson, the founder and CEO. Eventually he hired me to run their technology.
+	
+	My first challenge was to introduce a series of new products. PDM had a software platform that combined with in-house services provided data management for Medicare Advantage Plans. When I joined they have individual software product for …
+	
+		○ Financial reconciliation (Part C)
+		○ Medicare status correction
+		○ RAPS submission
+		○ HCC optimatization
+	
+	I needed to introduce two new products …
+	
+		○ Medicare enrollment
+		○ Financial reconciliation (Part D)
+	
+	Plan Data Management's array of software were built by different people using different styles of coding. The bulk of their code base was supplied by a consulting team from DataRite. DataRite started the Medicare enrollment software using C# and ASP.NET. It was a server side rendered web app with a SQL Server backend. All of PDM's products relied very heavily on SQL Server stored procedures. 
+	
+	My first accomplishment was getting the enrollment product introduced. The first version was riddled with bugs, most of which were embedded within the software's matching algorithm that DataRite had constructed with T-SQL. The logic for the algorithm was tightly controlled by the product manager, who could not conceptualize the logic for clean code.
+	
+	I architected a web based platform that would drive the entire suite of PDM software. It took several years to convert the existing software to the platform. The Medicare status correction software was never converted, and ran as a Visual Basic 6 client-server application long after Microsoft stopped supporting VB6.
+	
+	Along the way I wrote a job submission system for offline processing of workloads. Prior to the job system all PDM workloads were run synchronously from options in the UX. The job system allowed for workflows described with XML that could run a series of steps that would consume or produce files. The job platform was c# software implemented as a Windows console CLI.
+	
+	In addition to creating the web platform, I also moved PDM from an on-premise solution to a Software as a Service solution. This too took many months to complete, and even when done PDM's offering was a hybrid rather than pure SaaS. This was prior to cloud offerings, so our platform was hosted in a co-location datacenter on bare-iron that we managed ourselves.
+	
+	I started at PDM with two full-time junior developers and three DataRite consultants. Over the next seven years I eliminated our dependency on DataRite, recruited a team of twenty developers, established a Quality Assurance team, and integrated data services into our technology group. The team grew from a modest two developers to a department of fifty people.
+	
+	C#, .Net, RDBMS, SQL Server, Windows Server, ASP.NET, HTML, css, JavaScript
+	
+CTO, AlignCare
+	
+	July 2013 - August 2017 (4 years 2 months) 
+	
+	As CTO for a cloud-based healthcare analytics firm, implemented the Prescience Rx healthcare analytics platform on the Microsoft Azure cloud. Architected the solution using HDInsight (Hadoop) big data platform and micro  Page 2 of 7    services. Innovator of healthcare visualizations representing prescription data in an easy-to-find format. Created patent-pending technology for health analytics
+
+	I left TriZetto with a six month severance package. I used this to join and co-found the Start-up that Stephen Jackson and Manon Ruben were spinning up. My role was the new company's Chief Technology Officer and tech employee number one. We did not have funds to hire additional help, so for over six months I built out the platform myself.
+	
+	The company's mission was to analyze Rx (prescription) data on behalf of our customers and provide an indication of the healthiness of their member population. Our customers were healthcare payers (insurance companies). We invented three measures for this purpose. These were …
+	
+		○ Polypharmacy. A risk classification based on the number of prescriptions an individual is taking.
+		○ Polyprescriber. A risk classification based on the number of physicians prescribing drugs to individuals.
+		○ Therapeutic Complexity. A risk classification based on the number of conditions being treated.
+	
+	I architected the platform using Hadoop and micro-services. In hindsight, Hadoop wasn't necessary as our data volumes did not warrant it. 
+	
+	Data was received from our customers on a monthly schedule. The data was delivered in .csv text files in a proprietary format. Our customers rarely formatted their data properly so data cleaning was typically the first step. Cleaning was accomplished manually and although I wrote several scripts to automate the cleaning task, the scripts were never perfect.
+	
+	Once the data was processed by the Hadoop data pipeline, it was published to a staging RDBMS. We used SSIS for this. Another service pulled the data from the database and loaded it into an Elastic Search repository. The UX was an AngularJS dashboard with visualizations from Netcharts all pulling from the Elastic Search database.
+	
+	In addition to our three core metrics, we also computed data and showed visualizations for individual member drug compliance.
+	
+	After about six months, I was able to bring on Umais as our first employee. Later I also hired Steve Attwell. Both of them were colleagues from PDM/TriZetto. Umais had contacts offshore in Pakistan, so we hire two of them to build out the UX. 
+	
+	C#, Hadoop, Map-Reduce, HDInsight, AngularJS, NetCharts, JavaScript, Azure, Azure VM, SQL Server, SSIS, Elastic Search
+	
+Head of Engineering, Avlino
+
+	August 2017 - October 2018 (1 year 3 months) 
+	Holmdel, NJ 
+	
+	Delivered the Alenza Platform as Software as a Service (SaaS) increasing client’s market. Established Natural Language Processing models to compute marketing data from social media and web comments with Python, Spark and Tensorflow. Created pipeline architecture to improve performance of the data pipeline by a factor of four. Provided hands-on, front-end development on AngularJS and PowerBI.
+
+	Avlino was a company struggling to find a way to market its' expertise with Hadoop. They brought me in as a hands-on manager of the engineer team. That team was comprised of three developers. We were working on Avlino's Alenza product which was an analytics platform that provided sentiment analysis for our clients.
+	
+	While there, we were also engaged in a consulting engagement for converting a database from Vertica and Oracle to Hadoop. Two of my three team members were assigned to that engagement. Ultimately, the company did not want to be in the consulting business, and not having a product to offer, we withdrew from the project.
+	
+	The Alenza product consisted of a data-pipeline and dashboard. The data-pipeline was a multi-step Python workflow orchestrated with Apache AirFlow. The pipeline consumed data from social media APIs, namely Facebook and Twitter then combined them into a corpus of text that was analyzed with NLTK and Word2vec. We also had crude services for spellchecking and synonym look-up.
+	
+	The pipeline was terribly slow, and that was compounded by API throttling and a single thread architecture. I tackle this problem by redesigning the pipeline into a muti-threaded architecture. At the end of the pipeline, the data was publish to PowerBI.
+	
+	The PowerBI dashboards were custom built for every client making the deployment process tedious. This problem was never solved.
+	
+	During my time at Avlino, Facebook ran into controversy over misuse of its' data. The issue caused Facebook to greatly restrict the information available through their public API. That, in turn, impacted the quality of Alenza's analytics. We addressed that problem by building a web crawler that gathered ratings and comments posted on web sites about our customers. The web crawler scanned pages for text that was added to the corpus.
+	
+	Many sites use single page apps. The SPAs made crawling complicated because we could not simply scan the HTML for links and text. For sites using SPAs we needed to write a robot to page through ratings. The robots were slow and always at risk of being blocked. To prevent getting blocked, we would scan for comments in batches of pages, typically one hundred at a time.
+	
+	Processing in batches introduced its' own set of problems, namely being able to pick-up were we left off. We also needed to identify duplicate comments.
+	
+	Avlino was the wild west of development when I arrived. And while I established an Agile SDLC we were constrained by a couple of issues. First, my resources were frequently pulled off Alenza to work on other initiatives. Second, the development team was very poor at estimating; primarily because they had a difficult time anticipating problems.
+	
+	I help us hire a head of data science and a director for our shipping project.  I also hired a UX developer and a DBA. But while the team was growing, we were shifted more of our resources to the shipping project.
+	
+	We had a couple of offshore partners. The first team built our AngularJS frontend. We eventually ended their contract and I took over that work personally. We have a second team to work on the web crawler.
+
+	Python, JavaScript, Java, AirFlow, Hadoop, Spark, RDBMS, SQL Server, Azure, CentOS, Word2Vec, TensorFlow, NLTK, PowerBI, Teams
+
+Director of Engineering, PowerInbox
+	
+	October 2018 - October 2019 (1 year 1 month) 
+	New York, New York 
+	
+	As Director of Engineering for an on-line advertising platform company serving the email market, organized four distinct development teams into a single department working on a common roadmap. Delivered back-end design and development of an Azure hosted ad server using C# and .Net Core. Architected a data pipeline that processed 75 teraby
+
+	I joined PowerInbox as Director of Engineering for the data science team. Our team was responsible for building the ML models that selected ads for placement in email. The ads were placed in real-time as the email was read, and new ads would be placed if the page was refreshed or the email reread. Our team had four developers and a data analyst. The platform consisted of a Scala engine for selecting ads and a Python data pipeline for training models.
+	
+	The platform was run on AWS and supported by Kinesis and Athena. The platform loaded all potential ad placement combinations into Redis, but we were bumping up against the upper limits of Redis. We decided to rearchitect the engine on a different backend and chose AeroSpike (over DynamoDB).
+	
+	I eventually was given responsibility for the entire engineer team, which added the ad server and UX teams. I also had responsibility for the QA team. I organized engineering into four teams … Revenue Optimization, Ad Server, API, and Portal. Each team had a team lead and two or three additional developers. QA served all the teams.
+	
+	The greatest challenges at PowerInbox were related to personnel. The staff generally did not like each other. One individual was prone to having temper-tantrums. Another had a consistent chip on his shoulder. Establishing a responsive SDLC was near impossible because the company architect refused to support Agile process (he preferred IDesign).
+	
+	The company was highly data driven and relied on analytics. They used Splunk to provide the analytics, but Splunk was not the right tool for that job. We can cost, scalability, and accuracy issues with Splunk. Our notion was to architect the analytics off Splunk and we were looking at BI alternatives.
+
+	Python, Scala, AWS, Machine Learning, XG Boost, AWS Athena, AWS Kinesis, Redis, Slack
+
+Principal, Fourier Gauss Labs
+
+	January 2020 - Present
+	
+	Building technology for the purpose of creating prototypes of new ideas. Fourier Gauss Labs helps entrepreneurs build their core technology, establish best practices, and hire their engineering team. 
+
+http://www.fouriergauss.com 
+
+Companies assisted include:
+	
+	- Vbrato, LLC, Start-up of a music collaboration platform, https://vbrato.com
+	- RPM, Inc Fortune 500 manufacturer of industrial products, Consultant
+	- The PHAGE Company, Technology Advisor, https://phageco.com/
+	- Pillsmart, Software Architect, https://pillsmart.org
+	- mePrism, Technology Advisor, https://meprism.com/
+	- Trellis, Technology Advisor, https://trellisconnect.com
+
+	Fourier Gauss Labs is an LLC I created to grab freelance jobs after leaving PowerInbox. I spent a year operating under Fourier Gauss full time. Then the follow year I joined RGP and was assigned to a contract at RPM, Inc. I throw my RGP work under Fourier Gauss because it was contract work; RGP was the contractor and I was a sub-contractor.
+	
+	In the first year at Fourier Gauss I provided technology and advice for Phage, Trellis, MePrism, and PillSmart. Phage never really got off the ground. The founder did not have a cohesive vision for the product and there was little to use a blueprint to get started. I did a short project for Trellis and then started the interview process for a full time position. I withdrew once I learned the nature of their business model. I did not project management and data pipeline work for MePrism, but they have large non-technical issue to solve before they can gain traction. 
+	
+	I started writing an app for the PillSmart device, the app used React-native with a Firestore backend. PillSmart has since rebranded to Levl and has abandoned the notion of a mobile device.
+	
+	At RPM I was part of a team working on a pricing optimization and estimator for RPM. The platform was built on top of a consultant's tech framework and consisted of a T-SQL pipeline and Vue dashboard. I was primarily responsible for the Vue frontend. The project was an AWS to Azure migration. Much of the challenges of the migration revolved around deployment onto a Kubernetes infrastructure. On AWS, the solution relied on Rancher for orchestration, but that option was not available to us on Azure.
+	
+	The project at RPM suffered from a lack of on-the-ground leadership, so I took it upon myself to see it through. That included establishing Kanban boards and setting up source code management. I wanted to put an Agile SDLC in place, but RPM simply did not operate as a development shop. 
+
+	Vue, JavaScript, React, Firebase, Firestore, Google Cloud Platform, Sequelize, Teams, Azure DevOps, Jenkins
+
+Director of Engineering, Glidian
+
+	September 2021 - January 2023 (1 year 5 months) 
+	
+	Glidian integrates directly with virtually every payor to simplify one of the most broken processes in healthcare: Prior Authorizations. Prior authorizations cause dangerous delays in patient care, produce a significant administrative burden on healthcare professionals, and can lead to extensive losses in revenue. We are on a mission to enhance healthcare delivery for providers and patients by integrating with payors for a streamlined, painless care experience.
+
+	I joined Glidian to help them expand their development team and get more efficiency from their engineers. I joined a team with four developers, but one of those (Solomon) was more of a technical architect. And a fifth developer (Benj) had just been moved to a new role leading Product Management.
+	
+	I expected to join a team that was chaotics, much like Avlino and PowerInbox had been, but Glidian had well established processes. Their Agile SDLC was the best that I have seen. So instead of implementing process, my challenges were two-fold: hire developers and increase automation.
+	
+	Automation, in this case, is electronically processing medical prior authorizations. Glidian had started the company with a unified prior-auth portal that was backed by service reps performing the work on behalf of their customers. The initial attempts at automation were bots in Puppeteer. They later moved on to EDI 278/279 transactions.
+	
+	The challenge was few health plans supported EDI for prior-auths, so Glidian was forced to use third party clearing houses. We had partnerships with Optum (for UHC), Availity, and AIM (for Blues). Each of these came with their own set of challenges. The automation story was compounded by a lack of integration with our clients. We had a crude .csv integration, and worked throughout 2022 on HL7.
+	
+	Glidian was a fairly easy company to recruit talent. Despite being a start-up, we had advantages in company culture, technology stack, and purpose of social good (that last one was actually a facade). Within a couple of months I was able to expand to eight developers and two QA engineers. I organized them into portal and platform teams. Our velocity skyrocketed.
+	
+	I personally dove into our HL7 integration. I decided to use a third party solution instead of building the entire integration from scratch. I chose QIE by Qvera. I also personally setup our reporting database using MySQL replication. And I managed our SOC 2 audit.
+
+	EDI, HL7, React, NodeJS, Sequelize, MySQL, RDBMS, SOC 2, Oauth, Slack
+	
+Vbrato, LLC
+Head of Technology via Fourier Gauss Labs
+
+	April 2023 - Present
+
+	After leaving Glidian, and on the recommendation of a colleague there, I met with the founders of Vbrato. Vbrato is a start-up which at that time was nothing more than an idea. After meeting with the founders, I wrote up a proposal and project plan for the implementation of their idea. They hired me as a contractor Head of Technology to see the project through. 
+	
+	Vbrato's idea is a collaboration platform for music artists and songwriters. The platform provides a means form artists to find other artists to collaborate on their music. The collaboration aspect works much like Fivver or Upwork where a member will post a project for others to bid on the work. There are also social media and messaging features that result in a platform that is a mash-up of Fivver, Slack, and Facebook.
+	
+	To get the project started, I requested that the founders hire designers to provide a UX for our app. We had initially estimated the app to have about 24 screens. The final design, however, had over one hundred thirty screens. So right from the start the scope of the project was much larger and more complex than the original proposal.
+	
+	The founders wanted the app to released on mobile first, so I made the decision to build with React Native. I was hopeful that there would be overlap and sharing between the mobile app and the eventual web app. I learned through this process that there is actually very little in common between React and React Native other than syntax of the client-side code.
+	
+	For the backend, I decided to use AWS serverless architecture with AppSync (GraphQL). The system architecture then was based on micro-services and serverless computing. The micro-services provided the APIs for the frontend UX. I also designed and built two batch data pipelines to collect and load our databases.
+	
+	The first data-pipeline was build with python, Lambda, and AWS Step Functions. It collected data from SoundCharts. SoundCharts is a data aggregator for music artists. Through SoundCharts we gathered metrics from Spotify, Deezer, Instagram, Twitter, Facebook, YouTube, and TikTok.
+	
+	The second pipeline compute recommendations. The recommendation are people that would be best fit for collaborations. The pipeline uses the Euclidean distances between multi-dimensional vectors to make recommendations. The shorter the distance, the better the match. This recommendation engine is the basis for a Vbrato patent.
+	
+	After nearly two years of development, we launched the app on Apple's iOS App Store. We will launch on Google Play Store soon.
+	
+	
+	AWS, Lambda, CloudFormation, GraphQL, AppSync, Python, MySQL, React, React Native, Oauth, Stripe
+	
+Eyeweb, Inc Director of Technology 
+
+	August 2004 - June 2005 (11 months) 
+	New York, NY 
+	
+	Managed IT staff for Eyeweb including all software development, quality assurance, and network administration. Technical leader in all strategic relationships with industry partners and customers. Responsible for entire IT budget; cut expenses while driving development of new products.
+	
+	Visual Basic
+
+Elite Technology Partners Founder and CEO 
+
+	May 2002 - July 2004 (2 years 3 months) 
+	Old Bridge, NJ 
+	
+	Formed company to market an automated electronic trading system. Responsible for technical and business leadership. Architected equity and mutual fund trading systems
+
+	CashPoint, Inc CTO, consultant 
+	June 2003 - January 2004 (8 months) 
+	New York, NY and Birmingham, 
+	
+	A Leader of software development and infrastructure for bill payment firms. Helped establish software development practices. Built a talented and motivated team.
+	
+	C++, C#, Visual SourceSafe
+
+Blackwood Trading, Inc Director of Software Engineering 
+
+	March 2001 - April 2002 (1 year 2 months) 
+	
+	Full accountability for all aspects of software product development, including assessment of market needs and design of products with key competitive advantages; software compliance with SEC, NASD, and regulatory guidelines; product technology, architecture, design and delivery; recruiting / selection, team-building, and coordinating 19-member software development and QA team; budget management / cost reduction; and vendor management. Actively involved with business development and prospective clients, consisting of institutional buyers, money managers, American Stock Exchange, and broker dealers
+	
+	Windows NT Server, Windows 2000, C++, Windows MFC, Visual SourceSafe
+
+DoubleClick, Inc Director of Project Management 
+
+	June 2000 - March 2001 (10 months) 
+	
+	Managed a team of six (6) Project Managers responsible for planning and implementing new technology solutions and managing enterprise-level projects. Organized and effectively turned-around Dart for Publishers product. Accountable for software development lifecycle, design and architecture decisions for wide array of technologies and platforms. Trimmed group and turned around group into very productive, cohesive team
+	
+	Microsoft Project
+
+Information Builders, Manager of Product Management January 
+
+	2000 - May 2000 (5 months) New York, NY Leader of the Product Management team for a commercial business intelligence suite. Managed development and delivery of requirement. Responsible for the product roadmap
+
+	Manager of ISO 9000 Process 
+	September 1998 - December 1999 (1 year 4 months) 
+	New York, NY 
+	
+	Coordinated the implementation and certification of ISO 9000 processes. Deployed a documentation library to support ISO 9000 artifacts. Managed all aspects of the process to successful certification on our first audit
+
+	Technical Product Manager 
+	August 1997 - August 1998 (1 year 1 month) 
+	New York, NY Responsible for the delivery of a new version of a commercial business intelligence suite. Managed all aspects of the system development lifecycle for the software. Oversaw documentation and localization projects
+
+	Project Manager 
+	August 1996 - July 1997 (1 year) 
+	New York, NY 
+	
+	Responsible for delivery commercial software product. Managed requirements and tasks for large quality and engineering teams
+
+	Senior Consultant 
+	June 1994 - July 1996 (2 years 2 months) 
+	Troy, MI  
+	
+	Advised fortune 500 firms on use of data and business intelligence. Designed and deployed business intelligence systems for manufacturing processes.
+	
+	MVS, AS400, FOCUS, Oracle, Sybase, ISO-9000
+
+Computer TaskForce Founder and CEO 
+
+	August 1987 - May 1994 (6 years 10 months) 
+	Southfield, MI 
+	
+	Founded custom software development and PC computer training firm in response to tax law changes affecting contract technical workers. Performed multiple roles for the company, including business development, account management, strategic planning, business management, while also serving as revenue-producing software developer, producing code for mainframe and Unix platforms.
+
+	Assisted Ameritech with technical challenges caused by divestiture of AT&T
+	
+	Pascal, SAS, PL/1, C, DB-II, DB-III
+
+Buick Motor Division Programmer Analyst 
+
+	June 1981 - January 1985 (3 years 8 months) 
+	Flint, MI 
+	
+	Developer and System Analyst. Assumed technical responsibility for Buick's sample system tracking quality of parts from suppliers. Used PL/1 to create a prototype engine explosion system. The system identified the parts that comprised the engines in Buick vehicles.
+	
+	PL/1, MVS, JCL, COBOL, IMS DB, IMS DB/DC, MFS, ISPF, TSO

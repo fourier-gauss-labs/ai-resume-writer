@@ -16,6 +16,10 @@ export function DocumentPreviewModal({
     onClose,
     file
 }: DocumentPreviewModalProps) {
+    console.log('=== DocumentPreviewModal ===');
+    console.log('isOpen:', isOpen);
+    console.log('file:', file);
+
     if (!file) return null;
 
     return (

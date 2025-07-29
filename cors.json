@@ -1,7 +1,9 @@
 [
     {
         "origin": [
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "https://ai-resume-writer-46403.web.app"
         ],
         "method": [
             "GET",

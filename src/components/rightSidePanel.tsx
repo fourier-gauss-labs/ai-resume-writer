@@ -10,13 +10,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import BackgroundForm from "@/components/forms/backgroundForm";
 import { FileCard } from "@/components/fileCard";
 import { DeleteConfirmationModal } from "@/components/deleteConfirmationModal";
+import { DataOverwriteWarningModal } from "@/components/dataOverwriteWarningModal";
 import { DocumentPreviewModal } from "@/components/documentPreview";
 import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
 import { parseResumeToStructuredHistoryHttp, storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
 
-export function RightSidePanel() {
+interface RightSidePanelProps {
+    onDataRefresh?: () => Promise<void>;
+}
+
+export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +41,17 @@ export function RightSidePanel() {
     }>({
         isOpen: false,
         file: null,
+    });
+    const [warningModal, setWarningModal] = useState<{
+        isOpen: boolean;
+        type: 'upload-and-parse' | 'refresh-parsing';
+        fileName?: string;
+        pendingAction?: () => Promise<void>;
+    }>({
+        isOpen: false,
+        type: 'refresh-parsing',
+        fileName: undefined,
+        pendingAction: undefined,
     });
     const { user } = useAuth();
 
@@ -68,8 +84,8 @@ export function RightSidePanel() {
         loadFiles();
     }, [user]);
 
-    // Function to refresh file list and parse documents
-    const refreshFiles = async () => {
+    // Function to actually perform the parsing (without warning)
+    const performParsing = async (triggerRefresh: boolean = true) => {
         if (!user) return;
 
         try {
@@ -103,6 +119,11 @@ export function RightSidePanel() {
                     // Store the parsed data
                     await storeStructuredHistoryHttp(user.uid, structuredData);
                     toast.success("Documents parsed and profile updated!");
+
+                    // Refresh the profile data
+                    if (triggerRefresh && onDataRefresh) {
+                        await onDataRefresh();
+                    }
                 }
             } else {
                 toast.success("Files refreshed (no documents to parse)");
@@ -113,6 +134,50 @@ export function RightSidePanel() {
         } finally {
             setIsParsing(false);
         }
+    };
+
+    // Function to refresh file list and parse documents (shows warning first)
+    const refreshFiles = async () => {
+        setWarningModal({
+            isOpen: true,
+            type: 'refresh-parsing',
+            pendingAction: () => performParsing(true),
+        });
+    };
+
+    // Function to parse after upload (shows warning first)
+    const parseAfterUpload = async (fileName?: string) => {
+        setWarningModal({
+            isOpen: true,
+            type: 'upload-and-parse',
+            fileName: fileName,
+            pendingAction: () => performParsing(true),
+        });
+    };
+
+    // Handle warning confirmation
+    const handleWarningConfirm = async () => {
+        const action = warningModal.pendingAction;
+        setWarningModal({
+            isOpen: false,
+            type: 'refresh-parsing',
+            fileName: undefined,
+            pendingAction: undefined,
+        });
+
+        if (action) {
+            await action();
+        }
+    };
+
+    // Handle warning cancellation
+    const handleWarningCancel = () => {
+        setWarningModal({
+            isOpen: false,
+            type: 'refresh-parsing',
+            fileName: undefined,
+            pendingAction: undefined,
+        });
     };
 
     // Handle file view - show preview modal
@@ -177,12 +242,27 @@ export function RightSidePanel() {
         });
     };
 
-    // Handle modal close and refresh files
-    const handleModalClose = () => {
+    // Handle modal close and potentially trigger parsing
+    const handleModalClose = async () => {
         setIsModalOpen(false);
-        // Refresh files after potential upload
-        if (user) {
-            refreshFiles();
+
+        if (!user) return;
+
+        // Refresh file list to see if any new files were uploaded
+        try {
+            const files = await getUserFiles(user.uid);
+            const currentFileCount = uploadedFiles.length;
+            const newFileCount = files.length;
+
+            // Update the file list
+            setUploadedFiles(files);
+
+            // If files were uploaded, show parsing warning
+            if (newFileCount > currentFileCount && files.length > 0) {
+                parseAfterUpload("new document");
+            }
+        } catch (error) {
+            console.error("Error checking for new files:", error);
         }
     };
 
@@ -279,6 +359,16 @@ export function RightSidePanel() {
                 isOpen={previewModal.isOpen}
                 file={previewModal.file}
                 onClose={handlePreviewClose}
+            />
+
+            {/* Data Overwrite Warning Modal */}
+            <DataOverwriteWarningModal
+                isOpen={warningModal.isOpen}
+                type={warningModal.type}
+                fileName={warningModal.fileName}
+                onConfirm={handleWarningConfirm}
+                onCancel={handleWarningCancel}
+                isProcessing={isParsing}
             />
         </>
     );
