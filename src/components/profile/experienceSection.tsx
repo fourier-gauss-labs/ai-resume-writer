@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PencilIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
 
 interface JobHistoryItem {
@@ -20,6 +19,7 @@ interface ExperienceSectionProps {
     jobHistory: JobHistoryItem[];
     isLoading?: boolean;
     onDataRefresh?: () => Promise<void>;
+    onShowAllExperiences?: () => void;
 }
 
 interface JobEntryProps {
@@ -119,7 +119,7 @@ function JobEntry({ job, showFullDescription = false }: JobEntryProps) {
                 {shouldShowSeeMore() && !showFullDescription && (
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="text-sm text-blue-600 hover:text-blue-700 mt-2 font-medium"
+                        className="text-sm text-muted-foreground hover:text-foreground mt-2 font-medium"
                     >
                         {isExpanded ? 'see less' : '...see more'}
                     </button>
@@ -132,12 +132,13 @@ function JobEntry({ job, showFullDescription = false }: JobEntryProps) {
 export default function ExperienceSection({
     jobHistory,
     isLoading = false,
-    onDataRefresh
+    onDataRefresh,
+    onShowAllExperiences
 }: ExperienceSectionProps) {
-    const [isAllExperiencesOpen, setIsAllExperiencesOpen] = useState(false);
-
     const handleEditSection = () => {
-        setIsAllExperiencesOpen(true);
+        if (onShowAllExperiences) {
+            onShowAllExperiences();
+        }
     }; if (isLoading) {
         return (
             <Card className="border border-border p-4 mb-4">
@@ -209,7 +210,7 @@ export default function ExperienceSection({
                             {hasMoreJobs && (
                                 <div className="pt-3 border-t border-border mt-3">
                                     <button
-                                        onClick={() => setIsAllExperiencesOpen(true)}
+                                        onClick={() => onShowAllExperiences && onShowAllExperiences()}
                                         className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center"
                                     >
                                         Show all {sortedJobs.length} experience{sortedJobs.length !== 1 ? 's' : ''} →
@@ -224,24 +225,6 @@ export default function ExperienceSection({
                     )}
                 </div>
             </Card>
-
-            {/* All Experiences Modal */}
-            <Dialog open={isAllExperiencesOpen} onOpenChange={setIsAllExperiencesOpen}>
-                <DialogContent className="w-[50vw] max-w-none max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>Experience</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-0 divide-y divide-border">
-                        {sortedJobs.map((job, index) => (
-                            <JobEntry
-                                key={index}
-                                job={job}
-                                showFullDescription={true}
-                            />
-                        ))}
-                    </div>
-                </DialogContent>
-            </Dialog>
         </>
     );
 }
