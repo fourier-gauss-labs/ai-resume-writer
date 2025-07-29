@@ -8,6 +8,17 @@ import ContactInformationSection from "@/components/profile/contactInformationSe
 import ExperienceSection from "@/components/profile/experienceSection";
 import ExperienceFullView from "@/components/profile/experienceFullView";
 import { useStructuredHistory } from "@/hooks/useStructuredHistory";
+import { toast } from 'sonner';
+
+interface JobHistoryItem {
+    title: string;
+    company: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    currentlyWorking: boolean;
+    jobDescription: string;
+    accomplishments: string[];
+}
 
 type ProfileView = 'main' | 'experience';
 
@@ -29,6 +40,27 @@ export default function ProfilePage() {
 
     const handleBackToMain = () => {
         setCurrentView('main');
+    };
+
+    const handleUpdateJob = async (updatedJob: JobHistoryItem, originalJob: JobHistoryItem) => {
+        // TODO: Implement API call to update job
+        console.log('Updating job:', updatedJob, 'Original:', originalJob);
+        toast.success('Experience updated successfully!');
+        await refetch(); // Refresh the data
+    };
+
+    const handleAddJob = async (newJob: JobHistoryItem) => {
+        // TODO: Implement API call to add job
+        console.log('Adding job:', newJob);
+        toast.success('Experience added successfully!');
+        await refetch(); // Refresh the data
+    };
+
+    const handleDeleteJob = async (jobToDelete: JobHistoryItem) => {
+        // TODO: Implement API call to delete job
+        console.log('Deleting job:', jobToDelete);
+        toast.success('Experience deleted successfully!');
+        await refetch(); // Refresh the data
     };
 
     if (loading) {
@@ -61,6 +93,9 @@ export default function ProfilePage() {
                     <ExperienceFullView
                         jobHistory={data.jobHistory}
                         onBack={handleBackToMain}
+                        onUpdateJob={handleUpdateJob}
+                        onAddJob={handleAddJob}
+                        onDeleteJob={handleDeleteJob}
                         isLoading={isLoading}
                     />
                 ) : null}

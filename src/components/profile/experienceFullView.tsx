@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, PencilIcon } from 'lucide-react';
+import { ArrowLeft, Plus, PencilIcon, Trash2 } from 'lucide-react';
 import { BriefcaseIcon } from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
+import EditExperienceModal from './editExperienceModal';
+import { DeleteExperienceModal } from '../deleteExperienceModal';
 
 interface JobHistoryItem {
     title: string;
@@ -19,11 +20,18 @@ interface JobHistoryItem {
 interface ExperienceFullViewProps {
     jobHistory: JobHistoryItem[];
     onBack: () => void;
+    onUpdateJob?: (updatedJob: JobHistoryItem, originalJob: JobHistoryItem) => Promise<void>;
+    onAddJob?: (newJob: JobHistoryItem) => Promise<void>;
+    onDeleteJob?: (jobToDelete: JobHistoryItem) => Promise<void>;
     isLoading?: boolean;
 }
 
 // Component for individual job entry in full view
-function JobEntryFull({ job }: { job: JobHistoryItem }) {
+function JobEntryFull({ job, onEdit, onDelete }: {
+    job: JobHistoryItem;
+    onEdit: (job: JobHistoryItem) => void;
+    onDelete: (job: JobHistoryItem) => void;
+}) {
     const formatDateRange = () => {
         const startDate = `${job.startDate.month} ${job.startDate.year}`;
         const endDate = job.currentlyWorking ? 'Present' : `${job.endDate.month} ${job.endDate.year}`;
@@ -31,8 +39,11 @@ function JobEntryFull({ job }: { job: JobHistoryItem }) {
     };
 
     const handleEdit = () => {
-        toast.info(`Edit job: ${job.title} at ${job.company}`);
-        // TODO: Open individual job edit modal
+        onEdit(job);
+    };
+
+    const handleDelete = () => {
+        onDelete(job);
     };
 
     return (
@@ -68,15 +79,28 @@ function JobEntryFull({ job }: { job: JobHistoryItem }) {
                             </div>
                         </div>
 
-                        {/* Edit button */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
-                            onClick={handleEdit}
-                        >
-                            <PencilIcon className="h-4 w-4" />
-                        </Button>
+                        {/* Action buttons */}
+                        <div className="flex items-center space-x-2">
+                            {/* Edit button */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                                onClick={handleEdit}
+                            >
+                                <PencilIcon className="h-4 w-4" />
+                            </Button>
+
+                            {/* Delete button */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50"
+                                onClick={handleDelete}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
 
                     {/* Job description */}
@@ -108,11 +132,95 @@ function JobEntryFull({ job }: { job: JobHistoryItem }) {
 export default function ExperienceFullView({
     jobHistory,
     onBack,
+    onUpdateJob,
+    onAddJob,
+    onDeleteJob,
     isLoading = false
 }: ExperienceFullViewProps) {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [selectedJob, setSelectedJob] = useState<JobHistoryItem | null>(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState<{
+        isOpen: boolean;
+        job: JobHistoryItem | null;
+        isDeleting: boolean;
+    }>({
+        isOpen: false,
+        job: null,
+        isDeleting: false,
+    });
+
+    const handleEditJob = (job: JobHistoryItem) => {
+        setSelectedJob(job);
+        setIsEditModalOpen(true);
+    };
+
     const handleAddExperience = () => {
-        toast.info("Add experience functionality coming soon!");
-        // TODO: Open add experience modal
+        setSelectedJob(null);
+        setIsAddModalOpen(true);
+    };
+
+    const handleSaveJob = async (updatedJob: JobHistoryItem) => {
+        if (selectedJob && onUpdateJob) {
+            await onUpdateJob(updatedJob, selectedJob);
+        }
+    };
+
+    const handleAddJob = async (newJob: JobHistoryItem) => {
+        if (onAddJob) {
+            await onAddJob(newJob);
+        }
+    };
+
+    const handleDeleteJob = async (jobToDelete: JobHistoryItem) => {
+        if (onDeleteJob) {
+            await onDeleteJob(jobToDelete);
+        }
+    };
+
+    const handleShowDeleteConfirmation = (job: JobHistoryItem) => {
+        setDeleteConfirmation({
+            isOpen: true,
+            job: job,
+            isDeleting: false,
+        });
+    };
+
+    const handleConfirmedDelete = async () => {
+        if (!deleteConfirmation.job) return;
+
+        setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
+
+        try {
+            await handleDeleteJob(deleteConfirmation.job);
+            // Close the confirmation modal
+            setDeleteConfirmation({
+                isOpen: false,
+                job: null,
+                isDeleting: false,
+            });
+        } catch (error) {
+            console.error("Error deleting job:", error);
+            setDeleteConfirmation(prev => ({ ...prev, isDeleting: false }));
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteConfirmation({
+            isOpen: false,
+            job: null,
+            isDeleting: false,
+        });
+    };
+
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+        setSelectedJob(null);
+    };
+
+    const handleCloseAddModal = () => {
+        setIsAddModalOpen(false);
+        setSelectedJob(null);
     };
 
     if (isLoading) {
@@ -195,7 +303,7 @@ export default function ExperienceFullView({
                     <div className="border border-border rounded-lg bg-card p-6">
                         <div className="space-y-0 divide-y divide-border">
                             {sortedJobs.map((job, index) => (
-                                <JobEntryFull key={index} job={job} />
+                                <JobEntryFull key={index} job={job} onEdit={handleEditJob} onDelete={handleShowDeleteConfirmation} />
                             ))}
                         </div>
                     </div>
@@ -214,6 +322,33 @@ export default function ExperienceFullView({
                     </div>
                 )}
             </div>
+
+            {/* Edit Experience Modal */}
+            <EditExperienceModal
+                isOpen={isEditModalOpen}
+                onClose={handleCloseEditModal}
+                job={selectedJob}
+                onSave={handleSaveJob}
+                isNew={false}
+            />
+
+            {/* Add Experience Modal */}
+            <EditExperienceModal
+                isOpen={isAddModalOpen}
+                onClose={handleCloseAddModal}
+                job={null}
+                onSave={handleAddJob}
+                isNew={true}
+            />
+
+            {/* Delete Experience Modal */}
+            <DeleteExperienceModal
+                isOpen={deleteConfirmation.isOpen}
+                job={deleteConfirmation.job}
+                onConfirm={handleConfirmedDelete}
+                onCancel={handleDeleteCancel}
+                isDeleting={deleteConfirmation.isDeleting}
+            />
         </div>
     );
 }

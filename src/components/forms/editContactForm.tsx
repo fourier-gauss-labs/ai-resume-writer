@@ -217,20 +217,20 @@ export default function EditContactForm({
             </div>
 
             {/* Footer Actions */}
-            <div className="flex justify-end space-x-3 mt-8 pt-4 border-t">
-                <Button
-                    variant="outline"
-                    onClick={onCancel}
-                    disabled={isLoading}
-                >
-                    Cancel
-                </Button>
+            <div className="flex justify-end space-x-4 mt-8 pt-4 border-t">
                 <Button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="min-w-[80px]"
+                    className="w-32 bg-blue-500 hover:bg-blue-600 text-white"
                 >
                     {isLoading ? 'Saving...' : 'Save'}
+                </Button>
+                <Button
+                    onClick={onCancel}
+                    disabled={isLoading}
+                    className="w-32 bg-gray-500 hover:bg-gray-600 text-white"
+                >
+                    Cancel
                 </Button>
             </div>
         </div>
