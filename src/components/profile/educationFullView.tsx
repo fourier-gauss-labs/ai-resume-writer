@@ -2,81 +2,82 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, PencilIcon, Trash2 } from 'lucide-react';
-import { BriefcaseIcon } from '@heroicons/react/24/outline';
-import EditExperienceModal from './editExperienceModal';
-import { DeleteExperienceModal } from '../deleteExperienceModal';
+import { ArrowLeft, Plus, PencilIcon, Trash2, GraduationCap } from 'lucide-react';
+import EditEducationModal from './editEducationModal';
+import { DeleteEducationModal } from '../deleteEducationModal';
 
-interface JobHistoryItem {
-    title: string;
-    company: string;
+interface EducationItem {
+    school: string;
+    degree: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    currentlyWorking: boolean;
-    jobDescription: string;
-    accomplishments: string[];
+    grade?: string;
 }
 
-interface ExperienceFullViewProps {
-    jobHistory: JobHistoryItem[];
+interface EducationFullViewProps {
+    education: EducationItem[];
     onBack: () => void;
-    onUpdateJob?: (updatedJob: JobHistoryItem, originalJob: JobHistoryItem) => Promise<void>;
-    onAddJob?: (newJob: JobHistoryItem) => Promise<void>;
-    onDeleteJob?: (jobToDelete: JobHistoryItem) => Promise<void>;
+    onUpdateEducation?: (updatedEducation: EducationItem, originalEducation: EducationItem) => Promise<void>;
+    onAddEducation?: (newEducation: EducationItem) => Promise<void>;
+    onDeleteEducation?: (educationToDelete: EducationItem) => Promise<void>;
     isLoading?: boolean;
 }
 
-// Component for individual job entry in full view
-function JobEntryFull({ job, onEdit, onDelete }: {
-    job: JobHistoryItem;
-    onEdit: (job: JobHistoryItem) => void;
-    onDelete: (job: JobHistoryItem) => void;
+// Component for individual education entry in full view
+function EducationEntryFull({ education, onEdit, onDelete }: {
+    education: EducationItem;
+    onEdit: (education: EducationItem) => void;
+    onDelete: (education: EducationItem) => void;
 }) {
     const formatDateRange = () => {
-        const startDate = `${job.startDate.month} ${job.startDate.year}`;
-        const endDate = job.currentlyWorking ? 'Present' : `${job.endDate.month} ${job.endDate.year}`;
+        const startDate = `${education.startDate.month} ${education.startDate.year}`;
+        const endDate = `${education.endDate.month} ${education.endDate.year}`;
         return `${startDate} - ${endDate}`;
     };
 
     const handleEdit = () => {
-        onEdit(job);
+        onEdit(education);
     };
 
     const handleDelete = () => {
-        onDelete(job);
+        onDelete(education);
     };
 
     return (
         <div className="py-6">
             <div className="flex items-start space-x-4">
-                {/* Company logo placeholder */}
+                {/* School logo placeholder */}
                 <div className="flex-shrink-0">
                     <div className="w-12 h-12 bg-muted rounded border flex items-center justify-center">
-                        <BriefcaseIcon className="h-6 w-6 text-muted-foreground" />
+                        <GraduationCap className="h-6 w-6 text-muted-foreground" />
                     </div>
                 </div>
 
-                {/* Job details */}
+                {/* Education details */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
-                            {/* Job title */}
+                            {/* School name */}
                             <h3 className="font-semibold text-base text-foreground">
-                                {job.title}
+                                {education.school}
                             </h3>
 
-                            {/* Company */}
+                            {/* Degree */}
                             <div className="text-sm text-muted-foreground mt-1">
-                                {job.company}
+                                {education.degree}
                             </div>
 
                             {/* Date range */}
                             <div className="text-sm text-muted-foreground mt-2">
                                 {formatDateRange()}
-                                {job.currentlyWorking && (
-                                    <span className="text-sm text-green-600 ml-2">• Current</span>
-                                )}
                             </div>
+
+                            {/* Grade */}
+                            {education.grade && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                    GPA: {education.grade}
+                                </div>
+                            )}
                         </div>
 
                         {/* Action buttons */}
@@ -102,105 +103,84 @@ function JobEntryFull({ job, onEdit, onDelete }: {
                             </Button>
                         </div>
                     </div>
-
-                    {/* Job description */}
-                    {job.jobDescription && (
-                        <div className="text-sm text-foreground mt-4 leading-relaxed">
-                            {job.jobDescription}
-                        </div>
-                    )}
-
-                    {/* Accomplishments */}
-                    {job.accomplishments && job.accomplishments.length > 0 && (
-                        <div className="mt-4">
-                            <ul className="text-sm text-foreground space-y-2">
-                                {job.accomplishments.map((accomplishment, index) => (
-                                    <li key={index} className="flex items-start">
-                                        <span className="text-muted-foreground mr-3 mt-2">•</span>
-                                        <span className="leading-relaxed">{accomplishment}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-export default function ExperienceFullView({
-    jobHistory,
+export default function EducationFullView({
+    education,
     onBack,
-    onUpdateJob,
-    onAddJob,
-    onDeleteJob,
+    onUpdateEducation,
+    onAddEducation,
+    onDeleteEducation,
     isLoading = false
-}: ExperienceFullViewProps) {
+}: EducationFullViewProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [selectedJob, setSelectedJob] = useState<JobHistoryItem | null>(null);
+    const [selectedEducation, setSelectedEducation] = useState<EducationItem | null>(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState<{
         isOpen: boolean;
-        job: JobHistoryItem | null;
+        education: EducationItem | null;
         isDeleting: boolean;
     }>({
         isOpen: false,
-        job: null,
+        education: null,
         isDeleting: false,
     });
 
-    const handleEditJob = (job: JobHistoryItem) => {
-        setSelectedJob(job);
+    const handleEditEducation = (education: EducationItem) => {
+        setSelectedEducation(education);
         setIsEditModalOpen(true);
     };
 
-    const handleAddExperience = () => {
-        setSelectedJob(null);
+    const handleAddEducation = () => {
+        setSelectedEducation(null);
         setIsAddModalOpen(true);
     };
 
-    const handleSaveJob = async (updatedJob: JobHistoryItem) => {
-        if (selectedJob && onUpdateJob) {
-            await onUpdateJob(updatedJob, selectedJob);
+    const handleSaveEducation = async (updatedEducation: EducationItem) => {
+        if (selectedEducation && onUpdateEducation) {
+            await onUpdateEducation(updatedEducation, selectedEducation);
         }
     };
 
-    const handleAddJob = async (newJob: JobHistoryItem) => {
-        if (onAddJob) {
-            await onAddJob(newJob);
+    const handleAddEducationEntry = async (newEducation: EducationItem) => {
+        if (onAddEducation) {
+            await onAddEducation(newEducation);
         }
     };
 
-    const handleDeleteJob = async (jobToDelete: JobHistoryItem) => {
-        if (onDeleteJob) {
-            await onDeleteJob(jobToDelete);
+    const handleDeleteEducation = async (educationToDelete: EducationItem) => {
+        if (onDeleteEducation) {
+            await onDeleteEducation(educationToDelete);
         }
     };
 
-    const handleShowDeleteConfirmation = (job: JobHistoryItem) => {
+    const handleShowDeleteConfirmation = (education: EducationItem) => {
         setDeleteConfirmation({
             isOpen: true,
-            job: job,
+            education: education,
             isDeleting: false,
         });
     };
 
     const handleConfirmedDelete = async () => {
-        if (!deleteConfirmation.job) return;
+        if (!deleteConfirmation.education) return;
 
         setDeleteConfirmation(prev => ({ ...prev, isDeleting: true }));
 
         try {
-            await handleDeleteJob(deleteConfirmation.job);
+            await handleDeleteEducation(deleteConfirmation.education);
             // Close the confirmation modal
             setDeleteConfirmation({
                 isOpen: false,
-                job: null,
+                education: null,
                 isDeleting: false,
             });
         } catch (error) {
-            console.error("Error deleting job:", error);
+            console.error("Error deleting education:", error);
             setDeleteConfirmation(prev => ({ ...prev, isDeleting: false }));
         }
     };
@@ -208,19 +188,19 @@ export default function ExperienceFullView({
     const handleDeleteCancel = () => {
         setDeleteConfirmation({
             isOpen: false,
-            job: null,
+            education: null,
             isDeleting: false,
         });
     };
 
     const handleCloseEditModal = () => {
         setIsEditModalOpen(false);
-        setSelectedJob(null);
+        setSelectedEducation(null);
     };
 
     const handleCloseAddModal = () => {
         setIsAddModalOpen(false);
-        setSelectedJob(null);
+        setSelectedEducation(null);
     };
 
     if (isLoading) {
@@ -237,8 +217,6 @@ export default function ExperienceFullView({
                                         <div className="h-6 bg-muted rounded w-1/2"></div>
                                         <div className="h-4 bg-muted rounded w-1/3"></div>
                                         <div className="h-4 bg-muted rounded w-1/4"></div>
-                                        <div className="h-4 bg-muted rounded w-3/4"></div>
-                                        <div className="h-4 bg-muted rounded w-2/3"></div>
                                     </div>
                                 </div>
                             </div>
@@ -249,15 +227,10 @@ export default function ExperienceFullView({
         );
     }
 
-    // Sort jobs: current jobs first, then by start date (most recent first)
-    const sortedJobs = [...(jobHistory || [])].sort((a, b) => {
-        // Current jobs first
-        if (a.currentlyWorking && !b.currentlyWorking) return -1;
-        if (!a.currentlyWorking && b.currentlyWorking) return 1;
-
-        // Then by start year (most recent first)
-        const aYear = parseInt(a.startDate.year);
-        const bYear = parseInt(b.startDate.year);
+    // Sort education: most recent first
+    const sortedEducation = [...(education || [])].sort((a, b) => {
+        const aYear = parseInt(a.endDate.year);
+        const bYear = parseInt(b.endDate.year);
         return bYear - aYear;
     });
 
@@ -280,16 +253,16 @@ export default function ExperienceFullView({
 
                             {/* Title */}
                             <h1 className="text-2xl font-semibold text-foreground">
-                                Experience
+                                Education
                             </h1>
                         </div>
 
-                        {/* Add experience button */}
+                        {/* Add education button */}
                         <Button
                             variant="default"
                             size="icon"
                             className="h-8 w-8 rounded-full"
-                            onClick={handleAddExperience}
+                            onClick={handleAddEducation}
                         >
                             <Plus className="h-4 w-4" />
                         </Button>
@@ -299,52 +272,52 @@ export default function ExperienceFullView({
 
             {/* Content */}
             <div className="p-4">
-                {sortedJobs.length > 0 ? (
+                {sortedEducation.length > 0 ? (
                     <div className="border border-border rounded-lg bg-card p-6">
                         <div className="space-y-0 divide-y divide-border">
-                            {sortedJobs.map((job, index) => (
-                                <JobEntryFull key={index} job={job} onEdit={handleEditJob} onDelete={handleShowDeleteConfirmation} />
+                            {sortedEducation.map((edu, index) => (
+                                <EducationEntryFull key={index} education={edu} onEdit={handleEditEducation} onDelete={handleShowDeleteConfirmation} />
                             ))}
                         </div>
                     </div>
                 ) : (
                     <div className="text-center py-12">
-                        <BriefcaseIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-foreground mb-2">
-                            No work experience yet
+                            No education yet
                         </h3>
                         <p className="text-muted-foreground mb-6">
-                            Parse your documents or add your work experience manually.
+                            Parse your documents or add your education manually.
                         </p>
-                        <Button onClick={handleAddExperience}>
-                            Add experience
+                        <Button onClick={handleAddEducation}>
+                            Add education
                         </Button>
                     </div>
                 )}
             </div>
 
-            {/* Edit Experience Modal */}
-            <EditExperienceModal
+            {/* Edit Education Modal */}
+            <EditEducationModal
                 isOpen={isEditModalOpen}
                 onClose={handleCloseEditModal}
-                job={selectedJob}
-                onSave={handleSaveJob}
+                education={selectedEducation}
+                onSave={handleSaveEducation}
                 isNew={false}
             />
 
-            {/* Add Experience Modal */}
-            <EditExperienceModal
+            {/* Add Education Modal */}
+            <EditEducationModal
                 isOpen={isAddModalOpen}
                 onClose={handleCloseAddModal}
-                job={null}
-                onSave={handleAddJob}
+                education={null}
+                onSave={handleAddEducationEntry}
                 isNew={true}
             />
 
             {/* Delete Confirmation Modal */}
-            <DeleteExperienceModal
+            <DeleteEducationModal
                 isOpen={deleteConfirmation.isOpen}
-                job={deleteConfirmation.job}
+                education={deleteConfirmation.education}
                 onConfirm={handleConfirmedDelete}
                 onCancel={handleDeleteCancel}
                 isDeleting={deleteConfirmation.isDeleting}
