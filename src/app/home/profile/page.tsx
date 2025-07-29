@@ -11,6 +11,7 @@ import EducationSection from "@/components/profile/educationSection";
 import EducationFullView from "@/components/profile/educationFullView";
 import CertificationSection from "@/components/profile/certificationSection";
 import CertificationFullView from "@/components/profile/certificationFullView";
+import SkillsSection from "@/components/profile/skillsSection";
 import { useStructuredHistory } from "@/hooks/useStructuredHistory";
 import { storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { toast } from 'sonner';
@@ -422,6 +423,82 @@ export default function ProfilePage() {
         }
     };
 
+    const handleAddSkill = async (newSkill: string | string[]) => {
+        try {
+            console.log('Adding skill(s):', newSkill);
+
+            // Handle both single skill and array of skills
+            const skillsToAdd = Array.isArray(newSkill) ? newSkill : [newSkill];
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                skills: [...localData.skills, ...skillsToAdd]
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            const successMessage = skillsToAdd.length === 1
+                ? 'Skill added successfully!'
+                : `${skillsToAdd.length} skills added successfully!`;
+            toast.success(successMessage);
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error adding skill(s):', error);
+            toast.error('Failed to add skill(s)');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
+    const handleDeleteSkill = async (skillToDelete: string) => {
+        try {
+            console.log('Deleting skill:', skillToDelete);
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                skills: localData.skills.filter(skill => skill !== skillToDelete)
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            toast.success('Skill deleted successfully!');
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error deleting skill:', error);
+            toast.error('Failed to delete skill');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
     if (loading) {
         return <p>Loading...</p>; // Show a loading state while checking auth
     }
@@ -455,6 +532,12 @@ export default function ProfilePage() {
                                 certifications={data.certifications}
                                 isLoading={isLoading}
                                 onShowAllCertifications={handleShowCertifications}
+                            />
+                            <SkillsSection
+                                skills={data.skills}
+                                isLoading={isLoading}
+                                onAddSkill={handleAddSkill}
+                                onDeleteSkill={handleDeleteSkill}
                             />
                         </div>
                     </div>
