@@ -9,6 +9,8 @@ import ExperienceSection from "@/components/profile/experienceSection";
 import ExperienceFullView from "@/components/profile/experienceFullView";
 import EducationSection from "@/components/profile/educationSection";
 import EducationFullView from "@/components/profile/educationFullView";
+import CertificationSection from "@/components/profile/certificationSection";
+import CertificationFullView from "@/components/profile/certificationFullView";
 import { useStructuredHistory } from "@/hooks/useStructuredHistory";
 import { storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { toast } from 'sonner';
@@ -31,7 +33,14 @@ interface EducationItem {
     grade?: string;
 }
 
-type ProfileView = 'main' | 'experience' | 'education';
+interface CertificationItem {
+    certName: string;
+    issuer: string;
+    issuedDate: { month: string; year: string };
+    credentialId?: string;
+}
+
+type ProfileView = 'main' | 'experience' | 'education' | 'certifications';
 
 export default function ProfilePage() {
     const { user, loading } = useAuth();
@@ -62,6 +71,10 @@ export default function ProfilePage() {
 
     const handleShowEducation = () => {
         setCurrentView('education');
+    };
+
+    const handleShowCertifications = () => {
+        setCurrentView('certifications');
     };
 
     const handleBackToMain = () => {
@@ -240,6 +253,89 @@ export default function ProfilePage() {
         }
     };
 
+    const handleUpdateCertification = async (updatedCertification: CertificationItem, originalCertification: CertificationItem) => {
+        try {
+            console.log('Updating certification:', updatedCertification, 'Original:', originalCertification);
+
+            // Immediately update local state for responsive UI
+            setLocalData(prevData => ({
+                ...prevData,
+                certifications: prevData.certifications.map(cert =>
+                    (cert.certName === originalCertification.certName &&
+                        cert.issuer === originalCertification.issuer &&
+                        cert.issuedDate.month === originalCertification.issuedDate.month &&
+                        cert.issuedDate.year === originalCertification.issuedDate.year) ? updatedCertification : cert
+                )
+            }));
+
+            toast.success('Certification updated successfully!');
+            await refetch(); // Refresh the data
+        } catch (error) {
+            console.error('Error updating certification:', error);
+            toast.error('Failed to update certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
+    const handleAddCertification = async (newCertification: CertificationItem) => {
+        try {
+            console.log('Adding certification:', newCertification);
+
+            // Immediately update local state for responsive UI
+            setLocalData(prevData => ({
+                ...prevData,
+                certifications: [...prevData.certifications, newCertification]
+            }));
+
+            toast.success('Certification added successfully!');
+            await refetch(); // Refresh the data
+        } catch (error) {
+            console.error('Error adding certification:', error);
+            toast.error('Failed to add certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
+    const handleDeleteCertification = async (certificationToDelete: CertificationItem) => {
+        try {
+            console.log('Deleting certification:', certificationToDelete);
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: localData.certifications.filter(cert =>
+                    !(cert.certName === certificationToDelete.certName &&
+                        cert.issuer === certificationToDelete.issuer)
+                )
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            toast.success('Certification deleted successfully!');
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error deleting certification:', error);
+            toast.error('Failed to delete certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
     if (loading) {
         return <p>Loading...</p>; // Show a loading state while checking auth
     }
@@ -269,6 +365,11 @@ export default function ProfilePage() {
                                 isLoading={isLoading}
                                 onShowAllEducation={handleShowEducation}
                             />
+                            <CertificationSection
+                                certifications={data.certifications}
+                                isLoading={isLoading}
+                                onShowAllCertifications={handleShowCertifications}
+                            />
                         </div>
                     </div>
                 ) : currentView === 'experience' ? (
@@ -287,6 +388,15 @@ export default function ProfilePage() {
                         onUpdateEducation={handleUpdateEducation}
                         onAddEducation={handleAddEducation}
                         onDeleteEducation={handleDeleteEducation}
+                        isLoading={isLoading}
+                    />
+                ) : currentView === 'certifications' ? (
+                    <CertificationFullView
+                        certifications={data.certifications}
+                        onBack={handleBackToMain}
+                        onUpdateCertification={handleUpdateCertification}
+                        onAddCertification={handleAddCertification}
+                        onDeleteCertification={handleDeleteCertification}
                         isLoading={isLoading}
                     />
                 ) : null}
