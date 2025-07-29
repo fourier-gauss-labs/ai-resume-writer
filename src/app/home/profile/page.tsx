@@ -9,6 +9,8 @@ import ExperienceSection from "@/components/profile/experienceSection";
 import ExperienceFullView from "@/components/profile/experienceFullView";
 import EducationSection from "@/components/profile/educationSection";
 import EducationFullView from "@/components/profile/educationFullView";
+import CertificationSection from "@/components/profile/certificationSection";
+import CertificationFullView from "@/components/profile/certificationFullView";
 import { useStructuredHistory } from "@/hooks/useStructuredHistory";
 import { storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { toast } from 'sonner';
@@ -31,7 +33,14 @@ interface EducationItem {
     grade?: string;
 }
 
-type ProfileView = 'main' | 'experience' | 'education';
+interface CertificationItem {
+    certName: string;
+    issuer: string;
+    issuedDate: { month: string; year: string };
+    credentialId?: string;
+}
+
+type ProfileView = 'main' | 'experience' | 'education' | 'certifications';
 
 export default function ProfilePage() {
     const { user, loading } = useAuth();
@@ -64,28 +73,46 @@ export default function ProfilePage() {
         setCurrentView('education');
     };
 
+    const handleShowCertifications = () => {
+        setCurrentView('certifications');
+    };
+
     const handleBackToMain = () => {
         setCurrentView('main');
     };
 
     const handleUpdateJob = async (updatedJob: JobHistoryItem, originalJob: JobHistoryItem) => {
         try {
-            // TODO: Implement API call to update job
             console.log('Updating job:', updatedJob, 'Original:', originalJob);
 
-            // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                jobHistory: prevData.jobHistory.map(job =>
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                jobHistory: localData.jobHistory.map(job =>
                     (job.title === originalJob.title &&
                         job.company === originalJob.company &&
                         job.startDate.month === originalJob.startDate.month &&
                         job.startDate.year === originalJob.startDate.year) ? updatedJob : job
                 )
-            }));
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Experience updated successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error updating job:', error);
             toast.error('Failed to update experience');
@@ -96,17 +123,31 @@ export default function ProfilePage() {
 
     const handleAddJob = async (newJob: JobHistoryItem) => {
         try {
-            // TODO: Implement API call to add job
             console.log('Adding job:', newJob);
 
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                jobHistory: [...localData.jobHistory, newJob]
+            };
+
             // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                jobHistory: [...prevData.jobHistory, newJob]
-            }));
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Experience added successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error adding job:', error);
             toast.error('Failed to add experience');
@@ -157,22 +198,36 @@ export default function ProfilePage() {
 
     const handleUpdateEducation = async (updatedEducation: EducationItem, originalEducation: EducationItem) => {
         try {
-            // TODO: Implement API call to update education
             console.log('Updating education:', updatedEducation, 'Original:', originalEducation);
 
-            // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                education: prevData.education.map(edu =>
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                education: localData.education.map(edu =>
                     (edu.school === originalEducation.school &&
                         edu.degree === originalEducation.degree &&
                         edu.startDate.month === originalEducation.startDate.month &&
                         edu.startDate.year === originalEducation.startDate.year) ? updatedEducation : edu
                 )
-            }));
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Education updated successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error updating education:', error);
             toast.error('Failed to update education');
@@ -183,17 +238,31 @@ export default function ProfilePage() {
 
     const handleAddEducation = async (newEducation: EducationItem) => {
         try {
-            // TODO: Implement API call to add education
             console.log('Adding education:', newEducation);
 
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                education: [...localData.education, newEducation]
+            };
+
             // Immediately update local state for responsive UI
-            setLocalData(prevData => ({
-                ...prevData,
-                education: [...prevData.education, newEducation]
-            }));
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
 
             toast.success('Education added successfully!');
-            await refetch(); // Refresh the data
+            await refetch(); // Refresh the data from server
         } catch (error) {
             console.error('Error adding education:', error);
             toast.error('Failed to add education');
@@ -240,6 +309,119 @@ export default function ProfilePage() {
         }
     };
 
+    const handleUpdateCertification = async (updatedCertification: CertificationItem, originalCertification: CertificationItem) => {
+        try {
+            console.log('Updating certification:', updatedCertification, 'Original:', originalCertification);
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: localData.certifications.map(cert =>
+                    (cert.certName === originalCertification.certName &&
+                        cert.issuer === originalCertification.issuer &&
+                        cert.issuedDate.month === originalCertification.issuedDate.month &&
+                        cert.issuedDate.year === originalCertification.issuedDate.year) ? updatedCertification : cert
+                )
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            toast.success('Certification updated successfully!');
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error updating certification:', error);
+            toast.error('Failed to update certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
+    const handleAddCertification = async (newCertification: CertificationItem) => {
+        try {
+            console.log('Adding certification:', newCertification);
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: [...localData.certifications, newCertification]
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            toast.success('Certification added successfully!');
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error adding certification:', error);
+            toast.error('Failed to add certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
+    const handleDeleteCertification = async (certificationToDelete: CertificationItem) => {
+        try {
+            console.log('Deleting certification:', certificationToDelete);
+
+            // Create updated data structure
+            const updatedData = {
+                ...localData,
+                certifications: localData.certifications.filter(cert =>
+                    !(cert.certName === certificationToDelete.certName &&
+                        cert.issuer === certificationToDelete.issuer)
+                )
+            };
+
+            // Immediately update local state for responsive UI
+            setLocalData(updatedData);
+
+            // Persist to Firestore (only if we have contact information)
+            if (user && updatedData.contactInformation) {
+                const dataToStore = {
+                    contactInformation: updatedData.contactInformation as unknown as Record<string, unknown>,
+                    skills: updatedData.skills,
+                    education: updatedData.education as unknown as Record<string, unknown>[],
+                    certifications: updatedData.certifications as unknown as Record<string, unknown>[],
+                    jobHistory: updatedData.jobHistory as unknown as Record<string, unknown>[]
+                };
+                await storeStructuredHistoryHttp(user.uid, dataToStore);
+            }
+
+            toast.success('Certification deleted successfully!');
+            await refetch(); // Refresh the data from server
+        } catch (error) {
+            console.error('Error deleting certification:', error);
+            toast.error('Failed to delete certification');
+            // Revert local state on error
+            setLocalData(hookData);
+        }
+    };
+
     if (loading) {
         return <p>Loading...</p>; // Show a loading state while checking auth
     }
@@ -251,7 +433,7 @@ export default function ProfilePage() {
                 {currentView === 'main' ? (
                     <div className="p-4">
                         {/* Profile sections */}
-                        <div className="space-y-0">
+                        <div className="space-y-4">
                             <ContactInformationSection
                                 contactInfo={data.contactInformation}
                                 user={user}
@@ -268,6 +450,11 @@ export default function ProfilePage() {
                                 education={data.education}
                                 isLoading={isLoading}
                                 onShowAllEducation={handleShowEducation}
+                            />
+                            <CertificationSection
+                                certifications={data.certifications}
+                                isLoading={isLoading}
+                                onShowAllCertifications={handleShowCertifications}
                             />
                         </div>
                     </div>
@@ -287,6 +474,15 @@ export default function ProfilePage() {
                         onUpdateEducation={handleUpdateEducation}
                         onAddEducation={handleAddEducation}
                         onDeleteEducation={handleDeleteEducation}
+                        isLoading={isLoading}
+                    />
+                ) : currentView === 'certifications' ? (
+                    <CertificationFullView
+                        certifications={data.certifications}
+                        onBack={handleBackToMain}
+                        onUpdateCertification={handleUpdateCertification}
+                        onAddCertification={handleAddCertification}
+                        onDeleteCertification={handleDeleteCertification}
                         isLoading={isLoading}
                     />
                 ) : null}
