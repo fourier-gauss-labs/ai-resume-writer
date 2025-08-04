@@ -4,7 +4,7 @@
  * Test script to demonstrate improved AI parsing capabilities
  * This shows how the updated prompts handle different document types:
  * 1. Plain contact files
- * 2. Narrative career journaling  
+ * 2. Narrative career journaling
  * 3. Performance reviews
  * 4. Traditional resumes
  */
@@ -16,7 +16,7 @@ const path = require('path');
 async function testDocumentParsing() {
     console.log('🧪 Testing Improved AI Resume Parser\n');
     console.log('=' * 50);
-    
+
     const testFiles = [
         {
             name: 'Plain Contact File',
@@ -25,7 +25,7 @@ async function testDocumentParsing() {
         },
         {
             name: 'Narrative Career Journal',
-            file: 'test-narrative-journal.txt', 
+            file: 'test-narrative-journal.txt',
             description: 'Rich story about career experiences'
         },
         {
@@ -44,22 +44,22 @@ async function testDocumentParsing() {
         console.log(`\n📄 Testing: ${test.name}`);
         console.log(`   Description: ${test.description}`);
         console.log(`   File: ${test.file}\n`);
-        
+
         try {
             const filePath = path.join(__dirname, test.file);
             if (!fs.existsSync(filePath)) {
                 console.log(`   ⚠️  File not found: ${test.file}`);
                 continue;
             }
-            
+
             const content = fs.readFileSync(filePath, 'utf-8');
             console.log(`   📖 Content Preview (first 200 chars):`);
             console.log(`   "${content.substring(0, 200)}${content.length > 200 ? '...' : ''}"`);
             console.log('');
-            
+
             // Show what our improved prompts would look for
             console.log(`   🔍 Parsing Strategy:`);
-            
+
             if (test.file.includes('plain-contacts')) {
                 console.log(`   ✅ CONTACT: Detects simple contact list format`);
                 console.log(`   ✅ CONTACT: Will extract all phones & emails without labels`);
@@ -67,7 +67,7 @@ async function testDocumentParsing() {
                 console.log(`   ❌ JOBS: No job history expected`);
                 console.log(`   ❌ EDUCATION: No education expected`);
             }
-            
+
             if (test.file.includes('narrative')) {
                 console.log(`   ✅ CONTACT: Will scan narrative for contact mentions`);
                 console.log(`   ✅ SKILLS: Will mine technical skills from stories (Python, Docker, React, etc.)`);
@@ -75,7 +75,7 @@ async function testDocumentParsing() {
                 console.log(`   ✅ EDUCATION: Will find degree mentions in stories`);
                 console.log(`   ✅ CERTS: Will identify certifications mentioned in context`);
             }
-            
+
             if (test.file.includes('performance')) {
                 console.log(`   ✅ CONTACT: Will extract contact info from review`);
                 console.log(`   ✅ SKILLS: Will identify skills from "SKILLS DEMONSTRATED" section`);
@@ -83,18 +83,18 @@ async function testDocumentParsing() {
                 console.log(`   ✅ CERTS: Will find training and certifications completed`);
                 console.log(`   ✅ ACCOMPLISHMENTS: Will extract from achievements section`);
             }
-            
+
             if (test.file.includes('resume')) {
                 console.log(`   ✅ ALL: Standard resume parsing for all sections`);
             }
-            
+
         } catch (error) {
             console.log(`   ❌ Error: ${error.message}`);
         }
-        
+
         console.log('   ' + '-'.repeat(40));
     }
-    
+
     console.log('\n🎯 Key Improvements Made:');
     console.log('');
     console.log('1. 📋 Content Type Detection');

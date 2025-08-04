@@ -11,7 +11,7 @@ Updated the AI parsing prompts to handle the broader range of document types des
 The parsing functions now recognize and adapt to different document types:
 
 - **Plain contact files** - Simple lists of phone numbers and emails
-- **Traditional resumes** - Standard formatted resumes with dedicated sections  
+- **Traditional resumes** - Standard formatted resumes with dedicated sections
 - **Narrative career journaling** - Rich stories about career experiences
 - **Performance reviews** - Employee evaluations with achievements
 - **LinkedIn exports** - Professional profiles with structured sections
@@ -78,8 +78,8 @@ billfmccann@hotmail.com
 
 ### Narrative Career Journal
 ```
-"Today I completed my AWS Solutions Architect certification! 
-I've been at TechCorp since January 2022 as a Senior Software Engineer 
+"Today I completed my AWS Solutions Architect certification!
+I've been at TechCorp since January 2022 as a Senior Software Engineer
 leading their cloud migration using Python and Docker..."
 ```
 ✅ Extracts job history, skills, and certifications from the story context
