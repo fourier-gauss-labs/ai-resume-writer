@@ -1,0 +1,24 @@
+Performance Review - Q3 2023
+Employee: William McCann
+Current Role: Senior Software Engineer
+Department: Cloud Infrastructure
+
+ACCOMPLISHMENTS:
+- Successfully led the AWS cloud migration project, completing it 2 weeks ahead of schedule
+- Implemented new CI/CD pipeline using Jenkins and Docker, reducing deployment time by 60%
+- Mentored 3 junior developers in React and TypeScript best practices
+- Earned AWS Solutions Architect Professional certification
+
+SKILLS DEMONSTRATED:
+- Strong leadership in cross-functional teams
+- Expertise in AWS services (EC2, S3, Lambda, RDS)
+- Proficient in infrastructure as code using Terraform
+- Excellent communication with stakeholders
+
+TRAINING COMPLETED:
+- AWS re:Invent 2023 conference attendance
+- Kubernetes certification bootcamp (completed August 2023)
+- Leadership development program
+
+Phone: 732-812-0367
+Email: bill.mccann@techcorp.com

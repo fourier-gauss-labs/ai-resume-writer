@@ -126,7 +126,22 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
                     }
                 }
             } else {
-                toast.success("Files refreshed (no documents to parse)");
+                // Clear profile data when no documents exist
+                const emptyStructuredData = {
+                    contactInformation: {},
+                    skills: [],
+                    education: [],
+                    certifications: [],
+                    jobHistory: []
+                };
+
+                await storeStructuredHistoryHttp(user.uid, emptyStructuredData);
+                toast.success("Files refreshed (no documents to parse) - profile cleared");
+
+                // Refresh the profile data to reflect the cleared state
+                if (triggerRefresh && onDataRefresh) {
+                    await onDataRefresh();
+                }
             }
         } catch (error) {
             console.error("Error refreshing files or parsing documents:", error);
