@@ -61,9 +61,22 @@ export async function parseContactInformation(corpus: string): Promise<ContactIn
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `
-You are an AI assistant that extracts contact information from resume/biography documents.
+You are an AI assistant that extracts contact information from various types of career-related documents.
 
-Parse the following corpus of documents and extract ONLY contact information. Return a JSON object with the exact structure shown below. Prevent duplicate entries in email and phone arrays.
+You will encounter different document types requiring different parsing strategies:
+
+1. **Plain contact files** - Simple lists of phone numbers and emails (e.g., "732-812-0367\\n732-890-7780\\nbill.mccann@gmail.com")
+2. **Traditional resumes** - Standard formatted resumes with contact sections
+3. **Narrative career journaling** - Rich stories about career experiences that may mention contact details
+4. **Mixed content documents** - Files combining multiple information types
+
+**CONTENT TYPE DETECTION & PARSING STRATEGY:**
+- If the document appears to be primarily a list of contact information (phone numbers, emails), extract all valid contacts
+- If it's a traditional resume, look for contact sections at the top or dedicated contact areas
+- If it's narrative text, scan for contact information mentioned anywhere in the content
+- For mixed documents, combine information from all relevant sections
+
+Parse the following corpus of documents and extract ALL contact information found. Return a JSON object with the exact structure shown below. Prevent duplicate entries in email and phone arrays.
 
 REQUIRED JSON STRUCTURE:
 {
@@ -80,8 +93,10 @@ IMPORTANT RULES:
 3. If no name is found, use empty string for fullName
 4. If no emails are found, use empty array []
 5. If no phones are found, use empty array []
-6. Normalize phone numbers to a consistent format
+6. Normalize phone numbers to a consistent format (remove spaces, dashes, parentheses)
 7. Ensure email addresses are valid format
+8. Look for contact information throughout the entire corpus, not just traditional contact sections
+9. For plain contact files, extract all phone numbers and emails even without explicit labeling
 
 CORPUS TO PARSE:
 ${corpus}
@@ -192,7 +207,22 @@ export async function parseSkills(corpus: string): Promise<Skills> {
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `
-You are an AI assistant that extracts skills from resume/biography documents.
+You are an AI assistant that extracts skills from various types of career-related documents.
+
+You will encounter different document types requiring different parsing strategies:
+
+1. **Traditional resumes** - Standard formatted resumes with dedicated skills sections
+2. **Narrative career journaling** - Rich stories about career experiences containing implied and explicit skills
+3. **Plain contact files** - Simple contact lists (may not contain skills)
+4. **Mixed content documents** - Performance reviews, project descriptions, LinkedIn exports, etc.
+
+**CONTENT TYPE DETECTION & PARSING STRATEGY:**
+- For traditional resumes: Extract from skills sections, work experience, and education
+- For narrative content: Mine technical skills, tools, and competencies mentioned in stories
+- For performance reviews: Look for skills assessments and feedback
+- For project descriptions: Extract technologies, methodologies, and tools used
+- For LinkedIn exports: Look for skills sections and endorsements
+- For contact files: Skills likely not present, return empty array
 
 Parse the following corpus of documents and extract skills. Return a JSON object with the exact structure shown below.
 
@@ -205,15 +235,24 @@ GUIDELINES FOR SKILLS EXTRACTION:
 1. Each skill should be a single word or abbreviation (but may be a short phrase)
 2. Extract technical skills, programming languages, frameworks, tools, certifications, and professional skills
 3. No duplicates
-4. Include skills from work experience, education, and explicit skills sections
+4. Include skills from:
+   - Explicit skills sections
+   - Work experience descriptions and accomplishments
+   - Project descriptions and technical implementations
+   - Education and training mentions
+   - Narrative stories about career experiences
+   - Performance review feedback
+   - Any mention of tools, technologies, or methodologies used
 5. Use standard terminology (e.g., "JavaScript" not "JS", "Python" not "python")
 6. Include version numbers if specified (e.g., "React 18", "Node.js 16")
-7. Return 10-30 skills maximum, prioritizing the most relevant and prominent ones
+7. Return 10-50 skills maximum, prioritizing the most relevant and frequently mentioned ones
+8. Look for context clues like "worked with", "implemented using", "expertise in", "proficient in", etc.
 
 IMPORTANT RULES:
 1. Return ONLY valid JSON - no additional text or explanations
 2. Remove duplicates from skills array
 3. Focus on technical and professional skills
+4. If no skills are found in the document type, return empty array []
 
 CORPUS:
 ${corpus}
@@ -271,7 +310,22 @@ export async function parseEducation(corpus: string): Promise<Education> {
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `
-You are an AI assistant that extracts education information from resume/biography documents.
+You are an AI assistant that extracts education information from various types of career-related documents.
+
+You will encounter different document types requiring different parsing strategies:
+
+1. **Traditional resumes** - Standard formatted resumes with dedicated education sections
+2. **Narrative career journaling** - Rich stories about career experiences that may mention educational background
+3. **LinkedIn exports** - Professional profiles with education sections
+4. **Mixed content documents** - Performance reviews, project descriptions, informal notes
+5. **Plain contact files** - Simple contact lists (likely no education information)
+
+**CONTENT TYPE DETECTION & PARSING STRATEGY:**
+- For traditional resumes: Look for education sections with schools, degrees, and dates
+- For narrative content: Scan for mentions of schooling, degrees, training, or educational experiences in stories
+- For professional profiles: Extract from education or academic background sections
+- For informal notes: Look for any references to education, courses, or training
+- For contact files: Education likely not present, return empty array
 
 Parse the following corpus of documents and extract education information. Return a JSON object with the exact structure shown below.
 
@@ -289,20 +343,26 @@ REQUIRED JSON STRUCTURE:
 }
 
 GUIDELINES FOR EDUCATION EXTRACTION:
-1. Extract ALL education entries found in the document
-2. Include undergraduate, graduate, and any other educational institutions
-3. Avoid duplicate entries - but different degrees from the same school should be separate entries
-4. Parse dates carefully following these rules:
+1. Extract ALL education entries found in the document, regardless of format or location
+2. Include formal education (degrees), certifications, training programs, bootcamps, and significant courses
+3. Look for education mentions in:
+   - Dedicated education sections
+   - Narrative stories about career development
+   - Performance reviews mentioning educational achievements
+   - Project descriptions referencing academic background
+   - Any context where schooling or learning is discussed
+4. Avoid duplicate entries - but different degrees from the same school should be separate entries
+5. Parse dates carefully following these rules:
    - If only ONE date is found, it should be the END DATE (graduation date)
    - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
    - If there are conflicting months for the same education (e.g., "5/1981" vs "June 1981"), leave the month BLANK but keep the year
    - Common date formats: "12/1989", "December 1989", "June 1981", "05/1981"
-5. If any field cannot be parsed properly, leave it as an empty string ""
-6. For grade, extract GPA, honors, or similar academic performance indicators (e.g., "3.8 GPA", "Summa Cum Laude", "Dean's List")
-7. School should be the full institution name
-8. Degree should include the full degree name (e.g., "Bachelor of Science in Computer Science", "Master of Business Administration")
-9. Order entries chronologically if possible (most recent first)
-10. Pay special attention to education sections, academic history, and any lines containing school names with nearby date ranges
+6. If any field cannot be parsed properly, leave it as an empty string ""
+7. For grade, extract GPA, honors, or similar academic performance indicators (e.g., "3.8 GPA", "Summa Cum Laude", "Dean's List")
+8. School should be the full institution name
+9. Degree should include the full degree name (e.g., "Bachelor of Science in Computer Science", "Master of Business Administration")
+10. Order entries chronologically if possible (most recent first)
+11. Pay attention to context clues like "graduated from", "studied at", "alma mater", "university", "college", etc.
 
 IMPORTANT RULES:
 1. Return ONLY valid JSON - no additional text or explanations
@@ -317,16 +377,10 @@ IMPORTANT RULES:
    - "June 1981" → endDate: {"month": "06", "year": "1981"}
    - Conflicting "5/1981" and "June 1981" → endDate: {"month": "", "year": "1981"}
 
-IMPORTANT RULES:
-1. Return ONLY valid JSON - no additional text or explanations
-2. If dates are incomplete, use empty strings for missing parts
-3. If no education is found, return an empty array []
-4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
-5. Look carefully for date patterns near school names - they may be on the same line or adjacent lines
 CORPUS:
 ${corpus}
 
-Pay special attention to sections titled "Education", "Academic Background", "Academic History", or similar. Remember: single dates are END DATES (graduation dates), convert months to two-digit numbers (01-12), and handle conflicts by leaving month blank.
+Pay special attention to any mentions of education, training, or academic experiences throughout the entire corpus. Remember: single dates are END DATES (graduation dates), convert months to two-digit numbers (01-12), and handle conflicts by leaving month blank.
 `;
 
         try {
@@ -518,7 +572,23 @@ export async function parseCertifications(corpus: string): Promise<Certification
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `
-You are an AI assistant that extracts certifications and licenses from resume/biography documents.
+You are an AI assistant that extracts certifications and licenses from various types of career-related documents.
+
+You will encounter different document types requiring different parsing strategies:
+
+1. **Traditional resumes** - Standard formatted resumes with dedicated certifications sections
+2. **Narrative career journaling** - Rich stories about career experiences that may mention certifications earned
+3. **LinkedIn exports** - Professional profiles with certifications and licenses sections
+4. **Mixed content documents** - Performance reviews, project descriptions, training records
+5. **Plain contact files** - Simple contact lists (likely no certification information)
+
+**CONTENT TYPE DETECTION & PARSING STRATEGY:**
+- For traditional resumes: Look for certifications sections with credentials, issuers, and dates
+- For narrative content: Scan for mentions of certifications earned, licenses obtained, or professional credentials in stories
+- For professional profiles: Extract from certifications, licenses, or credentials sections
+- For training records: Look for completion certificates and professional development
+- For informal notes: Look for any references to certifications, licenses, or professional credentials
+- For contact files: Certifications likely not present, return empty array
 
 Parse the following corpus of documents and extract certifications and licenses information. Return a JSON object with the exact structure shown below.
 
@@ -535,32 +605,44 @@ REQUIRED JSON STRUCTURE:
 }
 
 GUIDELINES FOR CERTIFICATIONS EXTRACTION:
-1. Extract ALL certifications, licenses, and professional credentials found in the document
-2. Include professional licenses (e.g., CPA, PE), industry certifications (e.g., AWS, Microsoft, Cisco), and educational certifications
-3. Avoid duplicate entries
-4. Parse issued dates carefully following these rules:
-   - Look for "issued", "earned", "obtained", "awarded", "completed" dates
+1. Extract ALL certifications, licenses, and professional credentials found throughout the document
+2. Include:
+   - Professional licenses (e.g., CPA, PE, RN, PE)
+   - Industry certifications (e.g., AWS, Microsoft, Cisco, Google Cloud)
+   - Educational certifications and completion certificates
+   - Professional development credentials
+   - Training program completions
+   - Bootcamp certifications
+3. Look for certification mentions in:
+   - Dedicated certifications sections
+   - Narrative stories about professional development
+   - Performance reviews mentioning credentials earned
+   - Project descriptions referencing certified expertise
+   - Any context where credentials or licenses are discussed
+4. Avoid duplicate entries
+5. Parse issued dates carefully following these rules:
+   - Look for "issued", "earned", "obtained", "awarded", "completed", "certified" dates
    - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
    - If there are conflicting dates for the same certification, use the most recent one
    - Common date formats: "12/2019", "December 2019", "June 2021", "05/2020"
-5. If any field cannot be parsed properly, leave it as an empty string ""
-6. For credentialId, look for certification numbers, license numbers, or credential IDs
-7. Issuer should be the full organization name (e.g., "Amazon Web Services", "Microsoft", "Project Management Institute")
-8. CertName should include the full certification name (e.g., "AWS Certified Solutions Architect", "Certified Public Accountant")
-9. Order entries chronologically if possible (most recent first)
-10. Pay special attention to certification sections, professional licenses, and any lines containing certification names with nearby date ranges
+6. If any field cannot be parsed properly, leave it as an empty string ""
+7. For credentialId, look for certification numbers, license numbers, credential IDs, or badge numbers
+8. Issuer should be the full organization name (e.g., "Amazon Web Services", "Microsoft", "Project Management Institute")
+9. CertName should include the full certification name (e.g., "AWS Certified Solutions Architect", "Certified Public Accountant")
+10. Order entries chronologically if possible (most recent first)
+11. Pay attention to context clues like "certified in", "licensed for", "earned certification", "completed training", etc.
 
 IMPORTANT RULES:
 1. Return ONLY valid JSON - no additional text or explanations
 2. If dates are incomplete, use empty strings for missing parts
 3. If no certifications are found, return an empty array []
 4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
-5. Look carefully for date patterns near certification names - they may be on the same line or adjacent lines
+5. Look carefully for date patterns near certification names throughout the entire corpus
 
 CORPUS:
 ${corpus}
 
-Pay special attention to sections titled "Certifications", "Licenses", "Professional Credentials", "Certificates", or similar. Remember: convert months to two-digit numbers (01-12).
+Pay special attention to any mentions of certifications, licenses, or professional credentials throughout the entire corpus. Remember: convert months to two-digit numbers (01-12).
 `;
 
         try {
@@ -734,7 +816,25 @@ export async function parseJobHistory(corpus: string): Promise<JobHistory> {
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `
-You are an AI assistant that extracts job history and work experience from resume/biography documents.
+You are an AI assistant that extracts job history and work experience from various types of career-related documents.
+
+You will encounter different document types requiring different parsing strategies:
+
+1. **Traditional resumes** - Standard formatted resumes with dedicated work experience sections
+2. **Narrative career journaling** - Rich stories about career experiences with detailed context
+3. **LinkedIn exports** - Professional profiles with work history sections
+4. **Performance reviews** - Evaluations that may contain job descriptions and accomplishments
+5. **Project descriptions** - Documents describing work on specific projects or initiatives
+6. **Plain contact files** - Simple contact lists (likely no job history)
+
+**CONTENT TYPE DETECTION & PARSING STRATEGY:**
+- For traditional resumes: Look for work experience sections with companies, titles, and dates
+- For narrative content: Mine stories for job details, accomplishments, and career progression
+- For professional profiles: Extract from experience or work history sections
+- For performance reviews: Look for job responsibilities and achievement descriptions
+- For project descriptions: Extract work context, roles, and accomplishments from project work
+- For informal notes: Look for any references to jobs, employers, or work experiences
+- For contact files: Job history likely not present, return empty array
 
 Parse the following corpus of documents and extract job history information. Return a JSON object with the exact structure shown below.
 
@@ -754,35 +854,48 @@ REQUIRED JSON STRUCTURE:
 }
 
 GUIDELINES FOR JOB HISTORY EXTRACTION:
-1. Extract ALL job positions found in the document, including current and past positions
-2. Include multiple positions at the same company as separate entries if they have different titles or date ranges
-3. Avoid duplicate entries for identical positions
-4. Parse dates carefully following these rules:
+1. Extract ALL job positions found throughout the document, regardless of format or location
+2. Look for work experience in:
+   - Dedicated work experience sections
+   - Narrative stories about career progression
+   - Performance reviews describing current or past roles
+   - Project descriptions that reference employment context
+   - Any mention of employers, job titles, or work responsibilities
+3. Include multiple positions at the same company as separate entries if they have different titles or date ranges
+4. Avoid duplicate entries for identical positions
+5. Parse dates carefully following these rules:
    - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
    - If there are conflicting dates for the same position, use the most consistent set
    - Common date formats: "01/2020", "January 2020", "Jan 2020", "2020-01", "2020"
    - For current positions, look for keywords like "Present", "Current", "Now", or missing end dates
-5. Set currentlyWorking to true ONLY if:
+6. Set currentlyWorking to true ONLY if:
    - The end date is explicitly "Present", "Current", "Now", or similar
    - There is no end date but clear indicators this is their current job
    - The end date is very recent (within last few months) and context suggests ongoing employment
-6. For jobDescription, extract the main responsibilities and duties for each position
-7. For accomplishments, extract specific achievements, quantifiable results, or notable contributions
-   - Look for bullet points, achievements sections, or accomplishment-oriented language
+7. For jobDescription, extract main responsibilities and duties for each position from:
+   - Traditional job description sections
+   - Narrative descriptions of work performed
+   - Performance review content
+   - Project descriptions that detail daily responsibilities
+8. For accomplishments, extract specific achievements, quantifiable results, or notable contributions from:
+   - Traditional accomplishments sections
+   - Stories about successful projects or initiatives
+   - Performance review feedback and achievements
+   - Any mention of awards, recognitions, or measurable results
    - Each accomplishment should be a complete sentence
    - Focus on measurable results, awards, promotions, successful projects, etc.
-8. If any field cannot be parsed properly, leave it as an empty string "" or empty array []
-9. Company should be the full organization name
-10. Title should include the full job title (e.g., "Senior Software Engineer", "Vice President of Operations")
-11. Order entries chronologically if possible (most recent first)
-12. Pay special attention to experience sections, work history, and any lines containing company names with nearby date ranges
+9. If any field cannot be parsed properly, leave it as an empty string "" or empty array []
+10. Company should be the full organization name
+11. Title should include the full job title (e.g., "Senior Software Engineer", "Vice President of Operations")
+12. Order entries chronologically if possible (most recent first)
+13. Pay attention to context clues like "worked at", "employed by", "position at", "role as", etc.
 
 IMPORTANT RULES:
 1. Return ONLY valid JSON - no additional text or explanations
 2. If dates are incomplete, use empty strings for missing parts
 3. If no job history is found, return an empty array []
 4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
-5. Look carefully for date patterns near company/job title names - they may be on the same line or adjacent lines
+5. Look carefully for employment information throughout the entire corpus, not just traditional sections
 6. Be conservative with currentlyWorking - only set to true if clearly indicated
 7. DATE CONVERSION EXAMPLES:
    - "01/2020 - 03/2023" → startDate: {"month": "01", "year": "2020"}, endDate: {"month": "03", "year": "2023"}
@@ -792,7 +905,7 @@ IMPORTANT RULES:
 CORPUS:
 ${corpus}
 
-Pay special attention to sections titled "Experience", "Work History", "Professional Experience", "Employment", or similar. Remember: convert months to two-digit numbers (01-12), be conservative with currentlyWorking, and extract specific accomplishments.
+Pay special attention to any mentions of work experience, employment, or job responsibilities throughout the entire corpus. Remember: convert months to two-digit numbers (01-12), be conservative with currentlyWorking, and extract accomplishments from any source including narrative stories.
 `;
 
         try {

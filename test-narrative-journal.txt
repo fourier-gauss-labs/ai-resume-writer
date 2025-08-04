@@ -1,0 +1,9 @@
+Career Journal Entry - October 2023
+
+Today I completed my AWS Solutions Architect certification! It's been a long journey studying for this cert while working full-time at TechCorp as a Senior Software Engineer. I started at TechCorp in January 2022 and have been leading their cloud migration project using Python, Docker, and Kubernetes.
+
+Before TechCorp, I spent three years at StartupInc (2019-2021) as a Full Stack Developer where I built their entire platform using React, Node.js, and PostgreSQL. I graduated from NJIT in 2019 with a Computer Science degree (GPA: 3.8) and immediately dove into the startup world.
+
+My biggest accomplishment this year was reducing TechCorp's infrastructure costs by 40% through the AWS migration. I also earned my PMP certification in June 2023 from PMI, which has really helped with project management.
+
+Contact info update: Still using bill.mccann@gmail.com but added a new work phone 555-123-4567.
