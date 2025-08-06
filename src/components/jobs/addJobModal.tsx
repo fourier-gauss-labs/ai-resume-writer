@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import AddJobForm from '../forms/addJobForm';
+import AddJobForm from '@/components/forms/addJobForm';
 
 interface AddJobModalProps {
     isOpen: boolean;
