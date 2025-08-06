@@ -6,9 +6,8 @@ import SidePanel from "@/components/sidePanel"; // Import the SidePanel componen
 
 const menuItems = [
     { name: "Home", href: "/home" },
-    { name: "Settings", href: "/home/settings" },
-    { name: "Background", href: "/home/background" },
     { name: "Profile", href: "/home/profile" },
+    { name: "Jobs", href: "/home/jobs" },
 ];
 
 export default function HomeLayout({ children }: { children: ReactNode }) {
