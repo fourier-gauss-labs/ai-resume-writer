@@ -25,6 +25,9 @@ export default function TopBanner({ toggleSidePanel }: TopBannerProps) {
     // Get current user
     const user = auth.currentUser;
 
+    // Debug: Log the pathname to see what we're getting
+    console.log('Current pathname:', pathname);
+
     // Helper to get initials from displayName
     const getInitials = (name?: string | null) => {
         if (!name) return "";
@@ -39,10 +42,19 @@ export default function TopBanner({ toggleSidePanel }: TopBannerProps) {
     // Map paths to page titles
     const pageTitles: { [key: string]: string } = {
         "/home": "Home",
-        "/home/settings": "Settings",
+        "/home/": "Home",
+        "/home/settings": "My Settings",
+        "/home/settings/": "My Settings",
+        "/home/profile": "My Profile",
+        "/home/profile/": "My Profile",
+        "/home/jobs": "My Jobs",
+        "/home/jobs/": "My Jobs",
     };
 
     const pageTitle = pageTitles[pathname] || "Page"; // Default to "Page" if no match
+
+    // Debug: Log the page title calculation
+    console.log('Page title for', pathname, ':', pageTitle);
 
     const handleLogout = async () => {
         try {
