@@ -293,7 +293,7 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
                                 <Button
                                     variant="default"
                                     size="icon"
-                                    className="h-8 w-8 rounded-full"
+                                    className="h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
                                     onClick={() => {
                                         // Trigger refresh/parsing of historical documents
                                         refreshFiles();
@@ -306,7 +306,7 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
                                 <Button
                                     variant="default"
                                     size="icon"
-                                    className="h-8 w-8 rounded-full"
+                                    className="h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
                                     onClick={() => setIsModalOpen(true)}
                                 >
                                     <DocumentPlusIcon className="h-4 w-4" />

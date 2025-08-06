@@ -249,7 +249,7 @@ export default function CertificationFullView({
                             <Button
                                 variant="default"
                                 size="icon"
-                                className="h-8 w-8 rounded-full"
+                                className="h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
                                 onClick={onBack}
                             >
                                 <ArrowLeft className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function CertificationFullView({
                         <Button
                             variant="default"
                             size="icon"
-                            className="h-8 w-8 rounded-full"
+                            className="h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
                             onClick={handleAddCertification}
                         >
                             <Plus className="h-4 w-4" />
