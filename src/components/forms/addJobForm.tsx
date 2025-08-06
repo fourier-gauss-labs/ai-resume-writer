@@ -95,14 +95,11 @@ export default function AddJobForm({
                     value={formData.jobAdText}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleInputChange('jobAdText', e.target.value)}
                     placeholder="Paste the job advertisement text here. Our AI will extract the title, company, description, requirements, and other details automatically."
-                    className="w-full min-h-[200px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-2 border rounded-md min-h-[200px] resize-y"
                     rows={8}
                     required
                 />
                 {errors.jobAdText && <p className="text-sm text-red-500 mt-1">{errors.jobAdText}</p>}
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                    AI will automatically extract job title, company name, description, requirements, and deadline from this text.
-                </p>
             </div>
 
             {/* Action Buttons */}
