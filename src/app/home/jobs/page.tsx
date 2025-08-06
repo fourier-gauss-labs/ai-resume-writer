@@ -1,15 +1,36 @@
 "use client";
 
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import AddJobModal from '@/components/jobs/addJobModal';
 
 export default function JobsPage() {
+    const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
+
+    const handleAddJob = async (jobData: { url?: string; jobAdText: string }) => {
+        console.log('Adding job:', jobData);
+        // TODO: Implement API call to save job data
+        // This will be implemented when we add the backend functionality
+    };
+
     return (
         <div className="h-full flex">
             {/* Main content area - takes remaining space */}
             <div className="flex-1 pr-4 h-full">
                 <div className="p-4 h-full">
                     <div className="h-full">
-                        <Card className="border border-border p-4 h-full">
+                        <Card className="border border-border p-4 h-full relative">
+                            {/* Add Job Button */}
+                            <Button
+                                onClick={() => setIsAddJobModalOpen(true)}
+                                size="icon"
+                                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+
                             <div className="h-full flex flex-col">
                                 <div className="mb-6">
                                     <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -58,6 +79,13 @@ export default function JobsPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Add Job Modal */}
+            <AddJobModal
+                isOpen={isAddJobModalOpen}
+                onClose={() => setIsAddJobModalOpen(false)}
+                onSave={handleAddJob}
+            />
         </div>
     );
 }
