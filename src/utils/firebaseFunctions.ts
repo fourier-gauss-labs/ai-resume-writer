@@ -281,3 +281,54 @@ export async function getUserJobs(userId: string): Promise<ParsedJobData[]> {
         throw new Error(`Failed to fetch jobs: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }
+
+/**
+ * Fetch job text content from Firebase Storage
+ */
+export async function getJobTextFromStorage(fullTextPath: string): Promise<string> {
+    try {
+        console.log('=== getJobTextFromStorage ===');
+        console.log('Fetching job text from Storage path:', fullTextPath);
+
+        // Import Firebase Storage functions and auth
+        const { storage, auth } = await import("@/lib/firebase");
+        const { ref, getDownloadURL } = await import("firebase/storage");
+
+        console.log('Firebase imports successful');
+
+        // Check if user is authenticated
+        if (!auth.currentUser) {
+            throw new Error('User not authenticated');
+        }
+
+        console.log('User authenticated:', auth.currentUser.uid);
+
+        // Create a reference to the file
+        const fileRef = ref(storage, fullTextPath);
+        console.log('File reference created for:', fullTextPath);
+
+        // Get the download URL
+        console.log('Getting download URL...');
+        const downloadUrl = await getDownloadURL(fileRef);
+        console.log('Download URL obtained:', downloadUrl);
+
+        // Fetch the content using the authenticated download URL
+        console.log('Fetching content from download URL...');
+        const response = await fetch(downloadUrl);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch job text: ${response.status} ${response.statusText}`);
+        }
+
+        const textContent = await response.text();
+        console.log('Job text loaded successfully:', textContent.length, 'characters');
+
+        return textContent;
+
+    } catch (error) {
+        console.error('=== getJobTextFromStorage ERROR ===');
+        console.error('Error details:', error);
+        console.error('Full text path:', fullTextPath);
+        throw new Error(`Failed to fetch job text: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}

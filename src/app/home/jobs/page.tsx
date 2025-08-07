@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import AddJobModal from '@/components/jobs/addJobModal';
 import { JobCard } from '@/components/jobs/jobCard';
+import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
 import { parseJobPostingHttp, getUserJobs, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
@@ -14,15 +15,31 @@ export default function JobsPage() {
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
     const [jobs, setJobs] = useState<JobData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+
+    // Preview modal state
+    const [previewModal, setPreviewModal] = useState<{
+        isOpen: boolean;
+        job: JobData | null;
+    }>({
+        isOpen: false,
+        job: null,
+    });
 
     // Fetch jobs on component mount
     useEffect(() => {
         const fetchJobs = async () => {
-            if (!user) return;
+            if (!user) {
+                setIsLoading(false);
+                return;
+            }
+
+            // Wait a moment to ensure auth token is ready
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             try {
                 setIsLoading(true);
+                console.log('Fetching jobs for user:', user.uid);
                 const userJobs = await getUserJobs(user.uid);
                 setJobs(userJobs);
             } catch (error) {
@@ -33,10 +50,12 @@ export default function JobsPage() {
             }
         };
 
-        if (user) {
+        if (!loading && user) {
             fetchJobs();
+        } else if (!loading && !user) {
+            setIsLoading(false);
         }
-    }, [user]);
+    }, [user, loading]);
 
     const handleAddJob = async (jobData: { url?: string; jobAdText: string }) => {
         if (!user) {
@@ -65,7 +84,17 @@ export default function JobsPage() {
 
     const handleViewJob = (job: JobData) => {
         console.log('View job:', job);
-        // TODO: Implement job view modal
+        setPreviewModal({
+            isOpen: true,
+            job: job,
+        });
+    };
+
+    const handlePreviewClose = () => {
+        setPreviewModal({
+            isOpen: false,
+            job: null,
+        });
     };
 
     const handleEditJob = (job: JobData) => {
@@ -193,6 +222,13 @@ export default function JobsPage() {
                 isOpen={isAddJobModalOpen}
                 onClose={() => setIsAddJobModalOpen(false)}
                 onSave={handleAddJob}
+            />
+
+            {/* Job Preview Modal */}
+            <JobPreviewModal
+                isOpen={previewModal.isOpen}
+                job={previewModal.job}
+                onClose={handlePreviewClose}
             />
         </div>
     );
