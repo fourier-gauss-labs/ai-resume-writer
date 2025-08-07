@@ -7,7 +7,8 @@ import { Plus } from 'lucide-react';
 import AddJobModal from '@/components/jobs/addJobModal';
 import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
-import { parseJobPostingHttp, getUserJobs, updateJobStatus, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
+import EditJobModal from '@/components/jobs/editJobModal';
+import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
 
@@ -19,6 +20,15 @@ export default function JobsPage() {
 
     // Preview modal state
     const [previewModal, setPreviewModal] = useState<{
+        isOpen: boolean;
+        job: JobData | null;
+    }>({
+        isOpen: false,
+        job: null,
+    });
+
+    // Edit modal state
+    const [editModal, setEditModal] = useState<{
         isOpen: boolean;
         job: JobData | null;
     }>({
@@ -152,7 +162,40 @@ export default function JobsPage() {
 
     const handleEditJob = (job: JobData) => {
         console.log('Edit job:', job);
-        // TODO: Implement job edit modal
+        setEditModal({
+            isOpen: true,
+            job: job,
+        });
+    };
+
+    const handleEditClose = () => {
+        setEditModal({
+            isOpen: false,
+            job: null,
+        });
+    };
+
+    const handleJobUpdate = async (jobId: string, updatedJobData: Partial<JobData>) => {
+        if (!user) return;
+
+        try {
+            // Update in Firestore
+            await updateJob(user.uid, jobId, updatedJobData);
+
+            // Update local state
+            setJobs(prevJobs =>
+                prevJobs.map(job =>
+                    job.id === jobId
+                        ? { ...job, ...updatedJobData }
+                        : job
+                )
+            );
+
+            toast.success('Job updated successfully');
+        } catch (error) {
+            console.error('Error updating job:', error);
+            toast.error('Failed to update job');
+        }
     };
 
     // Filter jobs by status
@@ -318,6 +361,14 @@ export default function JobsPage() {
                 isOpen={previewModal.isOpen}
                 job={previewModal.job}
                 onClose={handlePreviewClose}
+            />
+
+            {/* Edit Job Modal */}
+            <EditJobModal
+                isOpen={editModal.isOpen}
+                job={editModal.job}
+                onClose={handleEditClose}
+                onSave={handleJobUpdate}
             />
         </div>
     );

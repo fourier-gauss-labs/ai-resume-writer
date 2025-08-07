@@ -304,6 +304,25 @@ export async function updateJobStatus(userId: string, jobId: string, newStatus: 
 }
 
 /**
+ * Update job details in Firestore
+ */
+export async function updateJob(userId: string, jobId: string, updates: Partial<ParsedJobData>): Promise<void> {
+    try {
+        const { doc, updateDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
+
+        const jobRef = doc(db, 'users', userId, 'jobs', jobId);
+        await updateDoc(jobRef, updates);
+
+        console.log(`Updated job ${jobId} with:`, updates);
+
+    } catch (error) {
+        console.error('Error updating job:', error);
+        throw new Error(`Failed to update job: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
+/**
  * Fetch job text content from Firebase Storage
  */
 export async function getJobTextFromStorage(fullTextPath: string): Promise<string> {
