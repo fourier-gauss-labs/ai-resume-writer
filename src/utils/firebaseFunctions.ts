@@ -179,3 +179,105 @@ export async function getStructuredHistory(userId: string): Promise<StructuredHi
         throw new Error(`Failed to get structured history: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }
+
+// Job parsing types
+export interface ParsedJobData {
+    id: string;
+    company: string;
+    title: string;
+    applicationDeadline: string | null;
+    status: 'interested' | 'applied' | 'interview' | 'completed';
+    dateAdded: string; // ISO string
+    url: string | null;
+    fullTextPath: string;
+}
+
+export interface JobParsingResponse {
+    success: true;
+    jobId: string;
+    jobData: ParsedJobData;
+}
+
+/**
+ * Call the parseJobPostingHttp Firebase function via HTTP
+ * to parse job posting text into structured data and store it
+ */
+export async function parseJobPostingHttp(userId: string, jobAdText: string, url?: string): Promise<JobParsingResponse> {
+    try {
+        // Use emulator URL for local development based on environment variable
+        const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_ENV === 'emulator';
+        const functionUrl = useEmulator
+            ? 'http://localhost:5001/ai-resume-writer-46403/us-central1/parseJobPostingHttp'
+            : 'https://us-central1-ai-resume-writer-46403.cloudfunctions.net/parseJobPostingHttp';
+
+        console.log('=== parseJobPostingHttp ===');
+        console.log('Using function URL:', functionUrl);
+        console.log('Request payload:', { userId, url, jobAdTextLength: jobAdText.length });
+
+        const requestBody = {
+            userId,
+            jobAdText,
+            url
+        };
+
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (data.error === 'duplicate') {
+                throw new Error(data.message);
+            }
+            throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        }
+
+        console.log('parseJobPostingHttp response:', data);
+        return data as JobParsingResponse;
+
+    } catch (error) {
+        console.error('Error calling parseJobPostingHttp:', error);
+        throw new Error(`Failed to parse job posting: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
+/**
+ * Fetch all jobs for a user from Firestore
+ */
+export async function getUserJobs(userId: string): Promise<ParsedJobData[]> {
+    try {
+        const { collection, query, getDocs, orderBy } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
+
+        const jobsRef = collection(db, 'users', userId, 'jobs');
+        const jobsQuery = query(jobsRef, orderBy('dateAdded', 'desc'));
+        const snapshot = await getDocs(jobsQuery);
+
+        const jobs: ParsedJobData[] = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            jobs.push({
+                id: doc.id,
+                company: data.company,
+                title: data.title,
+                applicationDeadline: data.applicationDeadline,
+                status: data.status,
+                dateAdded: data.dateAdded.toDate().toISOString(),
+                url: data.url,
+                fullTextPath: data.fullTextPath
+            });
+        });
+
+        console.log(`Fetched ${jobs.length} jobs for user ${userId}`);
+        return jobs;
+
+    } catch (error) {
+        console.error('Error fetching user jobs:', error);
+        throw new Error(`Failed to fetch jobs: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
