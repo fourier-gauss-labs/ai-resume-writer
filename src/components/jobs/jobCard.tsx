@@ -23,11 +23,30 @@ interface JobCardProps {
     job: JobData;
     onView?: (job: JobData) => void;
     onEdit?: (job: JobData) => void;
+    isDragging?: boolean;
+    onDragStart?: (jobId: string) => void;
 }
 
-export function JobCard({ job, onView, onEdit }: JobCardProps) {
+export function JobCard({ job, onView, onEdit, isDragging = false, onDragStart }: JobCardProps) {
+    const handleDragStart = (e: React.DragEvent) => {
+        e.dataTransfer.setData('text/plain', job.id);
+        e.dataTransfer.effectAllowed = 'move';
+        onDragStart?.(job.id);
+    };
+
+    const handleDragEnd = () => {
+        // Reset dragging state when drag ends
+        onDragStart?.('');
+    };
+
     return (
-        <Card className="relative p-4 border border-border">
+        <Card
+            className={`relative p-4 border border-border cursor-grab active:cursor-grabbing transition-all ${isDragging ? 'opacity-50 rotate-2 scale-105' : 'hover:shadow-md hover:scale-105'
+                }`}
+            draggable
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+        >
             {/* Main content with icon on left, text left-aligned */}
             <div className="flex items-start space-x-3">
                 {/* Job icon */}

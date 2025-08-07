@@ -7,7 +7,7 @@ import { Plus } from 'lucide-react';
 import AddJobModal from '@/components/jobs/addJobModal';
 import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
-import { parseJobPostingHttp, getUserJobs, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
+import { parseJobPostingHttp, getUserJobs, updateJobStatus, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
 
@@ -25,6 +25,10 @@ export default function JobsPage() {
         isOpen: false,
         job: null,
     });
+
+    // Drag and drop state
+    const [draggedJobId, setDraggedJobId] = useState<string | null>(null);
+    const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
 
     // Fetch jobs on component mount
     useEffect(() => {
@@ -97,6 +101,55 @@ export default function JobsPage() {
         });
     };
 
+    // Drag and drop handlers
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDragEnter = (status: string) => {
+        setDragOverColumn(status);
+    };
+
+    const handleDragLeave = () => {
+        setDragOverColumn(null);
+    };
+
+    const handleDragStart = (jobId: string) => {
+        setDraggedJobId(jobId);
+    };
+
+    const handleDrop = async (e: React.DragEvent, targetStatus: 'interested' | 'applied' | 'interview' | 'completed') => {
+        e.preventDefault();
+
+        const jobId = e.dataTransfer.getData('text/plain');
+        if (!jobId || !user) return;
+
+        try {
+            // Find the job being moved
+            const job = jobs.find(j => j.id === jobId);
+            if (!job || job.status === targetStatus) return;
+
+            // Update in Firestore
+            await updateJobStatus(user.uid, jobId, targetStatus);
+
+            // Update local state
+            setJobs(prevJobs =>
+                prevJobs.map(j =>
+                    j.id === jobId ? { ...j, status: targetStatus } : j
+                )
+            );
+
+            toast.success(`Moved "${job.title}" to ${targetStatus}`);
+        } catch (error) {
+            console.error('Error moving job:', error);
+            toast.error('Failed to move job');
+        }
+
+        setDraggedJobId(null);
+        setDragOverColumn(null);
+    };
+
     const handleEditJob = (job: JobData) => {
         console.log('Edit job:', job);
         // TODO: Implement job edit modal
@@ -133,7 +186,14 @@ export default function JobsPage() {
                                 </div>
 
                                 <div className="grid grid-cols-4 gap-4 flex-1">
-                                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 flex flex-col">
+                                    <div
+                                        className={`bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 flex flex-col transition-all ${dragOverColumn === 'interested' ? 'border-blue-400 dark:border-blue-600 bg-blue-100 dark:bg-blue-900/40 shadow-lg' : 'hover:bg-blue-100 dark:hover:bg-blue-900/30'
+                                            }`}
+                                        onDragOver={handleDragOver}
+                                        onDragEnter={() => handleDragEnter('interested')}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, 'interested')}
+                                    >
                                         <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Interested</h3>
                                         <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">Jobs you want to apply for</p>
                                         <div className="flex-1 border-t border-blue-200 dark:border-blue-800 pt-2 space-y-2 overflow-y-auto">
@@ -146,6 +206,8 @@ export default function JobsPage() {
                                                         job={job}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onDragStart={handleDragStart}
+                                                        isDragging={draggedJobId === job.id}
                                                     />
                                                 ))
                                             ) : (
@@ -154,7 +216,14 @@ export default function JobsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800 flex flex-col">
+                                    <div
+                                        className={`bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800 flex flex-col transition-all ${dragOverColumn === 'applied' ? 'border-yellow-400 dark:border-yellow-600 bg-yellow-100 dark:bg-yellow-900/40 shadow-lg' : 'hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
+                                            }`}
+                                        onDragOver={handleDragOver}
+                                        onDragEnter={() => handleDragEnter('applied')}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, 'applied')}
+                                    >
                                         <h3 className="font-medium text-yellow-900 dark:text-yellow-100 mb-2">Applied</h3>
                                         <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-4">Applications submitted</p>
                                         <div className="flex-1 border-t border-yellow-200 dark:border-yellow-800 pt-2 space-y-2 overflow-y-auto">
@@ -165,6 +234,8 @@ export default function JobsPage() {
                                                         job={job}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onDragStart={handleDragStart}
+                                                        isDragging={draggedJobId === job.id}
                                                     />
                                                 ))
                                             ) : (
@@ -173,7 +244,14 @@ export default function JobsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800 flex flex-col">
+                                    <div
+                                        className={`bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800 flex flex-col transition-all ${dragOverColumn === 'interview' ? 'border-green-400 dark:border-green-600 bg-green-100 dark:bg-green-900/40 shadow-lg' : 'hover:bg-green-100 dark:hover:bg-green-900/30'
+                                            }`}
+                                        onDragOver={handleDragOver}
+                                        onDragEnter={() => handleDragEnter('interview')}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, 'interview')}
+                                    >
                                         <h3 className="font-medium text-green-900 dark:text-green-100 mb-2">Interview</h3>
                                         <p className="text-sm text-green-700 dark:text-green-300 mb-4">Interview scheduled/completed</p>
                                         <div className="flex-1 border-t border-green-200 dark:border-green-800 pt-2 space-y-2 overflow-y-auto">
@@ -184,6 +262,8 @@ export default function JobsPage() {
                                                         job={job}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onDragStart={handleDragStart}
+                                                        isDragging={draggedJobId === job.id}
                                                     />
                                                 ))
                                             ) : (
@@ -192,7 +272,14 @@ export default function JobsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800 flex flex-col">
+                                    <div
+                                        className={`bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800 flex flex-col transition-all ${dragOverColumn === 'completed' ? 'border-purple-400 dark:border-purple-600 bg-purple-100 dark:bg-purple-900/40 shadow-lg' : 'hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                                            }`}
+                                        onDragOver={handleDragOver}
+                                        onDragEnter={() => handleDragEnter('completed')}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, 'completed')}
+                                    >
                                         <h3 className="font-medium text-purple-900 dark:text-purple-100 mb-2">Completed</h3>
                                         <p className="text-sm text-purple-700 dark:text-purple-300 mb-4">Offers, rejections, withdrawals</p>
                                         <div className="flex-1 border-t border-purple-200 dark:border-purple-800 pt-2 space-y-2 overflow-y-auto">
@@ -203,6 +290,8 @@ export default function JobsPage() {
                                                         job={job}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onDragStart={handleDragStart}
+                                                        isDragging={draggedJobId === job.id}
                                                     />
                                                 ))
                                             ) : (
