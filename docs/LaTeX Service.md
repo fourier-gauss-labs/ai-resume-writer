@@ -4,7 +4,7 @@
 
 This document outlines the technical specification for implementing a LaTeX-based resume generation service within our Firebase-centric AI Resume Writer application. The service will enable dynamic, AI-powered resume generation with professional LaTeX formatting.
 
-## Architecture: Option 1 - Firebase Cloud Functions + Containerized LaTeX Service
+## Architecture: Firebase Cloud Functions + Containerized LaTeX Service
 
 ### System Components
 
@@ -249,7 +249,7 @@ Standard variables:
 - [ ] Documentation completion
 - [ ] Launch preparation
 
-## Evolution to Option 3: Optimized Service
+## Evolution to Optimized Service
 
 ### Phase 5: Performance Optimization (Future Enhancement)
 
