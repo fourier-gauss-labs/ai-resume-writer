@@ -22,11 +22,14 @@ from utils.error_handling import handle_error
 app = Flask(__name__)
 
 # Configure logging
-if os.getenv('GOOGLE_CLOUD_PROJECT'):
-    # Use Google Cloud Logging in production
-    cloud_logging_client = cloud_logging.Client()
-    cloud_logging_client.setup_logging()
-else:
+try:
+    if os.getenv('GOOGLE_CLOUD_PROJECT') and os.getenv('GOOGLE_APPLICATION_CREDENTIALS'):
+        # Use Google Cloud Logging in production
+        cloud_logging_client = cloud_logging.Client()
+        cloud_logging_client.setup_logging()
+    else:
+        raise Exception("No Google Cloud credentials")
+except Exception:
     # Use local logging for development
     logging.basicConfig(
         level=getattr(logging, os.getenv('LOG_LEVEL', 'INFO')),

@@ -8,8 +8,8 @@ SERVICE_NAME="latex-resume-service"
 IMAGE_NAME="ai-resume-latex-service"
 TAG=${1:-latest}
 REGION=${REGION:-us-central1}
-PROJECT_ID=${GOOGLE_CLOUD_PROJECT:-your-project-id}
-DOCKER_REPO=${DOCKER_REPO:-your-dockerhub-username}
+PROJECT_ID=${GOOGLE_CLOUD_PROJECT:-ai-resume-writer-46403}
+DOCKER_REPO=${DOCKER_REPO:-iambillmccann}
 
 # Check if gcloud is installed and authenticated
 if ! command -v gcloud &> /dev/null; then

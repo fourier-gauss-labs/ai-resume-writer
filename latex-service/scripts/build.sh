@@ -6,7 +6,7 @@ set -e
 # Configuration
 IMAGE_NAME="ai-resume-latex-service"
 TAG=${1:-latest}
-DOCKER_REPO=${DOCKER_REPO:-your-dockerhub-username}
+DOCKER_REPO=${DOCKER_REPO:-iambillmccann}
 
 echo "Building LaTeX service Docker image..."
 echo "Image: ${DOCKER_REPO}/${IMAGE_NAME}:${TAG}"

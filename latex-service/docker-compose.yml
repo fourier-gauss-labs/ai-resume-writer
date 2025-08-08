@@ -10,7 +10,7 @@ services:
     environment:
       - PORT=8080
       - LOG_LEVEL=DEBUG
-      - GOOGLE_CLOUD_PROJECT=your-project-id
+      - GOOGLE_CLOUD_PROJECT=ai-resume-writer-46403
     volumes:
       # Mount source code for development (optional)
       - ./src:/app/src

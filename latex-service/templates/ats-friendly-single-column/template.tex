@@ -8,14 +8,16 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\usepackage{fontspec}
+% Note: Using standard fonts instead of fontspec for pdfLaTeX compatibility
 
 % Page setup
 \geometry{margin=0.75in}
 \pagestyle{empty}
 
-% Font settings (default to Arial-like)
-\setmainfont{Arial}
+% Font settings (using standard LaTeX fonts for pdfLaTeX compatibility)
+% Default to Arial-like appearance with helvet package
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
 
 % Colors (default to blue, will be replaced by customization)
 \definecolor{primarycolor}{HTML}{0066CC}
