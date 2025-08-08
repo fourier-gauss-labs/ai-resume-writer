@@ -1,0 +1,49 @@
+# Docker ignore patterns for LaTeX service
+
+# Development files
+.git/
+.gitignore
+.dockerignore
+README.md
+docker-compose.yml
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files and coverage
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+.tmp/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

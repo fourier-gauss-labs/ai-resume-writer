@@ -1,0 +1,95 @@
+\documentclass[11pt,letterpaper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fontspec}
+
+% Page setup
+\geometry{margin=0.75in}
+\pagestyle{empty}
+
+% Font settings (default to Arial-like)
+\setmainfont{Arial}
+
+% Colors (default to blue, will be replaced by customization)
+\definecolor{primarycolor}{HTML}{0066CC}
+\definecolor{textcolor}{HTML}{333333}
+
+% Custom commands for resume sections
+\newcommand{\resumesection}[1]{
+    \section*{\textcolor{primarycolor}{\MakeUppercase{#1}}}
+    \vspace{-0.3em}
+    \hrule height 0.5pt
+    \vspace{0.5em}
+}
+
+\newcommand{\experienceitem}[3]{
+    \textbf{#1} \hfill \textcolor{textcolor}{#3} \\
+    \textcolor{primarycolor}{#2} \\
+    \vspace{0.2em}
+}
+
+\newcommand{\educationitem}[3]{
+    \textbf{#1} \hfill \textcolor{textcolor}{#3} \\
+    \textcolor{primarycolor}{#2} \\
+    \vspace{0.2em}
+}
+
+\newcommand{\certificationitem}[3]{
+    \textbf{#1} \hfill \textcolor{textcolor}{#3} \\
+    \textcolor{primarycolor}{#2} \\
+    \vspace{0.2em}
+}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primarycolor,
+    urlcolor=primarycolor,
+    pdftitle={Resume},
+    pdfauthor={{{NAME}}}
+}
+
+% Custom list formatting
+\setlist[itemize]{leftmargin=1em, itemsep=0.1em, parsep=0em}
+
+\begin{document}
+
+% Header with contact information
+\begin{center}
+    {\Huge\textbf{{{NAME}}}} \\
+    \vspace{0.3em}
+    {{EMAIL}} $\bullet$ {{PHONE}} $\bullet$ {{LOCATION}} \\
+\end{center}
+
+\vspace{0.5em}
+
+% Professional Summary
+\resumesection{Professional Summary}
+{{SUMMARY}}
+
+\vspace{0.5em}
+
+% Experience Section
+\resumesection{Professional Experience}
+{{EXPERIENCE_SECTION}}
+
+% Education Section
+\resumesection{Education}
+{{EDUCATION_SECTION}}
+
+% Skills Section
+\resumesection{Technical Skills}
+{{SKILLS_SECTION}}
+
+% Certifications Section (only show if content exists)
+\resumesection{Certifications}
+{{CERTIFICATIONS_SECTION}}
+
+\end{document}
