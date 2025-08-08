@@ -157,7 +157,7 @@ Standard variables:
 
 ## Step-by-Step Work Breakdown
 
-### Phase 1: Foundation Setup (Week 1)
+### Phase 1: Foundation Setup
 
 #### 1.1 LaTeX Container Development
 - [ ] Create Dockerfile with TeXLive base image
@@ -180,7 +180,7 @@ Standard variables:
 - [ ] Set up monitoring and logging
 - [ ] Test container endpoints
 
-### Phase 2: Firebase Integration (Week 2)
+### Phase 2: Firebase Integration
 
 #### 2.1 Cloud Function Development
 - [ ] Create `generateResume` Cloud Function
@@ -203,7 +203,7 @@ Standard variables:
 - [ ] Create cleanup job for old generated files
 - [ ] Test end-to-end storage flow
 
-### Phase 3: Frontend Integration (Week 3)
+### Phase 3: Frontend Integration
 
 #### 3.1 UI Components
 - [ ] Create resume generation interface
