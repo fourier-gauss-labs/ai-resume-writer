@@ -1,0 +1,65 @@
+\documentclass[11pt,letterpaper]{article}
+
+% Minimal packages only
+\usepackage[margin=0.75in]{geometry}
+
+% Page setup
+\pagestyle{empty}
+
+% Custom commands for resume sections - very basic
+\newcommand{\resumesection}[1]{%
+    \vspace{0.5em}
+    {\large\bfseries\MakeUppercase{#1}}
+    \vspace{0.2em}
+    \hrule height 0.5pt
+    \vspace{0.3em}
+}
+
+\newcommand{\experienceitem}[3]{%
+    \textbf{#1} \hfill #3 \\
+    \textit{#2} \\
+    \vspace{0.2em}
+}
+
+\newcommand{\educationitem}[3]{%
+    \textbf{#1} \hfill #3 \\
+    \textit{#2} \\
+    \vspace{0.2em}
+}
+
+\newcommand{\certificationitem}[3]{%
+    \textbf{#1} \hfill #3 \\
+    \textit{#2} \\
+    \vspace{0.2em}
+}
+
+\begin{document}
+
+% Header with contact information
+\begin{center}
+    {\LARGE\bfseries {{NAME}}} \\
+    \vspace{0.2em}
+    {{EMAIL}} | {{PHONE}} | {{LOCATION}} \\
+\end{center}
+
+% Professional Summary
+\resumesection{Professional Summary}
+{{SUMMARY}}
+
+% Experience Section
+\resumesection{Professional Experience}
+{{EXPERIENCE_SECTION}}
+
+% Education Section
+\resumesection{Education}
+{{EDUCATION_SECTION}}
+
+% Skills Section
+\resumesection{Technical Skills}
+{{SKILLS_SECTION}}
+
+% Certifications Section
+\resumesection{Certifications}
+{{CERTIFICATIONS_SECTION}}
+
+\end{document}

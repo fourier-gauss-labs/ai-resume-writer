@@ -1,0 +1,42 @@
+{
+    "name": "ATS-Friendly Single Column",
+    "description": "Clean, single-column resume template optimized for Applicant Tracking Systems",
+    "category": "professional",
+    "version": "1.0",
+    "author": "AI Resume Writer",
+    "tags": [
+        "ats",
+        "professional",
+        "clean",
+        "single-column"
+    ],
+    "variables": [
+        "NAME",
+        "EMAIL",
+        "PHONE",
+        "LOCATION",
+        "SUMMARY",
+        "EXPERIENCE_SECTION",
+        "EDUCATION_SECTION",
+        "SKILLS_SECTION",
+        "CERTIFICATIONS_SECTION"
+    ],
+    "customizations": {
+        "colorScheme": [
+            "blue",
+            "green",
+            "red",
+            "purple",
+            "orange",
+            "gray",
+            "black"
+        ],
+        "fontFamily": [
+            "Arial",
+            "Helvetica",
+            "Times New Roman",
+            "Calibri",
+            "Georgia"
+        ]
+    }
+}

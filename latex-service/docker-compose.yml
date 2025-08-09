@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  latex-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - LOG_LEVEL=DEBUG
+      - GOOGLE_CLOUD_PROJECT=ai-resume-writer-46403
+    volumes:
+      # Mount source code for development (optional)
+      - ./src:/app/src
+      - ./templates:/app/templates
+      # Mount a local directory for LaTeX work files
+      - ./tmp:/tmp/latex-work
+    networks:
+      - latex-network
+
+  # Optional: Add a database or other services for local development
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - latex-network
+
+networks:
+  latex-network:
+    driver: bridge
+
+volumes:
+  latex-work:
