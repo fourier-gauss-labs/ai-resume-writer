@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Resume Generation</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-functions-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: red;
+            border-color: red;
+            background-color: #ffe6e6;
+        }
+
+        .success {
+            color: green;
+            border-color: green;
+            background-color: #e6ffe6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Resume Generation Test</h1>
+    <p>This page tests the generateResumeHttp Firebase Cloud Function.</p>
+
+    <button id="testButton" onclick="testResumeGeneration()">Generate Test Resume</button>
+
+    <div id="result"></div>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMFdOXRG5s0JqWs4o16xDk_NOOlzFIYfo",
+            authDomain: "ai-resume-writer-46403.firebaseapp.com",
+            projectId: "ai-resume-writer-46403",
+            storageBucket: "ai-resume-writer-46403.appspot.com",
+            messagingSenderId: "334659394893",
+            appId: "1:334659394893:web:2a1c8b56fb4b5c8a5d5e1c"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const functions = firebase.functions();
+
+        async function testResumeGeneration() {
+            const button = document.getElementById('testButton');
+            const result = document.getElementById('result');
+
+            button.disabled = true;
+            button.textContent = 'Generating...';
+            result.className = '';
+            result.textContent = 'Starting resume generation...';
+
+            try {
+                const generateResume = functions.httpsCallable('generateResumeHttp');
+
+                const testData = {
+                    templateId: 'ats-friendly-single-column',
+                    content: {
+                        personalInfo: {
+                            name: 'John Doe',
+                            email: 'john.doe@example.com',
+                            phone: '(555) 123-4567',
+                            location: 'San Francisco, CA'
+                        },
+                        summary: 'Experienced software developer with 5+ years of experience in full-stack development, specializing in React, Node.js, and cloud technologies. Proven track record of delivering high-quality applications and leading development teams.',
+                        experience: [
+                            {
+                                title: 'Senior Software Engineer',
+                                company: 'Tech Innovations Inc.',
+                                duration: '2021 - Present',
+                                bullets: [
+                                    'Led development of microservices architecture serving 1M+ users',
+                                    'Improved system performance by 40% through optimization initiatives',
+                                    'Mentored junior developers and established coding best practices',
+                                    'Collaborated with product team to deliver features ahead of schedule'
+                                ]
+                            },
+                            {
+                                title: 'Full Stack Developer',
+                                company: 'StartupXYZ',
+                                duration: '2019 - 2021',
+                                bullets: [
+                                    'Built responsive web applications using React and Node.js',
+                                    'Implemented CI/CD pipelines reducing deployment time by 60%',
+                                    'Designed and developed RESTful APIs serving mobile and web clients'
+                                ]
+                            }
+                        ],
+                        education: [
+                            {
+                                degree: 'Bachelor of Science in Computer Science',
+                                school: 'University of Technology',
+                                duration: '2015 - 2019'
+                            }
+                        ],
+                        skills: [
+                            'JavaScript', 'TypeScript', 'React', 'Node.js', 'Python',
+                            'Docker', 'Kubernetes', 'AWS', 'PostgreSQL', 'MongoDB'
+                        ],
+                        certifications: [
+                            {
+                                name: 'AWS Certified Solutions Architect',
+                                issuer: 'Amazon Web Services',
+                                date: '2022'
+                            },
+                            {
+                                name: 'Certified Kubernetes Administrator',
+                                issuer: 'Cloud Native Computing Foundation',
+                                date: '2023'
+                            }
+                        ]
+                    },
+                    customizations: {
+                        colors: {
+                            primary: '#0066cc'
+                        }
+                    }
+                };
+
+                const response = await generateResume(testData);
+                console.log('Function response:', response);
+
+                if (response.data.success) {
+                    result.className = 'success';
+                    result.textContent = `✅ Resume generated successfully!\n\n` +
+                        `File Size: ${response.data.metadata.fileSize} bytes\n` +
+                        `Pages: ${response.data.metadata.pages}\n` +
+                        `Compilation Time: ${response.data.metadata.compilationTime}\n` +
+                        `Template: ${response.data.metadata.templateId}\n\n` +
+                        `PDF Base64 length: ${response.data.pdfBase64.length} characters\n\n` +
+                        `To view the PDF, you could decode the base64 and save as a file.`;
+
+                    // Optional: Create download link
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = `data:application/pdf;base64,${response.data.pdfBase64}`;
+                    downloadLink.download = 'test-resume.pdf';
+                    downloadLink.textContent = 'Download PDF';
+                    downloadLink.style.display = 'block';
+                    downloadLink.style.marginTop = '10px';
+                    result.appendChild(downloadLink);
+
+                } else {
+                    result.className = 'error';
+                    result.textContent = `❌ Resume generation failed:\n${response.data.error}`;
+                }
+
+            } catch (error) {
+                console.error('Error calling function:', error);
+                result.className = 'error';
+                result.textContent = `❌ Error calling function:\n${error.message}\n\nCheck browser console for details.`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Generate Test Resume';
+            }
+        }
+    </script>
+</body>
+
+</html>
