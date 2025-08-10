@@ -54,3 +54,4 @@ export { storeStructuredHistory, getStructuredHistory } from './storeStructuredH
 export { storeStructuredHistoryHttp } from './storeStructuredHistoryHttp';
 export { getStructuredHistoryHttp } from './getStructuredHistoryHttp';
 export { parseJobPostingHttp } from './parseJobPostingHttp';
+export { generateResumeHttp } from './generateResumeHttp';
