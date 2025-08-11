@@ -8,9 +8,11 @@ import AddJobModal from '@/components/jobs/addJobModal';
 import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
 import EditJobModal from '@/components/jobs/editJobModal';
+import { DocumentPreviewModal } from '@/components/documentPreview';
 import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
+import { FileData } from '@/utils/fileUtils';
 
 // Use ParsedJobData as the main type
 type JobData = ParsedJobData;
@@ -42,6 +44,15 @@ export default function JobsPage() {
     // Drag and drop state
     const [draggedJobId, setDraggedJobId] = useState<string | null>(null);
     const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+
+    // Document preview modal state
+    const [documentPreview, setDocumentPreview] = useState<{
+        isOpen: boolean;
+        file: FileData | null;
+    }>({
+        isOpen: false,
+        file: null,
+    });
 
     // Fetch jobs on component mount
     useEffect(() => {
@@ -262,17 +273,168 @@ export default function JobsPage() {
         }
     };
 
-    const handleViewResume = (job: JobData) => {
-        if (job.resumeId) {
-            // TODO: Open the generated resume
-            toast.info('Opening resume...');
+    const handleViewResume = async (job: JobData) => {
+        if (!job.hasGeneratedResume && !job.resumeId) {
+            toast.error('No resume generated for this job yet');
+            return;
+        }
+
+        try {
+            toast.loading('Loading resume...', { id: 'resume-view' });
+            
+            // For now, we'll generate a fresh PDF since we don't have storage yet
+            // In the future, this would retrieve from Firebase Storage
+            
+            // Import the generateResumeHttp function
+            const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
+            
+            // Generate a fresh resume PDF (this is temporary until we have storage)
+            const testData = {
+                templateId: 'ats-friendly-single-column',
+                content: {
+                    personalInfo: {
+                        name: 'Generated for ' + job.company,
+                        email: 'user@example.com',
+                        phone: '(555) 123-4567',
+                        location: 'San Francisco, CA'
+                    },
+                    summary: `Resume tailored for ${job.title} position at ${job.company}`,
+                    experience: [
+                        {
+                            title: 'Sample Experience',
+                            company: 'Previous Company',
+                            duration: '2021 - Present', 
+                            bullets: [
+                                'Relevant experience for this role',
+                                'Achievements aligned with job requirements'
+                            ]
+                        }
+                    ],
+                    education: [{
+                        degree: 'Sample Degree',
+                        school: 'University',
+                        duration: '2015 - 2019'
+                    }],
+                    skills: ['Relevant', 'Skills', 'For', 'This', 'Role'],
+                    certifications: []
+                }
+            };
+
+            const result = await generateResumeHttp(testData);
+            
+            if (result.success && result.pdfBase64) {
+                // Convert base64 to blob URL for preview
+                const binaryString = atob(result.pdfBase64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Create FileData object for the document preview modal
+                const pdfFile: FileData = {
+                    id: job.resumeId || `resume-${job.id}`,
+                    name: `Resume-${job.company}-${job.title}.pdf`,
+                    type: 'pdf',
+                    uploadDate: new Date().toISOString(),
+                    size: `${Math.round(bytes.length / 1024)} KB`,
+                    url: blobUrl
+                };
+
+                setDocumentPreview({
+                    isOpen: true,
+                    file: pdfFile
+                });
+                
+                toast.success('Resume loaded', { id: 'resume-view' });
+            } else {
+                throw new Error('PDF generation failed');
+            }
+            
+        } catch (error) {
+            console.error('Error viewing resume:', error);
+            toast.error('Failed to load resume', { id: 'resume-view' });
         }
     };
 
-    const handleViewCoverLetter = (job: JobData) => {
-        if (job.coverLetterId) {
-            // TODO: Open the generated cover letter
-            toast.info('Opening cover letter...');
+    const handleViewCoverLetter = async (job: JobData) => {
+        if (!job.hasGeneratedCoverLetter && !job.coverLetterId) {
+            toast.error('No cover letter generated for this job yet');
+            return;
+        }
+
+        try {
+            toast.loading('Loading cover letter...', { id: 'cover-view' });
+            
+            // For now, we'll generate a fresh PDF since we don't have storage yet
+            // In the future, this would retrieve from Firebase Storage
+            
+            const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
+            
+            // Generate a cover letter PDF (using same template for now)
+            const testData = {
+                templateId: 'ats-friendly-single-column',
+                content: {
+                    personalInfo: {
+                        name: 'Cover Letter for ' + job.company,
+                        email: 'user@example.com',
+                        phone: '(555) 123-4567',
+                        location: 'San Francisco, CA'
+                    },
+                    summary: `Dear ${job.company} Hiring Team,\n\nI am writing to express my interest in the ${job.title} position. This cover letter has been tailored specifically for your company and role requirements.`,
+                    experience: [
+                        {
+                            title: 'Relevant Experience Highlight',
+                            company: 'Previous Role',
+                            duration: 'Experience Period',
+                            bullets: [
+                                'Key achievements relevant to this position',
+                                'Skills and accomplishments that match job requirements'
+                            ]
+                        }
+                    ],
+                    education: [],
+                    skills: [],
+                    certifications: []
+                }
+            };
+
+            const result = await generateResumeHttp(testData);
+            
+            if (result.success && result.pdfBase64) {
+                // Convert base64 to blob URL for preview
+                const binaryString = atob(result.pdfBase64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Create FileData object for the document preview modal
+                const pdfFile: FileData = {
+                    id: job.coverLetterId || `cover-${job.id}`,
+                    name: `Cover-Letter-${job.company}-${job.title}.pdf`,
+                    type: 'pdf',
+                    uploadDate: new Date().toISOString(),
+                    size: `${Math.round(bytes.length / 1024)} KB`,
+                    url: blobUrl
+                };
+
+                setDocumentPreview({
+                    isOpen: true,
+                    file: pdfFile
+                });
+                
+                toast.success('Cover letter loaded', { id: 'cover-view' });
+            } else {
+                throw new Error('PDF generation failed');
+            }
+            
+        } catch (error) {
+            console.error('Error viewing cover letter:', error);
+            toast.error('Failed to load cover letter', { id: 'cover-view' });
         }
     };
 
@@ -483,6 +645,19 @@ export default function JobsPage() {
                 job={editModal.job}
                 onClose={handleEditClose}
                 onSave={handleJobUpdate}
+            />
+
+            {/* Document Preview Modal */}
+            <DocumentPreviewModal
+                isOpen={documentPreview.isOpen}
+                file={documentPreview.file}
+                onClose={() => {
+                    // Clean up blob URL to prevent memory leaks
+                    if (documentPreview.file?.url.startsWith('blob:')) {
+                        URL.revokeObjectURL(documentPreview.file.url);
+                    }
+                    setDocumentPreview({ isOpen: false, file: null });
+                }}
             />
         </div>
     );
