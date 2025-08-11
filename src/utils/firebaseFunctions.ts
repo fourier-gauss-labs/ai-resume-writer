@@ -190,6 +190,11 @@ export interface ParsedJobData {
     dateAdded: string; // ISO string
     url: string | null;
     fullTextPath: string;
+    // New fields for generated materials
+    hasGeneratedResume?: boolean;
+    hasGeneratedCoverLetter?: boolean;
+    resumeId?: string;
+    coverLetterId?: string;
 }
 
 export interface JobParsingResponse {
@@ -370,5 +375,89 @@ export async function getJobTextFromStorage(fullTextPath: string): Promise<strin
         console.error('Error details:', error);
         console.error('Full text path:', fullTextPath);
         throw new Error(`Failed to fetch job text: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
+// Resume generation types and functions
+interface PersonalInfo {
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+}
+
+interface ExperienceItem {
+  title: string;
+  company: string;
+  duration: string;
+  bullets: string[];
+}
+
+interface EducationItem {
+  degree: string;
+  school: string;
+  duration: string;
+}
+
+interface CertificationItem {
+  name: string;
+  issuer: string;
+  date: string;
+}
+
+interface ResumeContent {
+  personalInfo: PersonalInfo;
+  summary: string;
+  experience: ExperienceItem[];
+  education: EducationItem[];
+  skills: string[];
+  certifications: CertificationItem[];
+}
+
+interface GenerateResumeRequest {
+  templateId: string;
+  content: ResumeContent;
+  customizations?: {
+    colors?: {
+      primary?: string;
+    };
+    fonts?: {
+      family?: string;
+    };
+  };
+}
+
+export interface LaTeXServiceResponse {
+  success: boolean;
+  pdfBase64?: string;
+  metadata?: {
+    compilationTime: string;
+    fileSize: number;
+    pages: number;
+    templateId: string;
+    templateVersion: string;
+  };
+  error?: string;
+  details?: string[];
+}
+
+/**
+ * Generate a resume PDF using the Firebase Cloud Function
+ */
+export async function generateResumeHttp(request: GenerateResumeRequest): Promise<LaTeXServiceResponse> {
+    try {
+        console.log('Calling generateResumeHttp function...');
+        
+        // Get the callable function
+        const generateResume = httpsCallable(functions, 'generateResumeHttp');
+        
+        // Call the function
+        const result = await generateResume(request);
+        
+        return result.data as LaTeXServiceResponse;
+        
+    } catch (error) {
+        console.error('Error calling generateResumeHttp:', error);
+        throw error;
     }
 }
