@@ -8,9 +8,12 @@ import AddJobModal from '@/components/jobs/addJobModal';
 import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
 import EditJobModal from '@/components/jobs/editJobModal';
-import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData as JobData } from '@/utils/firebaseFunctions';
+import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
+
+// Use ParsedJobData as the main type
+type JobData = ParsedJobData;
 
 export default function JobsPage() {
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
@@ -198,6 +201,93 @@ export default function JobsPage() {
         }
     };
 
+    // New action handlers for the enhanced JobCard
+    const handleOpenJob = (job: JobData) => {
+        // Open job (default action when clicking card)
+        handleViewJob(job);
+    };
+
+    const handleGenerateResume = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to generate resumes');
+            return;
+        }
+
+        try {
+            toast.info(`Generating resume for ${job.company} - ${job.title}...`);
+            
+            // TODO: Implement resume generation integration
+            // This will call our existing generateResumeHttp function
+            
+            // For now, simulate the process
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Update job to mark as having generated resume
+            await handleJobUpdate(job.id, { 
+                hasGeneratedResume: true,
+                resumeId: `resume-${job.id}-${Date.now()}`
+            });
+            
+            toast.success(`Resume generated for ${job.company}!`);
+        } catch (error) {
+            console.error('Error generating resume:', error);
+            toast.error('Failed to generate resume');
+        }
+    };
+
+    const handleGenerateCoverLetter = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to generate cover letters');
+            return;
+        }
+
+        try {
+            toast.info(`Generating cover letter for ${job.company} - ${job.title}...`);
+            
+            // TODO: Implement cover letter generation
+            
+            // For now, simulate the process
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Update job to mark as having generated cover letter
+            await handleJobUpdate(job.id, { 
+                hasGeneratedCoverLetter: true,
+                coverLetterId: `cover-${job.id}-${Date.now()}`
+            });
+            
+            toast.success(`Cover letter generated for ${job.company}!`);
+        } catch (error) {
+            console.error('Error generating cover letter:', error);
+            toast.error('Failed to generate cover letter');
+        }
+    };
+
+    const handleViewResume = (job: JobData) => {
+        if (job.resumeId) {
+            // TODO: Open the generated resume
+            toast.info('Opening resume...');
+        }
+    };
+
+    const handleViewCoverLetter = (job: JobData) => {
+        if (job.coverLetterId) {
+            // TODO: Open the generated cover letter
+            toast.info('Opening cover letter...');
+        }
+    };
+
+    const handleArchiveJob = async (job: JobData) => {
+        if (!user) return;
+
+        try {
+            // TODO: Implement archiving logic
+            toast.info(`Archived ${job.company} - ${job.title}`);
+        } catch (error) {
+            console.error('Error archiving job:', error);
+            toast.error('Failed to archive job');
+        }
+    };
+
     // Filter jobs by status
     const interestedJobs = jobs.filter(job => job.status === 'interested');
     const appliedJobs = jobs.filter(job => job.status === 'applied');
@@ -247,8 +337,14 @@ export default function JobsPage() {
                                                     <JobCard
                                                         key={job.id}
                                                         job={job}
+                                                        onOpen={handleOpenJob}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onGenerateResume={handleGenerateResume}
+                                                        onGenerateCoverLetter={handleGenerateCoverLetter}
+                                                        onViewResume={handleViewResume}
+                                                        onViewCoverLetter={handleViewCoverLetter}
+                                                        onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
                                                     />
@@ -275,8 +371,14 @@ export default function JobsPage() {
                                                     <JobCard
                                                         key={job.id}
                                                         job={job}
+                                                        onOpen={handleOpenJob}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onGenerateResume={handleGenerateResume}
+                                                        onGenerateCoverLetter={handleGenerateCoverLetter}
+                                                        onViewResume={handleViewResume}
+                                                        onViewCoverLetter={handleViewCoverLetter}
+                                                        onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
                                                     />
@@ -303,8 +405,14 @@ export default function JobsPage() {
                                                     <JobCard
                                                         key={job.id}
                                                         job={job}
+                                                        onOpen={handleOpenJob}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onGenerateResume={handleGenerateResume}
+                                                        onGenerateCoverLetter={handleGenerateCoverLetter}
+                                                        onViewResume={handleViewResume}
+                                                        onViewCoverLetter={handleViewCoverLetter}
+                                                        onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
                                                     />
@@ -331,8 +439,14 @@ export default function JobsPage() {
                                                     <JobCard
                                                         key={job.id}
                                                         job={job}
+                                                        onOpen={handleOpenJob}
                                                         onView={handleViewJob}
                                                         onEdit={handleEditJob}
+                                                        onGenerateResume={handleGenerateResume}
+                                                        onGenerateCoverLetter={handleGenerateCoverLetter}
+                                                        onViewResume={handleViewResume}
+                                                        onViewCoverLetter={handleViewCoverLetter}
+                                                        onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
                                                     />

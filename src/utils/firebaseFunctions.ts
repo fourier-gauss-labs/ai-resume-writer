@@ -190,6 +190,11 @@ export interface ParsedJobData {
     dateAdded: string; // ISO string
     url: string | null;
     fullTextPath: string;
+    // New fields for generated materials
+    hasGeneratedResume?: boolean;
+    hasGeneratedCoverLetter?: boolean;
+    resumeId?: string;
+    coverLetterId?: string;
 }
 
 export interface JobParsingResponse {
