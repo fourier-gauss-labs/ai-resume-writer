@@ -380,65 +380,65 @@ export async function getJobTextFromStorage(fullTextPath: string): Promise<strin
 
 // Resume generation types and functions
 interface PersonalInfo {
-  name: string;
-  email: string;
-  phone: string;
-  location: string;
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
 }
 
 interface ExperienceItem {
-  title: string;
-  company: string;
-  duration: string;
-  bullets: string[];
+    title: string;
+    company: string;
+    duration: string;
+    bullets: string[];
 }
 
 interface EducationItem {
-  degree: string;
-  school: string;
-  duration: string;
+    degree: string;
+    school: string;
+    duration: string;
 }
 
 interface CertificationItem {
-  name: string;
-  issuer: string;
-  date: string;
+    name: string;
+    issuer: string;
+    date: string;
 }
 
 interface ResumeContent {
-  personalInfo: PersonalInfo;
-  summary: string;
-  experience: ExperienceItem[];
-  education: EducationItem[];
-  skills: string[];
-  certifications: CertificationItem[];
+    personalInfo: PersonalInfo;
+    summary: string;
+    experience: ExperienceItem[];
+    education: EducationItem[];
+    skills: string[];
+    certifications: CertificationItem[];
 }
 
 interface GenerateResumeRequest {
-  templateId: string;
-  content: ResumeContent;
-  customizations?: {
-    colors?: {
-      primary?: string;
+    templateId: string;
+    content: ResumeContent;
+    customizations?: {
+        colors?: {
+            primary?: string;
+        };
+        fonts?: {
+            family?: string;
+        };
     };
-    fonts?: {
-      family?: string;
-    };
-  };
 }
 
 export interface LaTeXServiceResponse {
-  success: boolean;
-  pdfBase64?: string;
-  metadata?: {
-    compilationTime: string;
-    fileSize: number;
-    pages: number;
-    templateId: string;
-    templateVersion: string;
-  };
-  error?: string;
-  details?: string[];
+    success: boolean;
+    pdfBase64?: string;
+    metadata?: {
+        compilationTime: string;
+        fileSize: number;
+        pages: number;
+        templateId: string;
+        templateVersion: string;
+    };
+    error?: string;
+    details?: string[];
 }
 
 /**
@@ -447,15 +447,15 @@ export interface LaTeXServiceResponse {
 export async function generateResumeHttp(request: GenerateResumeRequest): Promise<LaTeXServiceResponse> {
     try {
         console.log('Calling generateResumeHttp function...');
-        
+
         // Get the callable function
         const generateResume = httpsCallable(functions, 'generateResumeHttp');
-        
+
         // Call the function
         const result = await generateResume(request);
-        
+
         return result.data as LaTeXServiceResponse;
-        
+
     } catch (error) {
         console.error('Error calling generateResumeHttp:', error);
         throw error;

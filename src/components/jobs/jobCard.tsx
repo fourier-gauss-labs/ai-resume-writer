@@ -17,8 +17,8 @@ import {
     DocumentIcon,
     TrashIcon
 } from "@heroicons/react/24/outline";
-import { 
-    Plus, 
+import {
+    Plus,
     Archive,
     MoreVertical
 } from "lucide-react";
@@ -52,18 +52,18 @@ interface JobCardProps {
     onDragStart?: (jobId: string) => void;
 }
 
-export function JobCard({ 
-    job, 
-    onView, 
-    onEdit, 
+export function JobCard({
+    job,
+    onView,
+    onEdit,
     onOpen,
     onGenerateResume,
     onGenerateCoverLetter,
     onViewResume,
     onViewCoverLetter,
     onArchive,
-    isDragging = false, 
-    onDragStart 
+    isDragging = false,
+    onDragStart
 }: JobCardProps) {
     const handleDragStart = (e: React.DragEvent) => {
         e.dataTransfer.setData('text/plain', job.id);
@@ -85,7 +85,7 @@ export function JobCard({
         } | {
             separator: true;
         };
-        
+
         const items: MenuItem[] = [
             {
                 label: 'Edit',
@@ -134,7 +134,7 @@ export function JobCard({
 
         // Add separator before destructive actions
         items.push({ separator: true });
-        
+
         items.push({
             label: 'Archive',
             icon: Archive,
@@ -146,9 +146,8 @@ export function JobCard({
 
     return (
         <Card
-            className={`relative p-4 border border-border cursor-grab active:cursor-grabbing transition-all ${
-                isDragging ? 'opacity-50 rotate-2 scale-105' : 'hover:shadow-md hover:scale-105'
-            }`}
+            className={`relative p-4 border border-border cursor-grab active:cursor-grabbing transition-all ${isDragging ? 'opacity-50 rotate-2 scale-105' : 'hover:shadow-md hover:scale-105'
+                }`}
             draggable
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
@@ -203,7 +202,7 @@ export function JobCard({
                         if ('separator' in item) {
                             return <DropdownMenuSeparator key={`separator-${index}`} />;
                         }
-                        
+
                         const IconComponent = item.icon;
                         return (
                             <DropdownMenuItem
@@ -223,15 +222,15 @@ export function JobCard({
             {(job.hasGeneratedResume || job.hasGeneratedCoverLetter) && (
                 <div className="absolute bottom-2 left-2 flex space-x-1">
                     {job.hasGeneratedResume && (
-                        <div 
-                            className="w-2 h-2 bg-green-500 rounded-full" 
-                            title="Resume generated" 
+                        <div
+                            className="w-2 h-2 bg-green-500 rounded-full"
+                            title="Resume generated"
                         />
                     )}
                     {job.hasGeneratedCoverLetter && (
-                        <div 
-                            className="w-2 h-2 bg-blue-500 rounded-full" 
-                            title="Cover letter generated" 
+                        <div
+                            className="w-2 h-2 bg-blue-500 rounded-full"
+                            title="Cover letter generated"
                         />
                     )}
                 </div>

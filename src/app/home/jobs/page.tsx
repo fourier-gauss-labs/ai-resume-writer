@@ -226,19 +226,19 @@ export default function JobsPage() {
 
         try {
             toast.info(`Generating resume for ${job.company} - ${job.title}...`);
-            
+
             // TODO: Implement resume generation integration
             // This will call our existing generateResumeHttp function
-            
+
             // For now, simulate the process
             await new Promise(resolve => setTimeout(resolve, 2000));
-            
+
             // Update job to mark as having generated resume
-            await handleJobUpdate(job.id, { 
+            await handleJobUpdate(job.id, {
                 hasGeneratedResume: true,
                 resumeId: `resume-${job.id}-${Date.now()}`
             });
-            
+
             toast.success(`Resume generated for ${job.company}!`);
         } catch (error) {
             console.error('Error generating resume:', error);
@@ -254,18 +254,18 @@ export default function JobsPage() {
 
         try {
             toast.info(`Generating cover letter for ${job.company} - ${job.title}...`);
-            
+
             // TODO: Implement cover letter generation
-            
+
             // For now, simulate the process
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             // Update job to mark as having generated cover letter
-            await handleJobUpdate(job.id, { 
+            await handleJobUpdate(job.id, {
                 hasGeneratedCoverLetter: true,
                 coverLetterId: `cover-${job.id}-${Date.now()}`
             });
-            
+
             toast.success(`Cover letter generated for ${job.company}!`);
         } catch (error) {
             console.error('Error generating cover letter:', error);
@@ -281,13 +281,13 @@ export default function JobsPage() {
 
         try {
             toast.loading('Loading resume...', { id: 'resume-view' });
-            
+
             // For now, we'll generate a fresh PDF since we don't have storage yet
             // In the future, this would retrieve from Firebase Storage
-            
+
             // Import the generateResumeHttp function
             const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
-            
+
             // Generate a fresh resume PDF (this is temporary until we have storage)
             const testData = {
                 templateId: 'ats-friendly-single-column',
@@ -303,7 +303,7 @@ export default function JobsPage() {
                         {
                             title: 'Sample Experience',
                             company: 'Previous Company',
-                            duration: '2021 - Present', 
+                            duration: '2021 - Present',
                             bullets: [
                                 'Relevant experience for this role',
                                 'Achievements aligned with job requirements'
@@ -321,7 +321,7 @@ export default function JobsPage() {
             };
 
             const result = await generateResumeHttp(testData);
-            
+
             if (result.success && result.pdfBase64) {
                 // Convert base64 to blob URL for preview
                 const binaryString = atob(result.pdfBase64);
@@ -331,7 +331,7 @@ export default function JobsPage() {
                 }
                 const blob = new Blob([bytes], { type: 'application/pdf' });
                 const blobUrl = URL.createObjectURL(blob);
-                
+
                 // Create FileData object for the document preview modal
                 const pdfFile: FileData = {
                     id: job.resumeId || `resume-${job.id}`,
@@ -346,12 +346,12 @@ export default function JobsPage() {
                     isOpen: true,
                     file: pdfFile
                 });
-                
+
                 toast.success('Resume loaded', { id: 'resume-view' });
             } else {
                 throw new Error('PDF generation failed');
             }
-            
+
         } catch (error) {
             console.error('Error viewing resume:', error);
             toast.error('Failed to load resume', { id: 'resume-view' });
@@ -366,12 +366,12 @@ export default function JobsPage() {
 
         try {
             toast.loading('Loading cover letter...', { id: 'cover-view' });
-            
+
             // For now, we'll generate a fresh PDF since we don't have storage yet
             // In the future, this would retrieve from Firebase Storage
-            
+
             const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
-            
+
             // Generate a cover letter PDF (using same template for now)
             const testData = {
                 templateId: 'ats-friendly-single-column',
@@ -401,7 +401,7 @@ export default function JobsPage() {
             };
 
             const result = await generateResumeHttp(testData);
-            
+
             if (result.success && result.pdfBase64) {
                 // Convert base64 to blob URL for preview
                 const binaryString = atob(result.pdfBase64);
@@ -411,7 +411,7 @@ export default function JobsPage() {
                 }
                 const blob = new Blob([bytes], { type: 'application/pdf' });
                 const blobUrl = URL.createObjectURL(blob);
-                
+
                 // Create FileData object for the document preview modal
                 const pdfFile: FileData = {
                     id: job.coverLetterId || `cover-${job.id}`,
@@ -426,12 +426,12 @@ export default function JobsPage() {
                     isOpen: true,
                     file: pdfFile
                 });
-                
+
                 toast.success('Cover letter loaded', { id: 'cover-view' });
             } else {
                 throw new Error('PDF generation failed');
             }
-            
+
         } catch (error) {
             console.error('Error viewing cover letter:', error);
             toast.error('Failed to load cover letter', { id: 'cover-view' });
