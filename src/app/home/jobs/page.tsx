@@ -56,34 +56,38 @@ export default function JobsPage() {
 
     // Fetch jobs on component mount
     useEffect(() => {
-        const fetchJobs = async () => {
-            if (!user) {
-                setIsLoading(false);
-                return;
-            }
+        fetchJobs();
+    }, [user, loading]);
 
-            // Wait a moment to ensure auth token is ready
-            await new Promise(resolve => setTimeout(resolve, 100));
+    // Centralized function to fetch jobs
+    const fetchJobs = async () => {
+        if (!user) {
+            setIsLoading(false);
+            return;
+        }
 
-            try {
-                setIsLoading(true);
-                console.log('Fetching jobs for user:', user.uid);
-                const userJobs = await getUserJobs(user.uid);
-                setJobs(userJobs);
-            } catch (error) {
-                console.error('Error fetching jobs:', error);
-                toast.error('Failed to load jobs');
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        // Wait a moment to ensure auth token is ready
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        if (!loading && user) {
-            fetchJobs();
-        } else if (!loading && !user) {
+        try {
+            setIsLoading(true);
+            console.log('Fetching jobs for user:', user.uid);
+            const userJobs = await getUserJobs(user.uid);
+            console.log('Fetched jobs:', userJobs);
+            setJobs(userJobs);
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+            toast.error('Failed to load jobs');
+        } finally {
             setIsLoading(false);
         }
-    }, [user, loading]);
+    };
+
+    // Helper function to refresh jobs from server
+    const refreshJobs = async () => {
+        console.log('Refreshing jobs from server...');
+        await fetchJobs();
+    };
 
     const handleAddJob = async (jobData: { url?: string; jobAdText: string }) => {
         if (!user) {
@@ -301,6 +305,9 @@ export default function JobsPage() {
                 resumeId: `resume-${job.id}-${Date.now()}`
             });
 
+            // Refresh jobs to ensure UI reflects the updated state
+            await refreshJobs();
+
             toast.success(`Resume generated for ${job.company}!`, { id: 'gen-resume' });
         } catch (error) {
             console.error('Error generating resume:', error);
@@ -327,6 +334,9 @@ export default function JobsPage() {
                 hasGeneratedCoverLetter: true,
                 coverLetterId: `cover-${job.id}-${Date.now()}`
             });
+
+            // Refresh jobs to ensure UI reflects the updated state
+            await refreshJobs();
 
             toast.success(`Cover letter generated for ${job.company}!`);
         } catch (error) {

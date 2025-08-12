@@ -266,7 +266,7 @@ export async function getUserJobs(userId: string): Promise<ParsedJobData[]> {
         const jobs: ParsedJobData[] = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
-            jobs.push({
+            const job = {
                 id: doc.id,
                 company: data.company,
                 title: data.title,
@@ -274,8 +274,15 @@ export async function getUserJobs(userId: string): Promise<ParsedJobData[]> {
                 status: data.status,
                 dateAdded: data.dateAdded.toDate().toISOString(),
                 url: data.url,
-                fullTextPath: data.fullTextPath
-            });
+                fullTextPath: data.fullTextPath,
+                // Include resume and cover letter fields
+                hasGeneratedResume: data.hasGeneratedResume || false,
+                hasGeneratedCoverLetter: data.hasGeneratedCoverLetter || false,
+                resumeId: data.resumeId || undefined,
+                coverLetterId: data.coverLetterId || undefined
+            };
+            console.log(`Job ${job.company} - ${job.title}: hasGeneratedResume=${job.hasGeneratedResume}, resumeId=${job.resumeId}`);
+            jobs.push(job);
         });
 
         console.log(`Fetched ${jobs.length} jobs for user ${userId}`);
