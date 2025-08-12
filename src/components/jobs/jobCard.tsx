@@ -15,7 +15,8 @@ import {
     PencilIcon,
     DocumentTextIcon,
     DocumentIcon,
-    TrashIcon
+    TrashIcon,
+    ArrowPathIcon
 } from "@heroicons/react/24/outline";
 import {
     Plus,
@@ -47,6 +48,8 @@ interface JobCardProps {
     onGenerateCoverLetter?: (job: JobData) => void;
     onViewResume?: (job: JobData) => void;
     onViewCoverLetter?: (job: JobData) => void;
+    onRegenerateResume?: (job: JobData) => void;
+    onRemoveResume?: (job: JobData) => void;
     onArchive?: (job: JobData) => void;
     isDragging?: boolean;
     onDragStart?: (jobId: string) => void;
@@ -61,6 +64,8 @@ export function JobCard({
     onGenerateCoverLetter,
     onViewResume,
     onViewCoverLetter,
+    onRegenerateResume,
+    onRemoveResume,
     onArchive,
     isDragging = false,
     onDragStart
@@ -102,13 +107,27 @@ export function JobCard({
         // Add separator before material actions
         items.push({ separator: true });
 
-        // Resume action - smart behavior
+        // Resume action - smart behavior with regeneration/removal for interested jobs
         if (job.hasGeneratedResume) {
             items.push({
                 label: 'View Resume',
                 icon: DocumentTextIcon,
                 action: () => onViewResume?.(job)
             });
+
+            // For interested jobs, allow regeneration and removal
+            if (job.status === 'interested') {
+                items.push({
+                    label: 'Regenerate Resume',
+                    icon: ArrowPathIcon,
+                    action: () => onRegenerateResume?.(job)
+                });
+                items.push({
+                    label: 'Remove Resume',
+                    icon: TrashIcon,
+                    action: () => onRemoveResume?.(job)
+                });
+            }
         } else {
             items.push({
                 label: 'Resume',

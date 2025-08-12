@@ -9,6 +9,7 @@ import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
 import EditJobModal from '@/components/jobs/editJobModal';
 import { DocumentPreviewModal } from '@/components/documentPreview';
+import { GenericDeleteModal } from '@/components/genericDeleteModal';
 import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
@@ -52,6 +53,17 @@ export default function JobsPage() {
     }>({
         isOpen: false,
         file: null,
+    });
+
+    // Resume deletion confirmation modal state
+    const [deleteResumeConfirmation, setDeleteResumeConfirmation] = useState<{
+        isOpen: boolean;
+        job: JobData | null;
+        isDeleting: boolean;
+    }>({
+        isOpen: false,
+        job: null,
+        isDeleting: false,
     });
 
     // Fetch jobs on component mount
@@ -542,6 +554,76 @@ export default function JobsPage() {
         }
     };
 
+    const handleRegenerateResume = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to regenerate resumes');
+            return;
+        }
+
+        // For now, just use the working generate function to avoid LaTeX errors
+        // This ensures it works, and we can enhance it later
+        await handleGenerateResume(job);
+    };
+
+    const handleRemoveResume = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to remove resumes');
+            return;
+        }
+
+        // Show confirmation modal
+        setDeleteResumeConfirmation({
+            isOpen: true,
+            job: job,
+            isDeleting: false,
+        });
+    };
+
+    const handleConfirmDeleteResume = async () => {
+        const job = deleteResumeConfirmation.job;
+        if (!job || !user) return;
+
+        setDeleteResumeConfirmation(prev => ({ ...prev, isDeleting: true }));
+
+        try {
+            toast.loading(`Removing resume for ${job.company}...`, { id: 'remove-resume' });
+
+            // Import Firebase deleteField function
+            const { deleteField } = await import('firebase/firestore');
+
+            // Update job to remove resume flags using deleteField for resumeId
+            await handleJobUpdate(job.id, {
+                hasGeneratedResume: false,
+                resumeId: deleteField() as any
+            });
+
+            // Refresh jobs to ensure UI reflects the updated state
+            await refreshJobs();
+
+            toast.success(`Resume removed for ${job.company}!`, { id: 'remove-resume' });
+
+            // Close the confirmation modal
+            setDeleteResumeConfirmation({
+                isOpen: false,
+                job: null,
+                isDeleting: false,
+            });
+        } catch (error) {
+            console.error('Error removing resume:', error);
+            toast.error('Failed to remove resume', { id: 'remove-resume' });
+
+            setDeleteResumeConfirmation(prev => ({ ...prev, isDeleting: false }));
+        }
+    };
+
+    const handleCancelDeleteResume = () => {
+        setDeleteResumeConfirmation({
+            isOpen: false,
+            job: null,
+            isDeleting: false,
+        });
+    };
+
     // Filter jobs by status
     const interestedJobs = jobs.filter(job => job.status === 'interested');
     const appliedJobs = jobs.filter(job => job.status === 'applied');
@@ -598,6 +680,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -632,6 +716,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -666,6 +752,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -700,6 +788,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -750,6 +840,20 @@ export default function JobsPage() {
                     }
                     setDocumentPreview({ isOpen: false, file: null });
                 }}
+            />
+
+            {/* Delete Resume Confirmation Modal */}
+            <GenericDeleteModal
+                isOpen={deleteResumeConfirmation.isOpen}
+                onConfirm={handleConfirmDeleteResume}
+                onCancel={handleCancelDeleteResume}
+                isDeleting={deleteResumeConfirmation.isDeleting}
+                title="Remove Resume"
+                message={
+                    deleteResumeConfirmation.job
+                        ? `Are you sure you want to remove the resume for ${deleteResumeConfirmation.job.company} - ${deleteResumeConfirmation.job.title}? This action cannot be undone. You'll need to generate a new resume if you want one later.`
+                        : ""
+                }
             />
         </div>
     );
