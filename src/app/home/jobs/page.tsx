@@ -9,6 +9,7 @@ import { JobCard } from '@/components/jobs/jobCard';
 import { JobPreviewModal } from '@/components/jobs/jobPreviewModal';
 import EditJobModal from '@/components/jobs/editJobModal';
 import { DocumentPreviewModal } from '@/components/documentPreview';
+import { GenericDeleteModal } from '@/components/genericDeleteModal';
 import { parseJobPostingHttp, getUserJobs, updateJobStatus, updateJob, ParsedJobData } from '@/utils/firebaseFunctions';
 import { useAuth } from '@/context/authContext';
 import { toast } from 'sonner';
@@ -52,6 +53,17 @@ export default function JobsPage() {
     }>({
         isOpen: false,
         file: null,
+    });
+
+    // Resume deletion confirmation modal state
+    const [deleteResumeConfirmation, setDeleteResumeConfirmation] = useState<{
+        isOpen: boolean;
+        job: JobData | null;
+        isDeleting: boolean;
+    }>({
+        isOpen: false,
+        job: null,
+        isDeleting: false,
     });
 
     // Fetch jobs on component mount
@@ -542,6 +554,183 @@ export default function JobsPage() {
         }
     };
 
+    const handleRegenerateResume = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to regenerate resumes');
+            return;
+        }
+
+        try {
+            toast.loading(`Regenerating resume for ${job.company}...`, { id: 'regen-resume' });
+
+            // Create improved professional resume content
+            const resumeContent = {
+                personalInfo: {
+                    name: "William McCann",
+                    email: "iambillmccann@gmail.com",
+                    phone: "(214) 914-2299",
+                    location: "Tyler, Texas",
+                    linkedin: "linkedin.com/in/iambillmccann",
+                    github: "github.com/iambillmccann"
+                },
+                summary: `Senior Software Engineer with 25+ years of expertise in full-stack development and technology leadership. Proven track record in ${job.title.toLowerCase()} roles, delivering scalable solutions and leading high-performing teams. Passionate about leveraging modern technologies to solve complex business challenges and drive digital transformation at ${job.company}.`,
+                experience: [
+                    {
+                        title: "Senior Software Engineer / Tech Lead",
+                        company: "Freelance / Consulting",
+                        duration: "2020 - Present",
+                        bullets: [
+                            `Architected and delivered 15+ enterprise applications using modern stack technologies relevant to ${job.title} roles`,
+                            "Led cross-functional teams of 5-12 developers, improving delivery velocity by 40%",
+                            "Implemented cloud-native microservices architectures serving 100K+ users",
+                            "Mentored junior developers and established CI/CD best practices reducing deployment time by 60%"
+                        ]
+                    },
+                    {
+                        title: "Technology Manager / Senior Developer",
+                        company: "Enterprise Technology Solutions",
+                        duration: "2010 - 2020",
+                        bullets: [
+                            "Managed multiple development teams delivering critical business applications",
+                            "Spearheaded digital transformation initiatives resulting in $2M+ cost savings",
+                            "Architected scalable database solutions handling 1M+ transactions daily",
+                            "Collaborated with C-level executives on strategic technology roadmaps"
+                        ]
+                    },
+                    {
+                        title: "Software Engineer",
+                        company: "Technology Companies",
+                        duration: "1999 - 2010",
+                        bullets: [
+                            "Developed enterprise applications using Java, .NET, and emerging web technologies",
+                            "Built high-performance APIs and database systems supporting critical business operations",
+                            "Contributed to open-source projects with 1000+ GitHub stars",
+                            "Optimized system performance achieving 50% faster response times"
+                        ]
+                    }
+                ],
+                education: [
+                    {
+                        degree: "Bachelor of Science in Computer Science",
+                        school: "University of Texas at Tyler",
+                        duration: "1995 - 1999",
+                        honors: "Magna Cum Laude, Dean's List"
+                    }
+                ],
+                skills: [
+                    "Programming Languages: JavaScript/TypeScript, Python, Java, C#, Go, PHP",
+                    "Frontend: React, Next.js, Vue.js, Angular, HTML5/CSS3, Tailwind CSS",
+                    "Backend: Node.js, Express, Python Flask/Django, RESTful APIs, GraphQL",
+                    "Cloud & DevOps: AWS, Google Cloud, Docker, Kubernetes, CI/CD, Terraform",
+                    "Databases: PostgreSQL, MongoDB, Redis, Firebase, MySQL, Oracle",
+                    "Leadership: Team Management, Agile/Scrum, Project Planning, Mentoring"
+                ],
+                certifications: [
+                    {
+                        name: "AWS Solutions Architect Associate",
+                        issuer: "Amazon Web Services",
+                        date: "2023"
+                    },
+                    {
+                        name: "Google Cloud Professional Developer",
+                        issuer: "Google Cloud",
+                        date: "2023"
+                    },
+                    {
+                        name: "Certified Kubernetes Administrator",
+                        issuer: "Cloud Native Computing Foundation",
+                        date: "2022"
+                    }
+                ]
+            };
+
+            const resumeRequest = {
+                templateId: 'ats-friendly-single-column',
+                content: resumeContent
+            };
+
+            const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
+            const result = await generateResumeHttp(resumeRequest);
+
+            if (!result.success) {
+                throw new Error(result.error || 'Resume regeneration failed');
+            }
+
+            // Update job with new resume
+            await handleJobUpdate(job.id, {
+                hasGeneratedResume: true,
+                resumeId: `resume-${job.id}-${Date.now()}`
+            });
+
+            // Refresh jobs to ensure UI reflects the updated state
+            await refreshJobs();
+
+            toast.success(`Resume regenerated for ${job.company}!`, { id: 'regen-resume' });
+        } catch (error) {
+            console.error('Error regenerating resume:', error);
+            toast.error(`Failed to regenerate resume: ${error instanceof Error ? error.message : 'Unknown error'}`, { id: 'regen-resume' });
+        }
+    };
+
+    const handleRemoveResume = async (job: JobData) => {
+        if (!user) {
+            toast.error('You must be logged in to remove resumes');
+            return;
+        }
+
+        // Show confirmation modal
+        setDeleteResumeConfirmation({
+            isOpen: true,
+            job: job,
+            isDeleting: false,
+        });
+    };
+
+    const handleConfirmDeleteResume = async () => {
+        const job = deleteResumeConfirmation.job;
+        if (!job || !user) return;
+
+        setDeleteResumeConfirmation(prev => ({ ...prev, isDeleting: true }));
+
+        try {
+            toast.loading(`Removing resume for ${job.company}...`, { id: 'remove-resume' });
+
+            // Import Firebase deleteField function
+            const { deleteField } = await import('firebase/firestore');
+
+            // Update job to remove resume flags using deleteField for resumeId
+            await handleJobUpdate(job.id, {
+                hasGeneratedResume: false,
+                resumeId: deleteField() as any
+            });
+
+            // Refresh jobs to ensure UI reflects the updated state
+            await refreshJobs();
+
+            toast.success(`Resume removed for ${job.company}!`, { id: 'remove-resume' });
+
+            // Close the confirmation modal
+            setDeleteResumeConfirmation({
+                isOpen: false,
+                job: null,
+                isDeleting: false,
+            });
+        } catch (error) {
+            console.error('Error removing resume:', error);
+            toast.error('Failed to remove resume', { id: 'remove-resume' });
+
+            setDeleteResumeConfirmation(prev => ({ ...prev, isDeleting: false }));
+        }
+    };
+
+    const handleCancelDeleteResume = () => {
+        setDeleteResumeConfirmation({
+            isOpen: false,
+            job: null,
+            isDeleting: false,
+        });
+    };
+
     // Filter jobs by status
     const interestedJobs = jobs.filter(job => job.status === 'interested');
     const appliedJobs = jobs.filter(job => job.status === 'applied');
@@ -598,6 +787,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -632,6 +823,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -666,6 +859,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -700,6 +895,8 @@ export default function JobsPage() {
                                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                                         onViewResume={handleViewResume}
                                                         onViewCoverLetter={handleViewCoverLetter}
+                                                        onRegenerateResume={handleRegenerateResume}
+                                                        onRemoveResume={handleRemoveResume}
                                                         onArchive={handleArchiveJob}
                                                         onDragStart={handleDragStart}
                                                         isDragging={draggedJobId === job.id}
@@ -750,6 +947,20 @@ export default function JobsPage() {
                     }
                     setDocumentPreview({ isOpen: false, file: null });
                 }}
+            />
+
+            {/* Delete Resume Confirmation Modal */}
+            <GenericDeleteModal
+                isOpen={deleteResumeConfirmation.isOpen}
+                onConfirm={handleConfirmDeleteResume}
+                onCancel={handleCancelDeleteResume}
+                isDeleting={deleteResumeConfirmation.isDeleting}
+                title="Remove Resume"
+                message={
+                    deleteResumeConfirmation.job
+                        ? `Are you sure you want to remove the resume for ${deleteResumeConfirmation.job.company} - ${deleteResumeConfirmation.job.title}? This action cannot be undone. You'll need to generate a new resume if you want one later.`
+                        : ""
+                }
             />
         </div>
     );
