@@ -229,7 +229,7 @@ export default function JobsPage() {
 
             // Get the necessary imports - skip structured history for now to avoid Firebase errors
             const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
-            
+
             // For now, skip the Firebase call that's causing issues and use professional template
             console.log('Creating resume with professional template...');
             toast.info('Creating professional resume template', { id: 'gen-resume', duration: 3000 });
@@ -255,7 +255,7 @@ export default function JobsPage() {
                         ]
                     },
                     {
-                        title: 'Professional Role', 
+                        title: 'Professional Role',
                         company: 'Earlier Company',
                         duration: '2018 - 2020',
                         bullets: [
@@ -290,7 +290,7 @@ export default function JobsPage() {
             // Generate the actual PDF
             console.log('Calling generateResumeHttp with tailored content...');
             const result = await generateResumeHttp(resumeRequest);
-            
+
             if (!result.success) {
                 throw new Error(result.error || 'Resume generation failed');
             }
@@ -343,13 +343,13 @@ export default function JobsPage() {
 
         try {
             toast.loading('Loading resume...', { id: 'resume-view' });
-            
+
             // Get the necessary imports
             const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
-            
+
             // Skip Firebase calls and generate fresh resume with professional template
             console.log('Generating fresh resume with professional template...');
-            
+
             // Create professional resume content tailored to the job
             const resumeContent = {
                 personalInfo: {
@@ -372,7 +372,7 @@ export default function JobsPage() {
                     },
                     {
                         title: 'Professional Role',
-                        company: 'Earlier Company', 
+                        company: 'Earlier Company',
                         duration: '2018 - 2020',
                         bullets: [
                             'Contributed to key projects and strategic initiatives',
@@ -404,7 +404,7 @@ export default function JobsPage() {
             };
 
             console.log('Generating PDF with tailored content...');
-            const result = await generateResumeHttp(resumeRequest);            if (result.success && result.pdfBase64) {
+            const result = await generateResumeHttp(resumeRequest); if (result.success && result.pdfBase64) {
                 // Convert base64 to blob URL for preview
                 const binaryString = atob(result.pdfBase64);
                 const bytes = new Uint8Array(binaryString.length);
