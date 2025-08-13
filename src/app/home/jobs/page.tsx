@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -22,7 +22,7 @@ export default function JobsPage() {
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
     const [jobs, setJobs] = useState<JobData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
 
     // Preview modal state
     const [previewModal, setPreviewModal] = useState<{
@@ -66,13 +66,8 @@ export default function JobsPage() {
         isDeleting: false,
     });
 
-    // Fetch jobs on component mount
-    useEffect(() => {
-        fetchJobs();
-    }, [user, loading]);
-
     // Centralized function to fetch jobs
-    const fetchJobs = async () => {
+    const fetchJobs = useCallback(async () => {
         if (!user) {
             setIsLoading(false);
             return;
@@ -93,7 +88,12 @@ export default function JobsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user]);
+
+    // Fetch jobs on component mount
+    useEffect(() => {
+        fetchJobs();
+    }, [fetchJobs]);
 
     // Helper function to refresh jobs from server
     const refreshJobs = async () => {
@@ -552,12 +552,14 @@ export default function JobsPage() {
             toast.loading(`Removing resume for ${job.company}...`, { id: 'remove-resume' });
 
             // Import Firebase deleteField function
-            const { deleteField } = await import('firebase/firestore');
+            const { deleteField, doc, updateDoc } = await import('firebase/firestore');
+            const { db } = await import('@/lib/firebase');
 
-            // Update job to remove resume flags using deleteField for resumeId
-            await handleJobUpdate(job.id, {
+            // Update job directly with Firestore to handle FieldValue properly
+            const jobRef = doc(db, 'users', user.uid, 'jobs', job.id);
+            await updateDoc(jobRef, {
                 hasGeneratedResume: false,
-                resumeId: deleteField() as any
+                resumeId: deleteField()
             });
 
             // Refresh jobs to ensure UI reflects the updated state

@@ -2,6 +2,21 @@ import { auth } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
 
+// Firebase error interface
+interface FirebaseError extends Error {
+    code?: string;
+    details?: unknown;
+}
+
+// Firebase function response interface
+interface StructuredHistoryResponse {
+    skills?: string[];
+    education?: Education[];
+    certifications?: Certification[];
+    jobHistory?: JobHistory[];
+    contactInformation?: ContactInformation;
+}
+
 export interface ContactInformation {
     fullName?: string;
     email?: string;
@@ -107,14 +122,14 @@ export class ProfileService {
             } catch (firebaseError) {
                 console.error('ProfileService: Firebase function error:', firebaseError);
                 console.error('ProfileService: Firebase error details:', {
-                    code: (firebaseError as any)?.code,
-                    message: (firebaseError as any)?.message,
-                    details: (firebaseError as any)?.details
+                    code: (firebaseError as FirebaseError)?.code,
+                    message: (firebaseError as FirebaseError)?.message,
+                    details: (firebaseError as FirebaseError)?.details
                 });
-                throw new Error(`Firebase function error: ${(firebaseError as any)?.message || 'Unknown Firebase error'}`);
+                throw new Error(`Firebase function error: ${(firebaseError as FirebaseError)?.message || 'Unknown Firebase error'}`);
             }
 
-            const data = response.data as any;
+            const data = response.data as StructuredHistoryResponse;
 
             if (!data) {
                 throw new Error('No profile data found in Firebase. Please upload your resume or enter your profile information first.');
@@ -168,7 +183,7 @@ export class ProfileService {
             }
 
             // Special warning if we have data but no contact info
-            if (!hasContactName && !hasContactEmail && (data.skills?.length > 0 || data.jobHistory?.length > 0)) {
+            if (!hasContactName && !hasContactEmail && ((data.skills?.length || 0) > 0 || (data.jobHistory?.length || 0) > 0)) {
                 console.warn('ProfileService: Profile data exists but missing essential contact information');
                 throw new Error('Profile found but missing contact information (name/email). Please update your profile with your basic contact details.');
             }
@@ -193,10 +208,10 @@ export class ProfileService {
             // Log more detailed error information
             if (error && typeof error === 'object') {
                 console.error('ProfileService: Error details:', {
-                    name: (error as any).name,
-                    code: (error as any).code,
-                    message: (error as any).message,
-                    stack: (error as any).stack?.substring(0, 500)
+                    name: (error as Error).name,
+                    code: (error as FirebaseError).code,
+                    message: (error as Error).message,
+                    stack: (error as Error).stack?.substring(0, 500)
                 });
             }
 

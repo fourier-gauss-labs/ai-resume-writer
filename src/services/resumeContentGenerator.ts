@@ -1,4 +1,4 @@
-import { UserProfile, JobHistory, Education, Certification } from './profileService';
+import { UserProfile, JobHistory, Education, Certification, ContactInformation } from './profileService';
 
 export interface ResumePersonalInfo {
     name: string;
@@ -45,7 +45,7 @@ export class ResumeContentGenerator {
         const education = this.convertEducation(profile.education);
         const skills = this.processSkills(profile.skills, jobDescription);
         const certifications = this.convertCertifications(profile.certifications);
-        const summary = this.generateSummary(profile, jobDescription);
+        const summary = this.generateSummary(profile);
 
         return {
             personalInfo,
@@ -60,7 +60,7 @@ export class ResumeContentGenerator {
     /**
      * Convert contact information to resume format
      */
-    private static convertContactInfo(contactInfo: any): ResumePersonalInfo {
+    private static convertContactInfo(contactInfo: ContactInformation): ResumePersonalInfo {
         // Handle email field - it might be a string or array
         let email = 'your.email@example.com';
         if (contactInfo.email) {
@@ -207,7 +207,7 @@ export class ResumeContentGenerator {
     /**
      * Generate a professional summary
      */
-    private static generateSummary(profile: UserProfile, jobDescription?: string): string {
+    private static generateSummary(profile: UserProfile): string {
         const { jobHistory, skills, education, certifications } = profile;
 
         // Calculate years of experience

@@ -183,7 +183,7 @@ async function runTest() {
         console.log('✅ Profile readiness:', readiness);
 
         console.log('\n3️⃣ Testing cache functionality...');
-        const cachedProfile = await profileService.getUserProfile();
+        await profileService.getUserProfile();
         console.log('✅ Cache test successful');
 
         console.log('\n4️⃣ Testing error scenario...');
