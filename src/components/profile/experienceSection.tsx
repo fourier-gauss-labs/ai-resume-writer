@@ -132,7 +132,6 @@ function JobEntry({ job, showFullDescription = false }: JobEntryProps) {
 export default function ExperienceSection({
     jobHistory,
     isLoading = false,
-    onDataRefresh,
     onShowAllExperiences
 }: ExperienceSectionProps) {
     const handleEditSection = () => {

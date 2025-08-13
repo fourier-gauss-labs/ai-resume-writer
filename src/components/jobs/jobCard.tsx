@@ -59,7 +59,6 @@ export function JobCard({
     job,
     onView,
     onEdit,
-    onOpen,
     onGenerateResume,
     onGenerateCoverLetter,
     onViewResume,
@@ -85,7 +84,7 @@ export function JobCard({
     const getMenuItems = () => {
         type MenuItem = {
             label: string;
-            icon: any;
+            icon: React.ComponentType<{ className?: string }>;
             action: () => void;
         } | {
             separator: true;
