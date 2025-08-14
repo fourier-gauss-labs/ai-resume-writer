@@ -51,3 +51,6 @@ functions/.runtimeconfig.json
 /venv
 functions/firebase-debug.log
 functions/firebase-debug.log
+
+# Project artifacts
+/docs/resumes

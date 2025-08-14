@@ -96,9 +96,30 @@ export const generateResumeHttp = onCall(
         throw new HttpsError('invalid-argument', 'content is required');
       }
 
-      // Validate personal info
-      if (!content.personalInfo || !content.personalInfo.name || !content.personalInfo.email) {
-        throw new HttpsError('invalid-argument', 'personalInfo with name and email is required');
+      // Validate personal info structure exists
+      if (!content.personalInfo) {
+        throw new HttpsError('invalid-argument', 'personalInfo is required');
+      }
+
+      // Check if we have meaningful contact information (not just defaults)
+      const hasRealName = content.personalInfo.name &&
+        content.personalInfo.name !== 'Your Name' &&
+        content.personalInfo.name.trim().length > 0;
+      const hasRealEmail = content.personalInfo.email &&
+        content.personalInfo.email !== 'your.email@example.com' &&
+        typeof content.personalInfo.email === 'string' &&
+        content.personalInfo.email.includes('@');
+
+      if (!hasRealName || !hasRealEmail) {
+        logger.warn('Missing or default contact information', {
+          name: content.personalInfo.name,
+          email: content.personalInfo.email,
+          hasRealName,
+          hasRealEmail
+        });
+
+        // For now, allow defaults to go through but log the issue
+        // In the future, we could throw an error or prompt user to complete profile
       }
 
       logger.info('Calling LaTeX service', {

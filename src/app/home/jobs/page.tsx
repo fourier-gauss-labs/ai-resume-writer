@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -22,7 +22,7 @@ export default function JobsPage() {
     const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
     const [jobs, setJobs] = useState<JobData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
 
     // Preview modal state
     const [previewModal, setPreviewModal] = useState<{
@@ -66,13 +66,8 @@ export default function JobsPage() {
         isDeleting: false,
     });
 
-    // Fetch jobs on component mount
-    useEffect(() => {
-        fetchJobs();
-    }, [user, loading]);
-
     // Centralized function to fetch jobs
-    const fetchJobs = async () => {
+    const fetchJobs = useCallback(async () => {
         if (!user) {
             setIsLoading(false);
             return;
@@ -93,7 +88,12 @@ export default function JobsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user]);
+
+    // Fetch jobs on component mount
+    useEffect(() => {
+        fetchJobs();
+    }, [fetchJobs]);
 
     // Helper function to refresh jobs from server
     const refreshJobs = async () => {
@@ -248,55 +248,26 @@ export default function JobsPage() {
 
             // For now, skip the Firebase call that's causing issues and use professional template
             console.log('Creating resume with professional template...');
-            toast.info('Creating professional resume template', { id: 'gen-resume', duration: 3000 });
+            toast.info('Creating professional resume from your profile', { id: 'gen-resume', duration: 3000 });
 
-            // Create professional resume content tailored to the job
-            const resumeContent = {
-                personalInfo: {
-                    name: user.displayName || 'Professional',
-                    email: user.email || 'your.email@example.com',
-                    phone: '(555) 123-4567',
-                    location: 'Your Location'
-                },
-                summary: `Experienced professional seeking ${job.title} position at ${job.company}. Proven track record of delivering results and driving success in dynamic environments. Ready to contribute expertise and leadership to achieve organizational goals.`,
-                experience: [
-                    {
-                        title: 'Senior Professional',
-                        company: 'Previous Company',
-                        duration: '2020 - Present',
-                        bullets: [
-                            `Demonstrated expertise relevant to ${job.title} responsibilities`,
-                            'Led cross-functional initiatives that improved operational efficiency',
-                            'Collaborated with stakeholders to deliver high-impact solutions'
-                        ]
-                    },
-                    {
-                        title: 'Professional Role',
-                        company: 'Earlier Company',
-                        duration: '2018 - 2020',
-                        bullets: [
-                            'Contributed to key projects and strategic initiatives',
-                            'Developed strong problem-solving and analytical skills',
-                            'Built relationships with clients and team members'
-                        ]
-                    }
-                ],
-                education: [
-                    {
-                        degree: 'Bachelor of Science',
-                        school: 'University',
-                        duration: '2014 - 2018'
-                    }
-                ],
-                skills: ['Leadership', 'Communication', 'Problem Solving', 'Project Management', 'Team Collaboration', 'Strategic Planning'],
-                certifications: [
-                    {
-                        name: 'Professional Certification',
-                        issuer: 'Industry Organization',
-                        date: '2023'
-                    }
-                ]
-            };
+            // Generate resume content from user profile
+            const { profileService } = await import('@/services/profileService');
+            const { ResumeContentGenerator } = await import('@/services/resumeContentGenerator');
+
+            console.log('Fetching user profile for resume generation...');
+            const userProfile = await profileService.getUserProfile();
+
+            // Check if profile is ready for resume generation
+            const readiness = await profileService.getProfileReadiness();
+            if (!readiness.isReady) {
+                throw new Error(`Profile incomplete for resume generation. Missing: ${readiness.missing.join(', ')}`);
+            }
+
+            console.log('Generating resume content from profile data...');
+            const resumeContent = ResumeContentGenerator.generateResumeContent(
+                userProfile
+                // TODO: In Phase 2, fetch job description from fullTextPath for tailoring
+            );
 
             const resumeRequest = {
                 templateId: 'ats-friendly-single-column',
@@ -304,7 +275,7 @@ export default function JobsPage() {
             };
 
             // Generate the actual PDF
-            console.log('Calling generateResumeHttp with tailored content...');
+            console.log('Calling generateResumeHttp with profile-based content...');
             const result = await generateResumeHttp(resumeRequest);
 
             if (!result.success) {
@@ -323,7 +294,29 @@ export default function JobsPage() {
             toast.success(`Resume generated for ${job.company}!`, { id: 'gen-resume' });
         } catch (error) {
             console.error('Error generating resume:', error);
-            toast.error(`Failed to generate resume: ${error instanceof Error ? error.message : 'Unknown error'}`, { id: 'gen-resume' });
+
+            // Provide more specific error messages based on the error type
+            let errorMessage = 'Unknown error occurred';
+
+            if (error instanceof Error) {
+                if (error.message.includes('User not authenticated') || error.message.includes('log in')) {
+                    errorMessage = 'Please log in to generate resumes';
+                } else if (error.message.includes('No profile data found') || error.message.includes('upload your resume')) {
+                    errorMessage = 'No profile data found. Please upload your resume or enter your information in Settings first.';
+                } else if (error.message.includes('Profile incomplete')) {
+                    errorMessage = error.message; // This already has good messaging from profileService
+                } else if (error.message.includes('Access denied') || error.message.includes('permission')) {
+                    errorMessage = 'Access denied. Please check your account permissions or try logging out and back in.';
+                } else if (error.message.includes('network') || error.message.includes('offline')) {
+                    errorMessage = 'Network error. Please check your connection and try again.';
+                } else if (error.message.includes('Resume generation failed') || error.message.includes('LaTeX')) {
+                    errorMessage = 'Resume generation service is unavailable. Please try again later.';
+                } else {
+                    errorMessage = error.message;
+                }
+            }
+
+            toast.error(`Failed to generate resume: ${errorMessage}`, { id: 'gen-resume' });
         }
     };
 
@@ -368,64 +361,34 @@ export default function JobsPage() {
 
             // Get the necessary imports
             const { generateResumeHttp } = await import('@/utils/firebaseFunctions');
+            const { profileService } = await import('@/services/profileService');
+            const { ResumeContentGenerator } = await import('@/services/resumeContentGenerator');
 
-            // Skip Firebase calls and generate fresh resume with professional template
-            console.log('Generating fresh resume with professional template...');
+            // Generate fresh resume with professional template using actual profile data
+            console.log('Generating fresh resume from user profile...');
 
-            // Create professional resume content tailored to the job
-            const resumeContent = {
-                personalInfo: {
-                    name: user?.displayName || 'Professional',
-                    email: user?.email || 'your.email@example.com',
-                    phone: '(555) 123-4567',
-                    location: 'Your Location'
-                },
-                summary: `Experienced professional seeking ${job.title} position at ${job.company}. Proven track record of delivering results and driving success in dynamic environments. Ready to contribute expertise and leadership to achieve organizational goals.`,
-                experience: [
-                    {
-                        title: 'Senior Professional',
-                        company: 'Previous Company',
-                        duration: '2020 - Present',
-                        bullets: [
-                            `Demonstrated expertise relevant to ${job.title} responsibilities`,
-                            'Led cross-functional initiatives that improved operational efficiency',
-                            'Collaborated with stakeholders to deliver high-impact solutions'
-                        ]
-                    },
-                    {
-                        title: 'Professional Role',
-                        company: 'Earlier Company',
-                        duration: '2018 - 2020',
-                        bullets: [
-                            'Contributed to key projects and strategic initiatives',
-                            'Developed strong problem-solving and analytical skills',
-                            'Built relationships with clients and team members'
-                        ]
-                    }
-                ],
-                education: [
-                    {
-                        degree: 'Bachelor of Science',
-                        school: 'University',
-                        duration: '2014 - 2018'
-                    }
-                ],
-                skills: ['Leadership', 'Communication', 'Problem Solving', 'Project Management', 'Team Collaboration', 'Strategic Planning'],
-                certifications: [
-                    {
-                        name: 'Professional Certification',
-                        issuer: 'Industry Organization',
-                        date: '2023'
-                    }
-                ]
-            };
+            // Generate resume content from user profile
+            console.log('Fetching user profile for resume regeneration...');
+            const userProfile = await profileService.getUserProfile();
+
+            // Check if profile is ready for resume generation
+            const readiness = await profileService.getProfileReadiness();
+            if (!readiness.isReady) {
+                throw new Error(`Profile incomplete for resume generation. Missing: ${readiness.missing.join(', ')}`);
+            }
+
+            console.log('Generating resume content from profile data...');
+            const resumeContent = ResumeContentGenerator.generateResumeContent(
+                userProfile
+                // TODO: In Phase 2, fetch job description from fullTextPath for tailoring
+            );
 
             const resumeRequest = {
                 templateId: 'ats-friendly-single-column',
                 content: resumeContent
             };
 
-            console.log('Generating PDF with tailored content...');
+            console.log('Generating PDF with profile-based content...');
             const result = await generateResumeHttp(resumeRequest); if (result.success && result.pdfBase64) {
                 // Convert base64 to blob URL for preview
                 const binaryString = atob(result.pdfBase64);
@@ -589,12 +552,14 @@ export default function JobsPage() {
             toast.loading(`Removing resume for ${job.company}...`, { id: 'remove-resume' });
 
             // Import Firebase deleteField function
-            const { deleteField } = await import('firebase/firestore');
+            const { deleteField, doc, updateDoc } = await import('firebase/firestore');
+            const { db } = await import('@/lib/firebase');
 
-            // Update job to remove resume flags using deleteField for resumeId
-            await handleJobUpdate(job.id, {
+            // Update job directly with Firestore to handle FieldValue properly
+            const jobRef = doc(db, 'users', user.uid, 'jobs', job.id);
+            await updateDoc(jobRef, {
                 hasGeneratedResume: false,
-                resumeId: deleteField() as any
+                resumeId: deleteField()
             });
 
             // Refresh jobs to ensure UI reflects the updated state
