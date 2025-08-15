@@ -385,12 +385,15 @@ GUIDELINES FOR EDUCATION EXTRACTION:
    - References to alma mater or university graduation
    - Context mentioning degree conferment or graduation ceremonies
 6. Avoid duplicate entries - but different degrees from the same school should be separate entries
-7. Parse dates carefully following these rules:
+7. **DATE EXTRACTION IS CRITICAL** - Parse dates very carefully following these rules:
    - If only ONE date is found, it should be the END DATE (graduation date)
+   - Look for dates in these formats: "12/1989", "05/1981", "December 1989", "June 1981", "1989", "1981"
+   - Search near the school/degree names for date patterns like MM/YYYY or YYYY
    - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
+   - Example conversions: "12/1989" = month:"12" year:"1989", "05/1981" = month:"05" year:"1981"
    - If there are conflicting months for the same education (e.g., "5/1981" vs "June 1981"), leave the month BLANK but keep the year
-   - Common date formats: "12/1989", "December 1989", "June 1981", "05/1981"
    - Pay special attention to graduation dates, which may be mentioned separately from enrollment dates
+   - Check the entire document for dates associated with each school name
 8. If any field cannot be parsed properly, leave it as an empty string ""
 9. For grade, extract GPA, honors, or similar academic performance indicators (e.g., "3.8 GPA", "Summa Cum Laude", "Dean's List")
 10. School should be the full institution name
@@ -409,7 +412,14 @@ IMPORTANT RULES:
    - "12/1989" → endDate: {"month": "12", "year": "1989"}
    - "05/1981" → endDate: {"month": "05", "year": "1981"}
    - "June 1981" → endDate: {"month": "06", "year": "1981"}
+   - "1989" (year only) → endDate: {"month": "", "year": "1989"}
    - Conflicting "5/1981" and "June 1981" → endDate: {"month": "", "year": "1981"}
+
+**SPECIAL ATTENTION TO DATE PATTERNS:**
+- University of Michigan + "12/1989" = MBA graduation 12/1989
+- Central Michigan University + "05/1981" = BS graduation 05/1981
+- Look for MM/YYYY patterns immediately following school/degree names
+- Search the entire document text for dates that correspond to each school
 
 CORPUS:
 ${corpus}
