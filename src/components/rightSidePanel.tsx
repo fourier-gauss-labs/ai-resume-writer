@@ -16,6 +16,7 @@ import { getUserFiles, deleteUserFile, FileData } from "@/utils/fileUtils";
 import { parseResumeToStructuredHistoryHttp, storeStructuredHistoryHttp } from "@/utils/firebaseFunctions";
 import { useAuth } from "@/context/authContext";
 import { toast } from "sonner";
+import { profileService } from "@/services/profileService";
 
 interface RightSidePanelProps {
     onDataRefresh?: () => Promise<void>;
@@ -90,6 +91,9 @@ export function RightSidePanel({ onDataRefresh }: RightSidePanelProps) {
 
         try {
             setIsParsing(true);
+
+            // Clear the ProfileService cache to ensure fresh data
+            profileService.clearCache();
 
             // First refresh the file list
             const files = await getUserFiles(user.uid);

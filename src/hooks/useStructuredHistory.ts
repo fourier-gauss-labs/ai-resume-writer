@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/authContext';
+import { profileService } from '@/services/profileService';
 
 interface ContactInformation {
     fullName: string;
@@ -67,9 +68,6 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
             return;
         }
 
-        console.log('=== useStructuredHistory fetchStructuredHistory called ===');
-        console.log('User ID:', user.uid);
-
         setIsLoading(true);
         setError(null);
 
@@ -84,31 +82,39 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
                 }
             );
 
-            console.log('=== useStructuredHistory response ===');
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-
             if (!response.ok) {
                 throw new Error(`Failed to fetch structured history: ${response.statusText}`);
             }
 
             const result = await response.json();
-            console.log('=== useStructuredHistory result ===');
-            console.log('Raw result:', result);
 
             // Extract the actual data from the wrapped response
             const actualData = result.data || {};
-            console.log('Extracted data:', actualData);
 
             // Transform the data to match our interface
             // Handle both flat and nested contactInformation structures
-            let contactInfo = actualData.contactInformation;
-            if (contactInfo && contactInfo.contactInformation) {
-                // If nested, extract the inner contactInformation
-                contactInfo = contactInfo.contactInformation;
-            }
+            let contactInfo = null;
 
-            console.log('Transformed contactInfo:', contactInfo);
+            if (actualData.contactInformation && actualData.contactInformation.contactInformation) {
+                // Extract the nested contactInformation and map to simple structure
+                const firebaseContact = actualData.contactInformation.contactInformation;
+                contactInfo = {
+                    fullName: firebaseContact.fullName || '',
+                    email: Array.isArray(firebaseContact.email) ? firebaseContact.email : [],
+                    phones: Array.isArray(firebaseContact.phone)
+                        ? firebaseContact.phone
+                        : (firebaseContact.phone ? [firebaseContact.phone] : [])
+                };
+            } else if (actualData.contactInformation) {
+                // Handle flat structure
+                contactInfo = {
+                    fullName: actualData.contactInformation.fullName || '',
+                    email: Array.isArray(actualData.contactInformation.email) ? actualData.contactInformation.email : [],
+                    phones: Array.isArray(actualData.contactInformation.phone)
+                        ? actualData.contactInformation.phone
+                        : (actualData.contactInformation.phone ? [actualData.contactInformation.phone] : [])
+                };
+            }
 
             const transformedData: StructuredHistoryData = {
                 contactInformation: contactInfo || null,
@@ -118,13 +124,9 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
                 skills: actualData.skills || []
             };
 
-            console.log('=== useStructuredHistory final transformed data ===');
-            console.log('Final data:', transformedData);
-
             setData(transformedData);
         } catch (err) {
-            console.error('=== useStructuredHistory error ===');
-            console.error('Error:', err);
+            console.error('Error fetching structured history:', err);
             setError(err instanceof Error ? err.message : 'An unknown error occurred');
         } finally {
             setIsLoading(false);
@@ -147,10 +149,16 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
         }
     }, [user, fetchStructuredHistory]);
 
+    // Create a refetch function that clears ProfileService cache first
+    const refetch = useCallback(async () => {
+        profileService.clearCache();
+        await fetchStructuredHistory();
+    }, [fetchStructuredHistory]);
+
     return {
         data,
         isLoading,
         error,
-        refetch: fetchStructuredHistory
+        refetch: refetch
     };
 }

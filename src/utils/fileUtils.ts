@@ -86,8 +86,10 @@ export const getUserFiles = async (userId: string): Promise<FileData[]> => {
         const fileDataArray = await Promise.all(filePromises);
 
         // Filter out null entries and sort by upload date (newest first)
+        // Also exclude files from the jobs/ subfolder since those are job postings, not biographical documents
         const validFiles = fileDataArray
             .filter((file): file is FileData => file !== null)
+            .filter((file) => !file.name.startsWith('jobs/')) // Exclude job postings
             .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
 
         console.log(`Returning ${validFiles.length} valid files`);
