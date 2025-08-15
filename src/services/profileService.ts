@@ -14,13 +14,23 @@ interface StructuredHistoryResponse {
     education?: Education[];
     certifications?: Certification[];
     jobHistory?: JobHistory[];
-    contactInformation?: ContactInformation;
+    contactInformation?: {
+        fullName: string;
+        email: string[];
+        phone: string[];
+        address: string;
+        linkedinUrl: string;
+        portfolioUrl: string;
+        githubUrl: string;
+    };
 }
 
 export interface ContactInformation {
     fullName?: string;
     email?: string;
+    emails?: string[]; // For backward compatibility
     phone?: string;
+    phones?: string[]; // For backward compatibility
     address?: string;
     linkedinUrl?: string;
     portfolioUrl?: string;
@@ -143,8 +153,30 @@ export class ProfileService {
                 jobHistoryCount: data.jobHistory?.length || 0
             });
 
+            // Extract contact information directly (no nested structure)
+            const contactData = data.contactInformation;
+            const flatContactInfo: ContactInformation = {
+                fullName: contactData?.fullName || '',
+                email: Array.isArray(contactData?.email) && contactData.email.length > 0
+                    ? contactData.email[0]
+                    : (typeof contactData?.email === 'string' ? contactData.email : ''),
+                emails: Array.isArray(contactData?.email)
+                    ? contactData.email
+                    : (contactData?.email ? [contactData.email] : []),
+                phone: Array.isArray(contactData?.phone) && contactData.phone.length > 0
+                    ? contactData.phone[0]
+                    : (typeof contactData?.phone === 'string' ? contactData.phone : ''),
+                phones: Array.isArray(contactData?.phone)
+                    ? contactData.phone
+                    : (contactData?.phone ? [contactData.phone] : []),
+                address: contactData?.address || '',
+                linkedinUrl: contactData?.linkedinUrl || '',
+                portfolioUrl: contactData?.portfolioUrl || '',
+                githubUrl: contactData?.githubUrl || ''
+            };
+
             const profile: UserProfile = {
-                contactInformation: data.contactInformation || {},
+                contactInformation: flatContactInfo,
                 skills: data.skills || [],
                 education: data.education || [],
                 certifications: data.certifications || [],
@@ -152,12 +184,8 @@ export class ProfileService {
             };
 
             // Check contact info more thoroughly
-            const contactInfo = data.contactInformation || {};
-            const hasContactName = contactInfo.fullName && contactInfo.fullName.trim().length > 0;
-            const hasContactEmail = contactInfo.email && (
-                (Array.isArray(contactInfo.email) && contactInfo.email.length > 0) ||
-                (typeof contactInfo.email === 'string' && contactInfo.email.trim().length > 0)
-            );
+            const hasContactName = flatContactInfo.fullName && flatContactInfo.fullName.trim().length > 0;
+            const hasContactEmail = flatContactInfo.email && flatContactInfo.email.trim().length > 0;
 
             // Check if we have any meaningful data
             const hasAnyData = (
@@ -174,7 +202,7 @@ export class ProfileService {
                 console.warn('ProfileService: Data breakdown:', {
                     hasContactName,
                     hasContactEmail,
-                    contactInfoKeys: Object.keys(contactInfo),
+                    contactInfoKeys: Object.keys(flatContactInfo),
                     skillsLength: data.skills?.length || 0,
                     educationLength: data.education?.length || 0,
                     jobHistoryLength: data.jobHistory?.length || 0
@@ -244,15 +272,6 @@ export class ProfileService {
     }
 
     /**
-     * Clear the cached profile (useful after profile updates)
-     */
-    clearCache(): void {
-        this.cachedProfile = null;
-        this.cacheTimestamp = 0;
-        console.log('ProfileService: Cache cleared');
-    }
-
-    /**
      * Check if user has complete profile data
      */
     async hasCompleteProfile(): Promise<boolean> {
@@ -308,6 +327,15 @@ export class ProfileService {
                 hasJobHistory
             }
         };
+    }
+
+    /**
+     * Clear the cached profile data (useful for refresh operations)
+     */
+    clearCache(): void {
+        this.cachedProfile = null;
+        this.cacheTimestamp = 0;
+        console.log('ProfileService: Cache cleared');
     }
 }
 

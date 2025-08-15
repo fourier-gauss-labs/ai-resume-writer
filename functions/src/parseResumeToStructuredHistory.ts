@@ -64,9 +64,17 @@ export const parseResumeToStructuredHistory = onCall({
     if (!files) {
         // List all files in user's upload folder (e.g., uploads/{userId}/)
         const [allFiles] = await storage.bucket().getFiles({ prefix: `uploads/${userId}/` });
-        files = allFiles.map(f => f.name);
+        files = allFiles
+            .map(f => f.name)
+            .filter(fileName => !fileName.includes('/jobs/')); // Exclude job postings from profile parsing
         if (!files.length) {
-            throw new HttpsError('not-found', 'No files found for user');
+            throw new HttpsError('not-found', 'No profile files found for user (job postings excluded)');
+        }
+    } else {
+        // Also filter provided file paths to exclude job postings
+        files = files.filter(filePath => !filePath.includes('/jobs/'));
+        if (!files.length) {
+            throw new HttpsError('invalid-argument', 'No valid profile files provided (excluding job postings)');
         }
     }
 

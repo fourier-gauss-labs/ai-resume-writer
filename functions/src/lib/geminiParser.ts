@@ -13,7 +13,11 @@ export interface ContactInformation {
     contactInformation: {
         fullName: string;
         email: string[];
-        phones: string[];
+        phone: string[];
+        address: string;
+        linkedinUrl: string;
+        portfolioUrl: string;
+        githubUrl: string;
     };
 }
 
@@ -83,7 +87,11 @@ REQUIRED JSON STRUCTURE:
   "contactInformation": {
     "fullName": "<string representing the user's name>",
     "email": ["<unique email addresses only>"],
-    "phones": ["<unique phone numbers only>"]
+    "phone": ["<unique phone numbers only>"],
+    "address": "<full address if found>",
+    "linkedinUrl": "<LinkedIn profile URL>",
+    "portfolioUrl": "<portfolio website URL>",
+    "githubUrl": "<GitHub profile URL>"
   }
 }
 
@@ -93,10 +101,14 @@ IMPORTANT RULES:
 3. If no name is found, use empty string for fullName
 4. If no emails are found, use empty array []
 5. If no phones are found, use empty array []
-6. Normalize phone numbers to a consistent format (remove spaces, dashes, parentheses)
-7. Ensure email addresses are valid format
-8. Look for contact information throughout the entire corpus, not just traditional contact sections
-9. For plain contact files, extract all phone numbers and emails even without explicit labeling
+6. If no address is found, use empty string for address
+7. If no LinkedIn URL is found, use empty string
+8. If no portfolio URL is found, use empty string
+9. If no GitHub URL is found, use empty string
+10. Normalize phone numbers to a consistent format (remove spaces, dashes, parentheses)
+11. Ensure email addresses are valid format
+12. Look for contact information throughout the entire corpus, not just traditional contact sections
+13. For plain contact files, extract all phone numbers and emails even without explicit labeling
 
 CORPUS TO PARSE:
 ${corpus}
@@ -134,7 +146,11 @@ JSON OUTPUT:`;
                     contactInformation: {
                         fullName: typeof contact.fullName === 'string' ? contact.fullName : '',
                         email: Array.isArray(contact.email) ? contact.email : [],
-                        phones: Array.isArray(contact.phones) ? contact.phones : []
+                        phone: Array.isArray(contact.phone) ? contact.phone : [],
+                        address: typeof contact.address === 'string' ? contact.address : '',
+                        linkedinUrl: typeof contact.linkedinUrl === 'string' ? contact.linkedinUrl : '',
+                        portfolioUrl: typeof contact.portfolioUrl === 'string' ? contact.portfolioUrl : '',
+                        githubUrl: typeof contact.githubUrl === 'string' ? contact.githubUrl : ''
                     }
                 };
 
@@ -190,7 +206,11 @@ function mockParseContactInformation(corpus: string): ContactInformation {
         contactInformation: {
             fullName: fullName || '',
             email: emails,
-            phones: phones
+            phone: phones,
+            address: '',
+            linkedinUrl: '',
+            portfolioUrl: '',
+            githubUrl: ''
         }
     };
 
@@ -605,20 +625,27 @@ REQUIRED JSON STRUCTURE:
 }
 
 GUIDELINES FOR CERTIFICATIONS EXTRACTION:
-1. Extract ALL certifications, licenses, and professional credentials found throughout the document
-2. Include:
-   - Professional licenses (e.g., CPA, PE, RN, PE)
-   - Industry certifications (e.g., AWS, Microsoft, Cisco, Google Cloud)
-   - Educational certifications and completion certificates
-   - Professional development credentials
-   - Training program completions
-   - Bootcamp certifications
-3. Look for certification mentions in:
+1. Extract ONLY legitimate professional certifications and licenses
+2. INCLUDE:
+   - Professional licenses (e.g., CPA, PE, RN, bar license)
+   - Industry certifications (e.g., AWS, Microsoft, Cisco, Google Cloud, Salesforce)
+   - Educational certifications and completion certificates from accredited institutions
+   - Professional development credentials from recognized organizations
+   - Training program completions from reputable providers
+   - Bootcamp certifications from coding schools
+3. EXCLUDE (DO NOT INCLUDE):
+   - Driver's licenses or motor vehicle licenses
+   - Basic government-issued IDs or documents
+   - Common personal licenses unrelated to professional work
+   - Certifications that don't exist or are not mentioned in the text
+   - Hallucinated or assumed certifications
+4. STRICT RULE: Only extract certifications that are explicitly mentioned in the provided text
+5. Look for certification mentions in:
    - Dedicated certifications sections
    - Narrative stories about professional development
    - Performance reviews mentioning credentials earned
    - Project descriptions referencing certified expertise
-   - Any context where credentials or licenses are discussed
+   - Any context where professional credentials or licenses are discussed
 4. Avoid duplicate entries
 5. Parse issued dates carefully following these rules:
    - Look for "issued", "earned", "obtained", "awarded", "completed", "certified" dates
@@ -632,12 +659,17 @@ GUIDELINES FOR CERTIFICATIONS EXTRACTION:
 10. Order entries chronologically if possible (most recent first)
 11. Pay attention to context clues like "certified in", "licensed for", "earned certification", "completed training", etc.
 
-IMPORTANT RULES:
+IMPORTANT EXTRACTION RULES:
 1. Return ONLY valid JSON - no additional text or explanations
-2. If dates are incomplete, use empty strings for missing parts
-3. If no certifications are found, return an empty array []
-4. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
-5. Look carefully for date patterns near certification names throughout the entire corpus
+2. ONLY include certifications explicitly mentioned in the provided text
+3. Do NOT create or assume certifications not mentioned in the corpus
+4. If dates are incomplete, use empty strings for missing parts
+5. If no certifications are found, return an empty array []
+6. Use two-digit month numbers (01, 02, etc.) not month names or abbreviations
+7. Exclude driver's licenses, personal IDs, or non-professional licenses
+8. Look carefully for date patterns near certification names throughout the entire corpus
+9. Verify each certification is actually present in the text before including it
+10. When in doubt, exclude rather than include questionable items
 
 CORPUS:
 ${corpus}

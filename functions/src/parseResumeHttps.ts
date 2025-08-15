@@ -49,17 +49,26 @@ export const parseResumeToStructuredHistoryHttp = onRequest(
                 const bucket = storage.bucket();
 
                 // List files in the user's folder
-                const [files] = await bucket.getFiles({
+                const [allFiles] = await bucket.getFiles({
                     prefix: `uploads/${userId}/`
                 });
 
-                if (files.length === 0) {
+                // Filter out job postings from profile parsing
+                const files = allFiles.filter(file => !file.name.includes('/jobs/'));
+
+                if (allFiles.length === 0) {
                     console.log('No files found in storage for user:', userId);
                     res.status(404).json({ error: 'No files found in storage' });
                     return;
                 }
 
-                console.log(`Found ${files.length} files in storage`);
+                if (files.length === 0) {
+                    console.log('No profile files found in storage for user (job postings excluded):', userId);
+                    res.status(404).json({ error: 'No profile files found in storage (job postings excluded)' });
+                    return;
+                }
+
+                console.log(`Found ${allFiles.length} total files, ${files.length} profile files (excluding job postings)`);
 
                 let allStructuredData = {
                     contactInformation: {},
