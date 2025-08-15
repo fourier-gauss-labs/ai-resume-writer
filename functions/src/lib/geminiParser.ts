@@ -363,26 +363,40 @@ REQUIRED JSON STRUCTURE:
 }
 
 GUIDELINES FOR EDUCATION EXTRACTION:
-1. Extract ALL education entries found in the document, regardless of format or location
-2. Include formal education (degrees), certifications, training programs, bootcamps, and significant courses
-3. Look for education mentions in:
+1. Extract ONLY formal education entries (traditional degrees from accredited institutions)
+2. EXCLUDE online courses, certifications, training programs, bootcamps, and MOOCs (Massive Open Online Courses)
+3. INCLUDE only these types of formal education:
+   - Bachelor's degrees (BS, BA, BSc, etc.)
+   - Master's degrees (MS, MA, MBA, MEng, etc.)
+   - Doctoral degrees (PhD, EdD, MD, JD, etc.)
+   - Associate degrees (AA, AS, AAS, etc.)
+   - Professional degrees from accredited universities
+4. EXCLUDE these (they belong in certifications, not education):
+   - Coursera specializations or certificates
+   - edX courses or certificates
+   - Udemy courses
+   - LinkedIn Learning courses
+   - Training programs or bootcamps
+   - Professional certifications (even from universities)
+   - Any course that mentions "Specialization", "Certificate Program", or similar non-degree terms
+5. Look for education mentions in:
    - Dedicated education sections
-   - Narrative stories about career development
-   - Performance reviews mentioning educational achievements
-   - Project descriptions referencing academic background
-   - Any context where schooling or learning is discussed
-4. Avoid duplicate entries - but different degrees from the same school should be separate entries
-5. Parse dates carefully following these rules:
+   - Narrative stories about formal schooling
+   - References to alma mater or university graduation
+   - Context mentioning degree conferment or graduation ceremonies
+6. Avoid duplicate entries - but different degrees from the same school should be separate entries
+7. Parse dates carefully following these rules:
    - If only ONE date is found, it should be the END DATE (graduation date)
    - Convert month names and numbers to two-digit format: January=01, February=02, March=03, April=04, May=05, June=06, July=07, August=08, September=09, October=10, November=11, December=12
    - If there are conflicting months for the same education (e.g., "5/1981" vs "June 1981"), leave the month BLANK but keep the year
    - Common date formats: "12/1989", "December 1989", "June 1981", "05/1981"
-6. If any field cannot be parsed properly, leave it as an empty string ""
-7. For grade, extract GPA, honors, or similar academic performance indicators (e.g., "3.8 GPA", "Summa Cum Laude", "Dean's List")
-8. School should be the full institution name
-9. Degree should include the full degree name (e.g., "Bachelor of Science in Computer Science", "Master of Business Administration")
-10. Order entries chronologically if possible (most recent first)
-11. Pay attention to context clues like "graduated from", "studied at", "alma mater", "university", "college", etc.
+   - Pay special attention to graduation dates, which may be mentioned separately from enrollment dates
+8. If any field cannot be parsed properly, leave it as an empty string ""
+9. For grade, extract GPA, honors, or similar academic performance indicators (e.g., "3.8 GPA", "Summa Cum Laude", "Dean's List")
+10. School should be the full institution name
+11. Degree should include the full degree name and field of study (e.g., "Bachelor of Science in Computer Science", "Master of Business Administration")
+12. Order entries chronologically if possible (most recent first)
+13. Pay attention to context clues like "graduated from", "earned degree from", "alma mater", but ignore references to "completed course", "earned certificate", etc.
 
 IMPORTANT RULES:
 1. Return ONLY valid JSON - no additional text or explanations
@@ -629,10 +643,13 @@ GUIDELINES FOR CERTIFICATIONS EXTRACTION:
 2. INCLUDE:
    - Professional licenses (e.g., CPA, PE, RN, bar license)
    - Industry certifications (e.g., AWS, Microsoft, Cisco, Google Cloud, Salesforce)
+   - Online courses and specializations (e.g., Coursera, edX, Udemy, LinkedIn Learning)
    - Educational certifications and completion certificates from accredited institutions
+   - University-sponsored online courses and specializations (e.g., "Stanford University and Coursera", "University of Michigan and Coursera")
    - Professional development credentials from recognized organizations
    - Training program completions from reputable providers
    - Bootcamp certifications from coding schools
+   - Any course completion certificates, even from universities, when they are NOT formal degree programs
 3. EXCLUDE (DO NOT INCLUDE):
    - Driver's licenses or motor vehicle licenses
    - Basic government-issued IDs or documents
