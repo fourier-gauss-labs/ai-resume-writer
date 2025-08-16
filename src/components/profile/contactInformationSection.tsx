@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PencilIcon, PhoneIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
@@ -32,37 +32,64 @@ export default function ContactInformationSection({
 }: ContactInformationSectionProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+    // Local state for optimistic updates
+    const [localContactInfo, setLocalContactInfo] = useState<ContactInformation | null>(null);
+
+    // Use local state if available, fallback to prop
+    const displayContactInfo = localContactInfo || contactInfo;
+
+    // Update local state when prop changes
+    useEffect(() => {
+        if (contactInfo) {
+            setLocalContactInfo(contactInfo);
+        }
+    }, [contactInfo]);
+
     const handleEdit = () => {
         setIsEditModalOpen(true);
     };
 
-    // Handle setting primary email
+    // Handle setting primary email with optimistic update
     const handleSetPrimaryEmail = async (index: number) => {
-        if (!user || !contactInfo) return;
+        if (!user || !displayContactInfo) return;
+
+        // Optimistic update - immediately update UI
+        const optimisticUpdate = {
+            ...displayContactInfo,
+            primaryEmailIndex: index
+        };
+        setLocalContactInfo(optimisticUpdate);
 
         try {
-            const updatedContact = {
-                ...contactInfo,
-                primaryEmailIndex: index
-            };
-            await handleSaveContact(updatedContact);
+            // Save to backend without page refresh
+            await handleSaveContactSilent(optimisticUpdate);
+            toast.success('Primary email updated');
         } catch (error) {
+            // Revert on error
+            setLocalContactInfo(contactInfo);
             console.error('Error setting primary email:', error);
             toast.error('Failed to set primary email');
         }
     };
 
-    // Handle setting primary phone
+    // Handle setting primary phone with optimistic update
     const handleSetPrimaryPhone = async (index: number) => {
-        if (!user || !contactInfo) return;
+        if (!user || !displayContactInfo) return;
+
+        // Optimistic update - immediately update UI
+        const optimisticUpdate = {
+            ...displayContactInfo,
+            primaryPhoneIndex: index
+        };
+        setLocalContactInfo(optimisticUpdate);
 
         try {
-            const updatedContact = {
-                ...contactInfo,
-                primaryPhoneIndex: index
-            };
-            await handleSaveContact(updatedContact);
+            // Save to backend without page refresh
+            await handleSaveContactSilent(optimisticUpdate);
+            toast.success('Primary phone updated');
         } catch (error) {
+            // Revert on error
+            setLocalContactInfo(contactInfo);
             console.error('Error setting primary phone:', error);
             toast.error('Failed to set primary phone');
         }
@@ -122,8 +149,54 @@ export default function ContactInformationSection({
             console.error('Error updating contact information:', error);
             throw error; // Re-throw to let the modal handle it
         }
+    };
+
+    // Silent save function for optimistic updates (no page refresh)
+    const handleSaveContactSilent = async (updatedContact: ContactInformation) => {
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        // Get the current full structured data to preserve other sections
+        const currentDataResponse = await fetch(
+            `https://us-central1-ai-resume-writer-46403.cloudfunctions.net/getStructuredHistoryHttp?userId=${user.uid}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (!currentDataResponse.ok) {
+            throw new Error('Failed to fetch current data');
+        }
+
+        const currentResult = await currentDataResponse.json();
+        const currentData = currentResult.data || {};
+
+        // Update only the contact information, preserving Firebase structure
+        const updatedData = {
+            ...currentData,
+            contactInformation: {
+                contactInformation: {
+                    fullName: updatedContact.fullName,
+                    email: updatedContact.email,
+                    phone: updatedContact.phones, // Note: Firebase expects "phone" not "phones"
+                    address: currentData.contactInformation?.contactInformation?.address || '',
+                    linkedinUrl: currentData.contactInformation?.contactInformation?.linkedinUrl || '',
+                    portfolioUrl: currentData.contactInformation?.contactInformation?.portfolioUrl || '',
+                    githubUrl: currentData.contactInformation?.contactInformation?.githubUrl || '',
+                    primaryEmailIndex: updatedContact.primaryEmailIndex ?? 0,
+                    primaryPhoneIndex: updatedContact.primaryPhoneIndex ?? 0
+                }
+            }
+        };
+
+        // Save the updated data (no refresh)
+        await storeStructuredHistoryHttp(user.uid, updatedData);
     };    // Determine the name to display
-    const displayName = contactInfo?.fullName || user?.displayName || user?.email?.split('@')[0] || 'Name Not Available';
+    const displayName = displayContactInfo?.fullName || user?.displayName || user?.email?.split('@')[0] || 'Name Not Available';
 
     if (isLoading) {
         return (
@@ -163,15 +236,15 @@ export default function ContactInformationSection({
                     <div className="grid grid-cols-2 gap-6">
                         {/* Phone numbers column */}
                         <div className="space-y-2">
-                            {contactInfo?.phones && contactInfo.phones.length > 0 ? (
+                            {displayContactInfo?.phones && displayContactInfo.phones.length > 0 ? (
                                 <>
                                     <div className="flex items-center space-x-2">
                                         <PhoneIcon className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-xs font-medium text-muted-foreground">Phone</span>
                                     </div>
                                     <div className="pl-6 space-y-1">
-                                        {contactInfo.phones.map((phone, index) => {
-                                            const isPrimary = (contactInfo.primaryPhoneIndex ?? 0) === index;
+                                        {displayContactInfo.phones.map((phone, index) => {
+                                            const isPrimary = (displayContactInfo.primaryPhoneIndex ?? 0) === index;
                                             return (
                                                 <div key={index} className="flex items-center space-x-2 group">
                                                     <button
@@ -201,15 +274,15 @@ export default function ContactInformationSection({
 
                         {/* Email addresses column */}
                         <div className="space-y-2">
-                            {contactInfo?.email && contactInfo.email.length > 0 ? (
+                            {displayContactInfo?.email && displayContactInfo.email.length > 0 ? (
                                 <>
                                     <div className="flex items-center space-x-2">
                                         <EnvelopeIcon className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-xs font-medium text-muted-foreground">Email</span>
                                     </div>
                                     <div className="pl-6 space-y-1">
-                                        {contactInfo.email.map((email, index) => {
-                                            const isPrimary = (contactInfo.primaryEmailIndex ?? 0) === index;
+                                        {displayContactInfo.email.map((email, index) => {
+                                            const isPrimary = (displayContactInfo.primaryEmailIndex ?? 0) === index;
                                             return (
                                                 <div key={index} className="flex items-start space-x-2 group">
                                                     <button
@@ -257,7 +330,7 @@ export default function ContactInformationSection({
             <EditContactModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                contactInfo={contactInfo}
+                contactInfo={displayContactInfo}
                 onSave={handleSaveContact}
             />
         </>
