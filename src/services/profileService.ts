@@ -35,6 +35,8 @@ export interface ContactInformation {
     linkedinUrl?: string;
     portfolioUrl?: string;
     githubUrl?: string;
+    primaryEmailIndex?: number;
+    primaryPhoneIndex?: number;
 }
 
 export interface Skill {

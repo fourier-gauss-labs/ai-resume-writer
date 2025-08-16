@@ -8,6 +8,8 @@ interface ContactInformation {
     fullName: string;
     email: string[];
     phones: string[];
+    primaryEmailIndex?: number;
+    primaryPhoneIndex?: number;
 }
 
 interface JobHistoryItem {
@@ -103,7 +105,9 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
                     email: Array.isArray(firebaseContact.email) ? firebaseContact.email : [],
                     phones: Array.isArray(firebaseContact.phone)
                         ? firebaseContact.phone
-                        : (firebaseContact.phone ? [firebaseContact.phone] : [])
+                        : (firebaseContact.phone ? [firebaseContact.phone] : []),
+                    primaryEmailIndex: firebaseContact.primaryEmailIndex ?? 0,
+                    primaryPhoneIndex: firebaseContact.primaryPhoneIndex ?? 0
                 };
             } else if (actualData.contactInformation) {
                 // Handle flat structure
@@ -112,7 +116,9 @@ export function useStructuredHistory(): UseStructuredHistoryReturn {
                     email: Array.isArray(actualData.contactInformation.email) ? actualData.contactInformation.email : [],
                     phones: Array.isArray(actualData.contactInformation.phone)
                         ? actualData.contactInformation.phone
-                        : (actualData.contactInformation.phone ? [actualData.contactInformation.phone] : [])
+                        : (actualData.contactInformation.phone ? [actualData.contactInformation.phone] : []),
+                    primaryEmailIndex: actualData.contactInformation.primaryEmailIndex ?? 0,
+                    primaryPhoneIndex: actualData.contactInformation.primaryPhoneIndex ?? 0
                 };
             }
 

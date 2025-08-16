@@ -61,20 +61,30 @@ export class ResumeContentGenerator {
      * Convert contact information to resume format
      */
     private static convertContactInfo(contactInfo: ContactInformation): ResumePersonalInfo {
-        // Handle email field - it might be a string or array
+        // Handle email field - use primary selection if available
         let email = 'your.email@example.com';
         if (contactInfo.email) {
             if (Array.isArray(contactInfo.email) && contactInfo.email.length > 0) {
-                email = contactInfo.email[0]; // Take the first email if it's an array
+                const primaryIndex = contactInfo.primaryEmailIndex ?? 0;
+                email = contactInfo.email[primaryIndex] || contactInfo.email[0]; // Use primary or fallback to first
             } else if (typeof contactInfo.email === 'string') {
                 email = contactInfo.email;
             }
         }
 
+        // Handle phone field - use primary selection if available
+        let phone = '(555) 123-4567';
+        if (contactInfo.phones && Array.isArray(contactInfo.phones) && contactInfo.phones.length > 0) {
+            const primaryIndex = contactInfo.primaryPhoneIndex ?? 0;
+            phone = contactInfo.phones[primaryIndex] || contactInfo.phones[0]; // Use primary or fallback to first
+        } else if (contactInfo.phone) {
+            phone = contactInfo.phone;
+        }
+
         return {
             name: contactInfo.fullName || 'Your Name',
             email: email,
-            phone: contactInfo.phone || '(555) 123-4567',
+            phone: phone,
             location: contactInfo.address || 'Your City, State'
         };
     }

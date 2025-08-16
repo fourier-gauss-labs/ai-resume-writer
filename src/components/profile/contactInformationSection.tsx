@@ -13,6 +13,8 @@ interface ContactInformation {
     fullName: string;
     email: string[];
     phones: string[];
+    primaryEmailIndex?: number;
+    primaryPhoneIndex?: number;
 }
 
 interface ContactInformationSectionProps {
@@ -32,6 +34,38 @@ export default function ContactInformationSection({
 
     const handleEdit = () => {
         setIsEditModalOpen(true);
+    };
+
+    // Handle setting primary email
+    const handleSetPrimaryEmail = async (index: number) => {
+        if (!user || !contactInfo) return;
+
+        try {
+            const updatedContact = {
+                ...contactInfo,
+                primaryEmailIndex: index
+            };
+            await handleSaveContact(updatedContact);
+        } catch (error) {
+            console.error('Error setting primary email:', error);
+            toast.error('Failed to set primary email');
+        }
+    };
+
+    // Handle setting primary phone
+    const handleSetPrimaryPhone = async (index: number) => {
+        if (!user || !contactInfo) return;
+
+        try {
+            const updatedContact = {
+                ...contactInfo,
+                primaryPhoneIndex: index
+            };
+            await handleSaveContact(updatedContact);
+        } catch (error) {
+            console.error('Error setting primary phone:', error);
+            toast.error('Failed to set primary phone');
+        }
     };
 
     const handleSaveContact = async (updatedContact: ContactInformation) => {
@@ -59,10 +93,22 @@ export default function ContactInformationSection({
             const currentResult = await currentDataResponse.json();
             const currentData = currentResult.data || {};
 
-            // Update only the contact information
+            // Update only the contact information, preserving Firebase structure
             const updatedData = {
                 ...currentData,
-                contactInformation: updatedContact
+                contactInformation: {
+                    contactInformation: {
+                        fullName: updatedContact.fullName,
+                        email: updatedContact.email,
+                        phone: updatedContact.phones, // Note: Firebase expects "phone" not "phones"
+                        address: currentData.contactInformation?.contactInformation?.address || '',
+                        linkedinUrl: currentData.contactInformation?.contactInformation?.linkedinUrl || '',
+                        portfolioUrl: currentData.contactInformation?.contactInformation?.portfolioUrl || '',
+                        githubUrl: currentData.contactInformation?.contactInformation?.githubUrl || '',
+                        primaryEmailIndex: updatedContact.primaryEmailIndex ?? 0,
+                        primaryPhoneIndex: updatedContact.primaryPhoneIndex ?? 0
+                    }
+                }
             };
 
             // Save the updated data
@@ -124,11 +170,25 @@ export default function ContactInformationSection({
                                         <span className="text-xs font-medium text-muted-foreground">Phone</span>
                                     </div>
                                     <div className="pl-6 space-y-1">
-                                        {contactInfo.phones.map((phone, index) => (
-                                            <div key={index} className="text-xs text-foreground">
-                                                {phone}
-                                            </div>
-                                        ))}
+                                        {contactInfo.phones.map((phone, index) => {
+                                            const isPrimary = (contactInfo.primaryPhoneIndex ?? 0) === index;
+                                            return (
+                                                <div key={index} className="flex items-center space-x-2 group">
+                                                    <button
+                                                        onClick={() => handleSetPrimaryPhone(index)}
+                                                        className="flex-shrink-0 w-3 h-3 rounded-full border-2 transition-all duration-200 hover:scale-110"
+                                                        style={{
+                                                            backgroundColor: isPrimary ? '#22c55e' : 'transparent',
+                                                            borderColor: isPrimary ? '#22c55e' : '#9ca3af'
+                                                        }}
+                                                        title={isPrimary ? 'Primary phone' : 'Click to set as primary'}
+                                                    />
+                                                    <div className="text-xs text-foreground">
+                                                        {phone}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </>
                             ) : (
@@ -148,11 +208,25 @@ export default function ContactInformationSection({
                                         <span className="text-xs font-medium text-muted-foreground">Email</span>
                                     </div>
                                     <div className="pl-6 space-y-1">
-                                        {contactInfo.email.map((email, index) => (
-                                            <div key={index} className="text-xs text-foreground break-words">
-                                                {email}
-                                            </div>
-                                        ))}
+                                        {contactInfo.email.map((email, index) => {
+                                            const isPrimary = (contactInfo.primaryEmailIndex ?? 0) === index;
+                                            return (
+                                                <div key={index} className="flex items-start space-x-2 group">
+                                                    <button
+                                                        onClick={() => handleSetPrimaryEmail(index)}
+                                                        className="flex-shrink-0 w-3 h-3 rounded-full border-2 transition-all duration-200 hover:scale-110 mt-0.5"
+                                                        style={{
+                                                            backgroundColor: isPrimary ? '#22c55e' : 'transparent',
+                                                            borderColor: isPrimary ? '#22c55e' : '#9ca3af'
+                                                        }}
+                                                        title={isPrimary ? 'Primary email' : 'Click to set as primary'}
+                                                    />
+                                                    <div className="text-xs text-foreground break-words">
+                                                        {email}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </>
                             ) : user?.email ? (

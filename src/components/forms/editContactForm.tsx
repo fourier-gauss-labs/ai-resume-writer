@@ -11,6 +11,8 @@ interface ContactInformation {
     fullName: string;
     email: string[];
     phones: string[];
+    primaryEmailIndex?: number;
+    primaryPhoneIndex?: number;
 }
 
 interface EditContactFormProps {
@@ -29,7 +31,9 @@ export default function EditContactForm({
     const [formData, setFormData] = useState<ContactInformation>({
         fullName: '',
         email: [''],
-        phones: ['']
+        phones: [''],
+        primaryEmailIndex: 0,
+        primaryPhoneIndex: 0
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +43,9 @@ export default function EditContactForm({
             setFormData({
                 fullName: contactInfo.fullName || '',
                 email: contactInfo.email.length > 0 ? [...contactInfo.email] : [''],
-                phones: contactInfo.phones.length > 0 ? [...contactInfo.phones] : ['']
+                phones: contactInfo.phones.length > 0 ? [...contactInfo.phones] : [''],
+                primaryEmailIndex: contactInfo.primaryEmailIndex ?? 0,
+                primaryPhoneIndex: contactInfo.primaryPhoneIndex ?? 0
             });
         }
     }, [isInitialized, contactInfo]);
@@ -92,6 +98,14 @@ export default function EditContactForm({
                 phones: prev.phones.filter((_, i) => i !== index)
             }));
         }
+    };
+
+    const handleSetPrimaryEmail = (index: number) => {
+        setFormData(prev => ({ ...prev, primaryEmailIndex: index }));
+    };
+
+    const handleSetPrimaryPhone = (index: number) => {
+        setFormData(prev => ({ ...prev, primaryPhoneIndex: index }));
     };
 
     const handleSave = async () => {
@@ -152,7 +166,21 @@ export default function EditContactForm({
                 </div>
                 <div className="space-y-2">
                     {formData.email.map((email, index) => (
-                        <div key={index} className="flex items-center space-x-2">
+                        <div key={index} className="flex items-center space-x-3">
+                            {/* Radio button for primary selection */}
+                            <div className="flex items-center">
+                                <input
+                                    type="radio"
+                                    id={`primary-email-${index}`}
+                                    name="primaryEmail"
+                                    checked={formData.primaryEmailIndex === index}
+                                    onChange={() => handleSetPrimaryEmail(index)}
+                                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
+                                />
+                                <label htmlFor={`primary-email-${index}`} className="ml-1 text-xs text-muted-foreground">
+                                    {index === 0 && formData.email.length === 1 ? 'Primary' : formData.primaryEmailIndex === index ? 'Primary' : 'Set Primary'}
+                                </label>
+                            </div>
                             <Input
                                 value={email}
                                 onChange={(e) => handleEmailChange(index, e.target.value)}
@@ -192,7 +220,21 @@ export default function EditContactForm({
                 </div>
                 <div className="space-y-2">
                     {formData.phones.map((phone, index) => (
-                        <div key={index} className="flex items-center space-x-2">
+                        <div key={index} className="flex items-center space-x-3">
+                            {/* Radio button for primary selection */}
+                            <div className="flex items-center">
+                                <input
+                                    type="radio"
+                                    id={`primary-phone-${index}`}
+                                    name="primaryPhone"
+                                    checked={formData.primaryPhoneIndex === index}
+                                    onChange={() => handleSetPrimaryPhone(index)}
+                                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
+                                />
+                                <label htmlFor={`primary-phone-${index}`} className="ml-1 text-xs text-muted-foreground">
+                                    {index === 0 && formData.phones.length === 1 ? 'Primary' : formData.primaryPhoneIndex === index ? 'Primary' : 'Set Primary'}
+                                </label>
+                            </div>
                             <Input
                                 value={phone}
                                 onChange={(e) => handlePhoneChange(index, e.target.value)}

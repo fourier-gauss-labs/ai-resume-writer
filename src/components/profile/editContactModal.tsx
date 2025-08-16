@@ -10,6 +10,8 @@ interface ContactInformation {
     fullName: string;
     email: string[];
     phones: string[];
+    primaryEmailIndex?: number;
+    primaryPhoneIndex?: number;
 }
 
 interface EditContactModalProps {
